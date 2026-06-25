@@ -1,0 +1,73 @@
+/* ============================================================
+   Background art — blurred, slow-drifting earth-tone orbs.
+   Fixed behind all content. Theme-aware, reduced-motion safe.
+   ============================================================ */
+
+.bg-art {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  /* gentle fade-in on load so it doesn't pop */
+  animation: bgFade 1.2s ease both;
+}
+@keyframes bgFade { from { opacity: 0; } to { opacity: 1; } }
+
+.bg-art .orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(72px);
+  opacity: .42;
+  mix-blend-mode: multiply;          /* tints the warm paper */
+  will-change: transform;
+}
+[data-theme="dark"] .bg-art .orb {
+  filter: blur(86px);
+  opacity: .5;
+  mix-blend-mode: screen;            /* glows on the dark brown */
+}
+
+.bg-art .o1 {
+  width: 48vw; height: 48vw; left: -10vw; top: -8vw;
+  background: radial-gradient(circle at 32% 32%, var(--accent), transparent 70%);
+  animation: drift1 34s ease-in-out infinite alternate;
+}
+.bg-art .o2 {
+  width: 42vw; height: 42vw; right: -12vw; top: 8vh;
+  background: radial-gradient(circle at 50% 50%, var(--viz-teal), transparent 70%);
+  animation: drift2 43s ease-in-out infinite alternate;
+}
+.bg-art .o3 {
+  width: 40vw; height: 40vw; left: 16vw; bottom: -16vw;
+  background: radial-gradient(circle at 50% 50%, var(--viz-sand), transparent 71%);
+  animation: drift3 38s ease-in-out infinite alternate;
+}
+.bg-art .o4 {
+  width: 34vw; height: 34vw; right: 4vw; bottom: -10vw;
+  background: radial-gradient(circle at 50% 50%, var(--viz-olive), transparent 72%);
+  animation: drift4 47s ease-in-out infinite alternate;
+}
+.bg-art .o5 {
+  width: 30vw; height: 30vw; left: 40vw; top: 26vh;
+  background: radial-gradient(circle at 50% 50%, var(--viz-clay), transparent 72%);
+  animation: drift5 30s ease-in-out infinite alternate;
+}
+
+@keyframes drift1 { from { transform: translate(0,0) scale(1); }    to { transform: translate(9vw,7vh) scale(1.16); } }
+@keyframes drift2 { from { transform: translate(0,0) scale(1); }    to { transform: translate(-8vw,6vh) scale(1.1); } }
+@keyframes drift3 { from { transform: translate(0,0) scale(1.04); } to { transform: translate(7vw,-8vh) scale(1.18); } }
+@keyframes drift4 { from { transform: translate(0,0) scale(1.06); } to { transform: translate(-6vw,-6vh) scale(1); } }
+@keyframes drift5 { from { transform: translate(0,0) scale(1); }    to { transform: translate(6vw,9vh) scale(1.13); } }
+
+/* faint film grain for texture */
+.bg-art .grain {
+  position: absolute; inset: 0; opacity: .04; pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+[data-theme="dark"] .bg-art .grain { opacity: .06; }
+
+@media (prefers-reduced-motion: reduce) {
+  .bg-art { animation: none; }
+  .bg-art .orb { animation: none; }
+}
