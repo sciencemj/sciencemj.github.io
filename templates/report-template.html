@@ -181,9 +181,8 @@ td .util{font-family:var(--font-mono);font-weight:600;color:var(--accent-700)}
 .ins h4{font-size:15.5px;margin-bottom:4px}
 .ins p{font-size:13.5px;color:var(--ink-2)}
 
-/* report meta footer (the unified portfolio footer is injected below it) */
-footer.report-foot{border-top:1px solid var(--border);padding:34px 0;color:var(--muted);font-size:13px}
-footer.report-foot .mono{font-family:var(--font-mono)}
+/* report provenance note */
+.provenance{font-family:var(--font-mono);font-size:12.5px;color:var(--muted);line-height:1.55}
 
 @media(max-width:860px){
   .hero-grid,.grid-2,.insights{grid-template-columns:1fr}
@@ -430,15 +429,14 @@ footer.report-foot .mono{font-family:var(--font-mono)}
   </div>
 </div></section>
 
+<!-- provenance note (data period, sources, limitations) -->
+<section class="block" style="padding-top:0"><div class="wrap">
+  <p class="provenance">TODO: data period · sources · limitations · next step.</p>
+</div></section>
+
 </main>
 
-<!-- report-specific meta (data period, sources, limitations, next step) -->
-<footer class="report-foot"><div class="wrap">
-  <div class="brand" style="margin-bottom:10px"><span class="mk"><i data-lucide="bar-chart-3"></i></span><span>Project name<span class="dot">.</span></span></div>
-  <p class="mono">TODO: data period · sources · limitations · next step.</p>
-</div></footer>
-
-<!-- Shared portfolio footer + back-link (keep this line). -->
+<!-- Unified portfolio footer (same as the portfolio site). Keep this line. -->
 <script src="https://sciencemj.github.io/embed/footer.js" defer></script>
 
 <!-- Theme toggle + Lucide icons -->
