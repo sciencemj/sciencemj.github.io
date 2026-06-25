@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<!--
+  Sciencemj — reusable project report template
+  ============================================
+  Copy this file into a project repo as `report.html`, fill the placeholders
+  (search for "TODO"), drop your figures next to it, and enable GitHub Pages.
+
+  It already includes:
+    • the Sciencemj design system (warm earth-tone tokens, light + dark)
+    • a "← Sciencemj" back-link in the nav
+    • the shared portfolio footer, injected by embed/footer.js
+  Keep the <script src=".../embed/footer.js"> tag so the footer stays unified.
+-->
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TODO: Project title — report</title>
+<meta name="description" content="TODO: one-line summary of the report.">
+<meta name="color-scheme" content="light dark">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+/* ===== Design tokens — Sciencemj (warm earth-tone, terracotta) ===== */
+:root{
+  --accent-200:#F6BE91;--accent:#E8682B;--accent-600:#CE551E;--accent-700:#A84417;--accent-soft:#FBEEE2;
+  --canvas:#FAF6F0;--surface:#FFFFFF;--surface-2:#F3ECE0;
+  --ink:#221C16;--ink-2:#4A4036;--muted:#6E614D;--border:#E8DECE;--border-2:#D8CBB5;
+  --viz-orange:#E8682B;--viz-clay:#C2613F;--viz-sand:#D9A441;--viz-olive:#7E8A4B;
+  --viz-teal:#4E8A7E;--viz-slate:#5E6E8A;--viz-mauve:#B0746A;--viz-brown:#6B4B33;
+  --success:#5E8A52;--warning:#D9A441;--danger:#C5503B;--info:#4E8A7E;
+  --r-sm:10px;--r-md:14px;--r-lg:20px;--r-xl:28px;--r-pill:999px;
+  --shadow-sm:0 1px 2px rgba(60,42,24,.06),0 1px 1px rgba(60,42,24,.04);
+  --shadow-md:0 4px 14px rgba(60,42,24,.08),0 2px 4px rgba(60,42,24,.05);
+  --shadow-raised:inset 0 1px 0 rgba(255,255,255,.7),0 6px 16px rgba(60,42,24,.10);
+  --font-display:"Space Grotesk","IBM Plex Sans KR",system-ui,sans-serif;
+  --font-body:"Hanken Grotesk","IBM Plex Sans KR",system-ui,sans-serif;
+  --font-mono:"JetBrains Mono",ui-monospace,monospace;
+}
+[data-theme="dark"]{
+  --accent:#F2783A;--accent-600:#E8682B;--accent-700:#F19C5C;--accent-soft:#2E2017;
+  --canvas:#1B1611;--surface:#251E18;--surface-2:#2F271F;
+  --ink:#F3EBDD;--ink-2:#C9BCA8;--muted:#998A75;--border:#392F26;--border-2:#4A3E31;
+  --shadow-sm:0 1px 2px rgba(0,0,0,.40);--shadow-md:0 4px 14px rgba(0,0,0,.45);
+  --shadow-raised:inset 0 1px 0 rgba(255,255,255,.06),0 6px 16px rgba(0,0,0,.5);
+}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--canvas);color:var(--ink);font-family:var(--font-body);
+  font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;transition:background .3s,color .3s}
+h1,h2,h3,h4{font-family:var(--font-display);font-weight:600;line-height:1.14;letter-spacing:-.015em;margin:0;text-wrap:balance}
+p{margin:0;text-wrap:pretty}
+a{color:var(--accent);text-decoration:none}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+.tnum{font-variant-numeric:tabular-nums}
+.wrap{max-width:1080px;margin:0 auto;padding:0 28px}
+
+/* nav */
+nav{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--canvas) 82%,transparent);
+  backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+.nav-in{display:flex;align-items:center;justify-content:space-between;height:62px}
+.brand{display:flex;align-items:center;gap:9px;font-family:var(--font-display);font-weight:700;font-size:17px;letter-spacing:-.02em;color:var(--ink)}
+.brand .mk{width:26px;height:26px;border-radius:8px;background:var(--accent);display:grid;place-items:center;
+  color:#fff;box-shadow:0 6px 14px color-mix(in srgb,var(--accent) 30%,transparent)}
+.brand .mk svg{width:15px;height:15px}
+.brand .dot{color:var(--accent)}
+.nav-right{display:flex;align-items:center;gap:12px}
+.badge{display:inline-flex;align-items:center;gap:5px;padding:5px 11px;border-radius:var(--r-pill);
+  font-family:var(--font-mono);font-size:11px;font-weight:500;background:var(--accent-soft);color:var(--accent-700)}
+.icon-btn{display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:var(--r-md);
+  border:1px solid var(--border-2);background:var(--surface);color:var(--muted);cursor:pointer;box-shadow:var(--shadow-sm)}
+.icon-btn:hover{color:var(--ink)}.icon-btn svg{width:18px;height:18px}
+
+/* eyebrow */
+.eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:var(--font-mono);font-size:12px;
+  letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-weight:500}
+.pulse{width:7px;height:7px;border-radius:50%;background:var(--accent);
+  box-shadow:0 0 0 0 rgba(232,104,43,.5);animation:pulse 2.4s ease-out infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(232,104,43,.5)}70%{box-shadow:0 0 0 8px rgba(232,104,43,0)}100%{box-shadow:0 0 0 0 rgba(232,104,43,0)}}
+
+/* hero */
+.hero{padding:64px 0 36px}
+h1.title{font-size:clamp(34px,5.5vw,50px);line-height:1.05;letter-spacing:-.025em;margin:16px 0 0}
+h1.title em{font-style:normal;color:var(--accent)}
+.lead{margin:18px 0 0;font-size:17px;line-height:1.6;color:var(--ink-2);max-width:620px}
+.hero-meta{display:flex;gap:30px;margin-top:28px;flex-wrap:wrap;padding-top:24px;border-top:1px solid var(--border)}
+.hero-meta .v{font-family:var(--font-mono);font-size:24px;font-weight:600}
+.hero-meta .k{font-size:12px;color:var(--muted);margin-top:2px}
+
+/* metric strip */
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.metric{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--shadow-sm);padding:20px}
+.metric .k{font-family:var(--font-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.metric .v{font-family:var(--font-mono);font-size:30px;font-weight:600;margin-top:8px;letter-spacing:-.01em}
+.metric .s{font-size:12.5px;color:var(--ink-2);margin-top:4px}
+
+/* sections */
+section.block{padding:44px 0}
+.sec-head{margin-bottom:22px}
+.sec-head h2{font-size:30px;letter-spacing:-.02em}
+.sec-head p{color:var(--muted);margin-top:8px;font-size:15px;max-width:680px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--shadow-md);padding:24px}
+.card h3{font-size:18px;margin-bottom:8px;display:flex;align-items:center;gap:9px}
+.card h3 .ic{width:30px;height:30px;border-radius:9px;background:var(--accent-soft);color:var(--accent-700);display:grid;place-items:center;flex:none}
+.card h3 .ic svg{width:16px;height:16px}
+.card p{color:var(--ink-2);font-size:14.5px}
+
+/* figure */
+.fig{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--shadow-md);padding:16px;overflow:hidden}
+.fig img{width:100%;display:block;border-radius:var(--r-md)}
+.cap{color:var(--muted);font-size:13px;margin-top:12px;line-height:1.55}
+.cap b{color:var(--ink);font-weight:600}
+
+/* table */
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:11px 12px;border-bottom:1px solid var(--border)}
+th{font-family:var(--font-mono);font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);font-weight:500}
+td.num,th.num{text-align:right;font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+tbody tr:hover{background:var(--surface-2)}
+
+/* insights */
+.insights{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.ins{display:flex;gap:14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--shadow-sm);padding:18px 20px}
+.ins .n{font-family:var(--font-mono);font-weight:600;color:var(--accent);font-size:14px;flex:none;
+  width:30px;height:30px;border-radius:9px;background:var(--accent-soft);display:grid;place-items:center}
+.ins h4{font-size:15.5px;margin-bottom:4px}
+.ins p{font-size:13.5px;color:var(--ink-2)}
+
+/* report's own meta footer (the unified portfolio footer is injected below it) */
+footer.report-foot{border-top:1px solid var(--border);padding:34px 0;color:var(--muted);font-size:13px}
+footer.report-foot .mono{font-family:var(--font-mono)}
+
+@media(max-width:860px){
+  .hero-meta,.grid-2,.insights{grid-template-columns:1fr}
+  .metrics{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap nav-in">
+    <!-- TODO: project short name -->
+    <div class="brand">
+      <span class="mk"><i data-lucide="bar-chart-3"></i></span>
+      <span>Project name<span class="dot">.</span></span>
+    </div>
+    <div class="nav-right">
+      <a href="https://sciencemj.github.io/" class="badge" aria-label="Back to Sciencemj portfolio">← Sciencemj</a>
+      <button class="icon-btn" id="theme" aria-label="Toggle theme"><i data-lucide="moon"></i></button>
+    </div>
+  </div>
+</nav>
+
+<main>
+
+  <!-- HERO -->
+  <header class="hero"><div class="wrap">
+    <span class="eyebrow"><span class="pulse"></span>&nbsp;TODO: eyebrow / category</span>
+    <h1 class="title">TODO: the <em>headline finding</em> in one line.</h1>
+    <p class="lead">TODO: 1–2 sentences — what the project asked, what data, what you concluded.</p>
+    <div class="hero-meta">
+      <div><div class="v tnum">TODO</div><div class="k">key metric</div></div>
+      <div><div class="v tnum">TODO</div><div class="k">key metric</div></div>
+      <div><div class="v tnum">TODO</div><div class="k">key metric</div></div>
+    </div>
+  </div></header>
+
+  <!-- METRICS -->
+  <section class="block"><div class="wrap">
+    <div class="metrics">
+      <div class="metric"><div class="k">Metric</div><div class="v tnum">00</div><div class="s">TODO short note</div></div>
+      <div class="metric"><div class="k">Metric</div><div class="v tnum">00%</div><div class="s">TODO short note</div></div>
+      <div class="metric"><div class="k">Metric</div><div class="v tnum">0.00</div><div class="s">TODO short note</div></div>
+      <div class="metric"><div class="k">Metric</div><div class="v tnum">00</div><div class="s">TODO short note</div></div>
+    </div>
+  </div></section>
+
+  <!-- FIGURE + EXPLANATION -->
+  <section class="block" style="padding-top:0"><div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow"><i data-lucide="line-chart" style="width:14px;height:14px"></i>&nbsp;Section</span>
+      <h2 style="margin-top:10px">TODO: section title</h2>
+      <p>TODO: what this chart shows and why it matters.</p>
+    </div>
+    <div class="grid-2">
+      <div class="fig">
+        <!-- TODO: drop a figure image next to report.html -->
+        <img src="report_assets/fig_example.png" alt="TODO: describe the figure">
+        <p class="cap"><b>Read:</b> TODO caption — the one thing a reader should take from this figure.</p>
+      </div>
+      <div class="card">
+        <h3><span class="ic"><i data-lucide="search"></i></span>What we found</h3>
+        <p>TODO: the interpretation. Keep it specific — numbers, direction, magnitude.</p>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- TABLE -->
+  <section class="block" style="padding-top:0"><div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow"><i data-lucide="table" style="width:14px;height:14px"></i>&nbsp;Detail</span>
+      <h2 style="margin-top:10px">TODO: table title</h2>
+    </div>
+    <div class="card" style="padding:8px 8px 4px">
+      <table>
+        <thead><tr><th>Item</th><th class="num">Value</th><th class="num">Share</th></tr></thead>
+        <tbody>
+          <tr><td>TODO row</td><td class="num tnum">000</td><td class="num tnum">00%</td></tr>
+          <tr><td>TODO row</td><td class="num tnum">000</td><td class="num tnum">00%</td></tr>
+          <tr><td>TODO row</td><td class="num tnum">000</td><td class="num tnum">00%</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div></section>
+
+  <!-- KEY FINDINGS / NEXT STEPS -->
+  <section class="block" style="padding-top:0"><div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow"><i data-lucide="git-branch" style="width:14px;height:14px"></i>&nbsp;Takeaways</span>
+      <h2 style="margin-top:10px">TODO: findings &amp; next steps</h2>
+    </div>
+    <div class="insights">
+      <div class="ins"><span class="n">A</span><div><h4>TODO finding</h4><p>TODO one-sentence detail.</p></div></div>
+      <div class="ins"><span class="n">B</span><div><h4>TODO finding</h4><p>TODO one-sentence detail.</p></div></div>
+      <div class="ins"><span class="n">C</span><div><h4>TODO finding</h4><p>TODO one-sentence detail.</p></div></div>
+      <div class="ins"><span class="n">D</span><div><h4>TODO finding</h4><p>TODO one-sentence detail.</p></div></div>
+    </div>
+  </div></section>
+
+</main>
+
+<!-- report-specific meta (data sources, period, limitations) -->
+<footer class="report-foot"><div class="wrap">
+  <div class="brand" style="margin-bottom:10px"><span class="mk"><i data-lucide="bar-chart-3"></i></span><span>Project name<span class="dot">.</span></span></div>
+  <p class="mono">TODO: data period · sources · limitations · next step.</p>
+</div></footer>
+
+<!-- Shared portfolio footer + back-link (keep this line). -->
+<script src="https://sciencemj.github.io/embed/footer.js" defer></script>
+
+<!-- Theme toggle + icons -->
+<script>
+  const root=document.documentElement;
+  const saved=localStorage.getItem("ddr-theme");
+  if(saved)root.setAttribute("data-theme",saved);
+  function sync(){const d=root.getAttribute("data-theme")==="dark";
+    document.getElementById("theme").innerHTML='<i data-lucide="'+(d?"sun":"moon")+'"></i>';
+    if(window.lucide)lucide.createIcons();}
+  document.getElementById("theme").addEventListener("click",()=>{
+    const n=root.getAttribute("data-theme")==="dark"?"light":"dark";
+    root.setAttribute("data-theme",n);localStorage.setItem("ddr-theme",n);sync();});
+  if(window.lucide)lucide.createIcons();
+  sync();
+</script>
+</body>
+</html>

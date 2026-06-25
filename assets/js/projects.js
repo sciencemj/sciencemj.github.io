@@ -6,9 +6,11 @@
 
   // Local config: which repos to feature + per-repo report link.
   //   report: a path under the repo's GitHub Pages site (used only if has_pages).
+  // `tags` are merged with the repo's live GitHub topics (deduped) — they seed
+  // the filter and card chips, and any topics you add on GitHub flow in too.
   var PROJECTS = [
-    { repo: 'seoul-bike-analysis', report: 'report.html' },
-    { repo: 'LCC_Review_Sentiment_Cluster' }
+    { repo: 'seoul-bike-analysis', report: 'report.html', tags: ['Data analysis', 'Forecasting', 'Geospatial'] },
+    { repo: 'LCC_Review_Sentiment_Cluster', tags: ['NLP', 'Clustering', 'Sentiment'] }
   ];
 
   // Cover gradient pairs (natural viz palette), cycled per card.
@@ -21,6 +23,7 @@
 
   var grid = document.getElementById('project-grid');
   if (!grid) return;
+  var filterBar = document.getElementById('project-filter');
 
   function esc(s) {
     return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) {
@@ -32,6 +35,17 @@
     return name.split(/[-_]/).filter(Boolean).map(function (w) {
       return /^[A-Z0-9]+$/.test(w) ? w : w.charAt(0).toUpperCase() + w.slice(1);
     }).join(' ');
+  }
+
+  // Merge live GitHub topics with configured tags, deduped case-insensitively.
+  function tagsFor(p, data) {
+    var out = [], seen = {};
+    var src = ((data && data.topics) || []).concat(p.tags || []);
+    src.forEach(function (t) {
+      var k = String(t).toLowerCase();
+      if (k && !seen[k]) { seen[k] = 1; out.push(t); }
+    });
+    return out;
   }
 
   function relTime(iso) {
@@ -95,8 +109,9 @@
       : '<span class="pc-status soon">Code · report soon</span>';
     var desc = data && data.description ? esc(data.description)
       : 'Open the project repository on GitHub.';
-    var topicArr = (data && data.topics) ? data.topics.slice(0, 4) : [];
-    var topics = topicArr.map(function (t) { return '<span class="tag">' + esc(t) + '</span>'; }).join('');
+    var tagList = tagsFor(p, data);
+    var topics = tagList.slice(0, 6).map(function (t) { return '<span class="tag">' + esc(t) + '</span>'; }).join('');
+    var dataTags = tagList.map(function (t) { return t.toLowerCase(); }).join('|');
     var lang = data && data.language
       ? '<span class="pc-lang"><i class="dot"></i>' + esc(data.language) + '</span>' : '';
     var updated = data && data.pushed_at
@@ -107,6 +122,7 @@
     var statusText = hasReport ? 'report available' : 'code, report soon';
 
     return '<a class="project-card" href="' + esc(link) + '"' + external +
+      ' data-tags="' + esc(dataTags) + '"' +
       ' aria-label="' + esc(title + ' — ' + statusText) + '">' +
       '<div class="pc-cover" style="--c1:' + cov[0] + ';--c2:' + cov[1] + '">' +
         '<svg class="pc-bars" viewBox="0 0 120 70" aria-hidden="true">' + bars() + '</svg>' +
@@ -128,6 +144,45 @@
     }).join('');
   }
 
+  // Build the tag filter from the union of all cards' tags. Hidden if < 2 tags.
+  function buildFilter(perCardTags) {
+    if (!filterBar) return;
+    var seen = {}, tags = [];
+    perCardTags.forEach(function (arr) {
+      arr.forEach(function (t) { var k = t.toLowerCase(); if (!seen[k]) { seen[k] = 1; tags.push(t); } });
+    });
+    if (tags.length < 2) { filterBar.hidden = true; return; }
+
+    var active = {};
+    function draw() {
+      var any = Object.keys(active).length > 0;
+      filterBar.innerHTML =
+        '<button type="button" class="filter-chip' + (any ? '' : ' active') + '" data-all="1" aria-pressed="' + (!any) + '">All</button>' +
+        tags.map(function (t) {
+          var k = t.toLowerCase(), on = !!active[k];
+          return '<button type="button" class="filter-chip' + (on ? ' active' : '') + '" data-tag="' + esc(k) + '" aria-pressed="' + on + '">' + esc(t) + '</button>';
+        }).join('');
+    }
+    function apply() {
+      var keys = Object.keys(active);
+      [].slice.call(grid.querySelectorAll('.project-card')).forEach(function (c) {
+        if (keys.length === 0) { c.style.display = ''; return; }
+        var ctags = (c.getAttribute('data-tags') || '').split('|');
+        var show = keys.some(function (k) { return ctags.indexOf(k) > -1; });
+        c.style.display = show ? '' : 'none';
+      });
+    }
+    filterBar.addEventListener('click', function (e) {
+      var btn = e.target.closest('.filter-chip');
+      if (!btn) return;
+      if (btn.getAttribute('data-all')) active = {};
+      else { var k = btn.getAttribute('data-tag'); if (active[k]) delete active[k]; else active[k] = 1; }
+      draw(); apply();
+    });
+    filterBar.hidden = false;
+    draw();
+  }
+
   function render() {
     skeletons();
     Promise.all(PROJECTS.map(function (p) {
@@ -135,6 +190,7 @@
     })).then(function (results) {
       grid.innerHTML = PROJECTS.map(function (p, i) { return card(p, results[i], i); }).join('');
       grid.setAttribute('aria-busy', 'false');
+      buildFilter(PROJECTS.map(function (p, i) { return tagsFor(p, results[i]); }));
     });
   }
 

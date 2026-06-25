@@ -111,6 +111,19 @@ p { text-wrap: pretty; }
 
 /* ---- project grid + cards ---- */
 .project-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 312px), 1fr)); gap: 18px; }
+
+/* tag filter */
+.filter-bar { display: flex; flex-wrap: wrap; gap: 8px; }
+.filter-chip {
+  font-family: var(--font-body); font-size: 13px; padding: 7px 14px; border-radius: var(--r-pill);
+  background: var(--surface); color: var(--ink-2); border: 1px solid var(--border-2); cursor: pointer;
+  transition: background .15s, color .15s, border-color .15s, transform .15s;
+}
+.filter-chip:hover { transform: translateY(-1px); border-color: var(--accent-200); }
+.filter-chip.active {
+  background: var(--accent); color: #fff; border-color: transparent;
+  box-shadow: 0 6px 14px color-mix(in srgb, var(--accent) 28%, transparent);
+}
 .project-card {
   background: var(--surface); border: 1px solid var(--border); border-radius: 22px;
   overflow: hidden; box-shadow: var(--shadow-raised); color: var(--ink);
