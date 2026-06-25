@@ -6,11 +6,11 @@
 
   // Local config: which repos to feature + per-repo report link.
   //   report: a path under the repo's GitHub Pages site (used only if has_pages).
-  // `tags` are merged with the repo's live GitHub topics (deduped) — they seed
-  // the filter and card chips, and any topics you add on GitHub flow in too.
+  // Tags come live from each repo's GitHub topics (deduped, prettified).
+  // Add/edit topics on GitHub and the cards + filter update on the next load.
   var PROJECTS = [
-    { repo: 'seoul-bike-analysis', report: 'report.html', tags: ['Data analysis', 'Forecasting', 'Geospatial'] },
-    { repo: 'LCC_Review_Sentiment_Cluster', report: 'report.html', tags: ['NLP', 'Clustering', 'Sentiment'] }
+    { repo: 'seoul-bike-analysis', report: 'report.html' },
+    { repo: 'LCC_Review_Sentiment_Cluster', report: 'report.html' }
   ];
 
   // Cover gradient pairs (natural viz palette), cycled per card.
@@ -37,13 +37,21 @@
     }).join(' ');
   }
 
-  // Merge live GitHub topics with configured tags, deduped case-insensitively.
+  // Prettify a GitHub topic for display: hyphen-words -> Title Case, a few
+  // acronyms forced upper. "data-analysis" -> "Data Analysis", "nlp" -> "NLP".
+  var ACRONYMS = { nlp: 'NLP', ml: 'ML', ai: 'AI', eda: 'EDA', api: 'API', llm: 'LLM', umap: 'UMAP', cv: 'CV', sql: 'SQL', ocr: 'OCR' };
+  function prettyTag(t) {
+    return String(t).split('-').map(function (w) {
+      return ACRONYMS[w.toLowerCase()] || (w.charAt(0).toUpperCase() + w.slice(1));
+    }).join(' ');
+  }
+
+  // Tags come live from the repo's GitHub topics (deduped, prettified).
   function tagsFor(p, data) {
     var out = [], seen = {};
-    var src = ((data && data.topics) || []).concat(p.tags || []);
-    src.forEach(function (t) {
-      var k = String(t).toLowerCase();
-      if (k && !seen[k]) { seen[k] = 1; out.push(t); }
+    ((data && data.topics) || []).forEach(function (t) {
+      var pretty = prettyTag(t), k = pretty.toLowerCase();
+      if (k && !seen[k]) { seen[k] = 1; out.push(pretty); }
     });
     return out;
   }
