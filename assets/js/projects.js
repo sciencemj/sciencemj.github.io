@@ -10,7 +10,7 @@
   // the filter and card chips, and any topics you add on GitHub flow in too.
   var PROJECTS = [
     { repo: 'seoul-bike-analysis', report: 'report.html', tags: ['Data analysis', 'Forecasting', 'Geospatial'] },
-    { repo: 'LCC_Review_Sentiment_Cluster', tags: ['NLP', 'Clustering', 'Sentiment'] }
+    { repo: 'LCC_Review_Sentiment_Cluster', report: 'report.html', tags: ['NLP', 'Clustering', 'Sentiment'] }
   ];
 
   // Cover gradient pairs (natural viz palette), cycled per card.
