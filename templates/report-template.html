@@ -1,15 +1,21 @@
 <!DOCTYPE html>
 <!--
   Sciencemj — reusable project report template
-  ============================================
-  Copy this file into a project repo as `report.html`, fill the placeholders
-  (search for "TODO"), drop your figures next to it, and enable GitHub Pages.
+  =============================================
+  Based on the seoul-bike-analysis report design.
 
-  It already includes:
+  Copy this file into a project repo as `report.html`, search for "TODO" and fill
+  it in, drop figures in `report_assets/`, and enable GitHub Pages.
+
+  Built in:
     • the Sciencemj design system (warm earth-tone tokens, light + dark)
-    • a "← Sciencemj" back-link in the nav
-    • the shared portfolio footer, injected by embed/footer.js
-  Keep the <script src=".../embed/footer.js"> tag so the footer stays unified.
+    • a "← Sciencemj" nav back-link + the shared portfolio footer (footer.js)
+  Keep the <script src=".../embed/footer.js"> line so the footer stays unified.
+
+  Reusable blocks (delete what you don't need):
+    hero + side stat panel · problem/purpose cards · data sources ·
+    finding + figure · figure pair · segment bars / split · model bars ·
+    recommendation table · insight grid.
 -->
 <html lang="en" data-theme="light">
 <head>
@@ -25,16 +31,19 @@
 <style>
 /* ===== Design tokens — Sciencemj (warm earth-tone, terracotta) ===== */
 :root{
-  --accent-200:#F6BE91;--accent:#E8682B;--accent-600:#CE551E;--accent-700:#A84417;--accent-soft:#FBEEE2;
+  --accent-50:#FDF1E8;--accent-100:#FBDFC8;--accent-200:#F6BE91;--accent-300:#F19C5C;
+  --accent-400:#ED7E33;--accent:#E8682B;--accent-600:#CE551E;--accent-700:#A84417;--accent-soft:#FBEEE2;
   --canvas:#FAF6F0;--surface:#FFFFFF;--surface-2:#F3ECE0;
   --ink:#221C16;--ink-2:#4A4036;--muted:#6E614D;--border:#E8DECE;--border-2:#D8CBB5;
   --viz-orange:#E8682B;--viz-clay:#C2613F;--viz-sand:#D9A441;--viz-olive:#7E8A4B;
   --viz-teal:#4E8A7E;--viz-slate:#5E6E8A;--viz-mauve:#B0746A;--viz-brown:#6B4B33;
   --success:#5E8A52;--warning:#D9A441;--danger:#C5503B;--info:#4E8A7E;
-  --r-sm:10px;--r-md:14px;--r-lg:20px;--r-xl:28px;--r-pill:999px;
+  --r-xs:6px;--r-sm:10px;--r-md:14px;--r-lg:20px;--r-xl:28px;--r-pill:999px;
   --shadow-sm:0 1px 2px rgba(60,42,24,.06),0 1px 1px rgba(60,42,24,.04);
   --shadow-md:0 4px 14px rgba(60,42,24,.08),0 2px 4px rgba(60,42,24,.05);
+  --shadow-lg:0 14px 34px rgba(60,42,24,.12),0 4px 10px rgba(60,42,24,.07);
   --shadow-raised:inset 0 1px 0 rgba(255,255,255,.7),0 6px 16px rgba(60,42,24,.10);
+  --shadow-accent:0 10px 26px rgba(232,104,43,.30);
   --font-display:"Space Grotesk","IBM Plex Sans KR",system-ui,sans-serif;
   --font-body:"Hanken Grotesk","IBM Plex Sans KR",system-ui,sans-serif;
   --font-mono:"JetBrains Mono",ui-monospace,monospace;
@@ -44,16 +53,17 @@
   --canvas:#1B1611;--surface:#251E18;--surface-2:#2F271F;
   --ink:#F3EBDD;--ink-2:#C9BCA8;--muted:#998A75;--border:#392F26;--border-2:#4A3E31;
   --shadow-sm:0 1px 2px rgba(0,0,0,.40);--shadow-md:0 4px 14px rgba(0,0,0,.45);
-  --shadow-raised:inset 0 1px 0 rgba(255,255,255,.06),0 6px 16px rgba(0,0,0,.5);
+  --shadow-lg:0 14px 34px rgba(0,0,0,.55);--shadow-raised:inset 0 1px 0 rgba(255,255,255,.06),0 6px 16px rgba(0,0,0,.5);
 }
 *,*::before,*::after{box-sizing:border-box}
 body{margin:0;background:var(--canvas);color:var(--ink);font-family:var(--font-body);
-  font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;transition:background .3s,color .3s}
+  font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+  transition:background .3s,color .3s}
 h1,h2,h3,h4{font-family:var(--font-display);font-weight:600;line-height:1.14;letter-spacing:-.015em;margin:0;text-wrap:balance}
-p{margin:0;text-wrap:pretty}
+p{text-wrap:pretty;margin:0}
 a{color:var(--accent);text-decoration:none}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
-.tnum{font-variant-numeric:tabular-nums}
+.tnum{font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1}
 .wrap{max-width:1080px;margin:0 auto;padding:0 28px}
 
 /* nav */
@@ -62,56 +72,97 @@ nav{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--canvas) 
 .nav-in{display:flex;align-items:center;justify-content:space-between;height:62px}
 .brand{display:flex;align-items:center;gap:9px;font-family:var(--font-display);font-weight:700;font-size:17px;letter-spacing:-.02em;color:var(--ink)}
 .brand .mk{width:26px;height:26px;border-radius:8px;background:var(--accent);display:grid;place-items:center;
-  color:#fff;box-shadow:0 6px 14px color-mix(in srgb,var(--accent) 30%,transparent)}
+  color:#fff;box-shadow:var(--shadow-accent)}
 .brand .mk svg{width:15px;height:15px}
 .brand .dot{color:var(--accent)}
 .nav-right{display:flex;align-items:center;gap:12px}
-.badge{display:inline-flex;align-items:center;gap:5px;padding:5px 11px;border-radius:var(--r-pill);
-  font-family:var(--font-mono);font-size:11px;font-weight:500;background:var(--accent-soft);color:var(--accent-700)}
 .icon-btn{display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:var(--r-md);
-  border:1px solid var(--border-2);background:var(--surface);color:var(--muted);cursor:pointer;box-shadow:var(--shadow-sm)}
-.icon-btn:hover{color:var(--ink)}.icon-btn svg{width:18px;height:18px}
+  border:1px solid var(--border-2);background:var(--surface);color:var(--muted);cursor:pointer;box-shadow:var(--shadow-sm);
+  transition:transform .2s,color .15s}
+.icon-btn:hover{color:var(--ink);transform:translateY(-1px)}
+.icon-btn svg{width:18px;height:18px}
 
 /* eyebrow */
 .eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:var(--font-mono);font-size:12px;
-  letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-weight:500}
-.pulse{width:7px;height:7px;border-radius:50%;background:var(--accent);
+  letter-spacing:.08em;text-transform:uppercase;color:var(--accent);font-weight:500}
+.eyebrow .pulse{width:7px;height:7px;border-radius:50%;background:var(--accent);
   box-shadow:0 0 0 0 rgba(232,104,43,.5);animation:pulse 2.4s ease-out infinite}
 @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(232,104,43,.5)}70%{box-shadow:0 0 0 8px rgba(232,104,43,0)}100%{box-shadow:0 0 0 0 rgba(232,104,43,0)}}
 
 /* hero */
-.hero{padding:64px 0 36px}
-h1.title{font-size:clamp(34px,5.5vw,50px);line-height:1.05;letter-spacing:-.025em;margin:16px 0 0}
+.hero{position:relative;padding:74px 0 40px;overflow:hidden}
+.glow{position:absolute;top:-140px;left:50%;transform:translateX(-50%);width:760px;height:420px;
+  background:radial-gradient(ellipse at center,rgba(232,104,43,.18),rgba(232,104,43,0) 68%);pointer-events:none}
+.hero-grid{position:relative;display:grid;grid-template-columns:1.05fr .95fr;gap:46px;align-items:center}
+h1.title{font-family:var(--font-display);font-weight:700;font-size:50px;line-height:1.05;letter-spacing:-.025em;margin:18px 0 0}
 h1.title em{font-style:normal;color:var(--accent)}
-.lead{margin:18px 0 0;font-size:17px;line-height:1.6;color:var(--ink-2);max-width:620px}
-.hero-meta{display:flex;gap:30px;margin-top:28px;flex-wrap:wrap;padding-top:24px;border-top:1px solid var(--border)}
+.lead{margin:20px 0 0;font-size:17px;line-height:1.6;color:var(--ink-2);max-width:480px}
+.hero-meta{display:flex;gap:30px;margin-top:30px;flex-wrap:wrap}
 .hero-meta .v{font-family:var(--font-mono);font-size:24px;font-weight:600}
+.hero-meta .v small{font-size:14px;color:var(--muted)}
 .hero-meta .k{font-size:12px;color:var(--muted);margin-top:2px}
 
-/* metric strip */
-.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
-.metric{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--shadow-sm);padding:20px}
-.metric .k{font-family:var(--font-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
-.metric .v{font-family:var(--font-mono);font-size:30px;font-weight:600;margin-top:8px;letter-spacing:-.01em}
-.metric .s{font-size:12.5px;color:var(--ink-2);margin-top:4px}
+/* side panel (dashboard preview) */
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-xl);box-shadow:var(--shadow-raised);padding:20px}
+.panel-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.panel-title{font-size:13px;font-weight:600;color:var(--ink-2);display:flex;align-items:center;gap:8px}
+.panel-title .dotg{width:8px;height:8px;border-radius:50%;background:var(--success)}
+.big-num{font-family:var(--font-mono);font-size:32px;font-weight:600;margin:6px 0 0;letter-spacing:-.01em}
+.big-num .u{font-size:15px;color:var(--muted)}
+.delta{font-family:var(--font-mono);font-size:12px;color:var(--success)}
+.panel img{width:100%;display:block;border-radius:var(--r-md);margin-top:8px}
+.stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+.stat{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-md);padding:10px 12px}
+.stat .v{font-family:var(--font-mono);font-size:16px;font-weight:600}
+.stat .k{font-size:11px;color:var(--muted);margin-top:1px}
+
+/* badges / tags */
+.badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:var(--r-pill);
+  font-family:var(--font-mono);font-size:11px;font-weight:500;background:var(--accent-soft);color:var(--accent-700)}
+.tag{padding:4px 11px;border-radius:var(--r-pill);background:var(--surface-2);border:1px solid var(--border);
+  font-size:12px;font-weight:500;color:var(--ink-2)}
 
 /* sections */
-section.block{padding:44px 0}
-.sec-head{margin-bottom:22px}
+section.block{padding:46px 0}
+.sec-head{margin-bottom:24px}
 .sec-head h2{font-size:30px;letter-spacing:-.02em}
 .sec-head p{color:var(--muted);margin-top:8px;font-size:15px;max-width:680px}
 .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
 .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--shadow-md);padding:24px}
+.card.raised{box-shadow:var(--shadow-raised)}
 .card h3{font-size:18px;margin-bottom:8px;display:flex;align-items:center;gap:9px}
-.card h3 .ic{width:30px;height:30px;border-radius:9px;background:var(--accent-soft);color:var(--accent-700);display:grid;place-items:center;flex:none}
+.card h3 .ic{width:30px;height:30px;border-radius:9px;background:var(--accent-soft);color:var(--accent-700);
+  display:grid;place-items:center;flex:none}
 .card h3 .ic svg{width:16px;height:16px}
 .card p{color:var(--ink-2);font-size:14.5px}
 
 /* figure */
-.fig{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--shadow-md);padding:16px;overflow:hidden}
+.fig{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--shadow-md);
+  padding:16px;overflow:hidden}
 .fig img{width:100%;display:block;border-radius:var(--r-md)}
 .cap{color:var(--muted);font-size:13px;margin-top:12px;line-height:1.55}
 .cap b{color:var(--ink);font-weight:600}
+
+/* metric strip (optional alternative to hero-meta) */
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.metric{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--shadow-sm);padding:20px}
+.metric .k{font-family:var(--font-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.metric .v{font-family:var(--font-mono);font-size:30px;font-weight:600;margin-top:8px;letter-spacing:-.01em}
+.metric .v small{font-size:15px;color:var(--muted);font-weight:500}
+.metric .s{font-size:12.5px;color:var(--ink-2);margin-top:4px}
+
+/* horizontal bars */
+.bars{display:flex;flex-direction:column;gap:11px;margin-top:6px}
+.bar-row{display:grid;grid-template-columns:88px 1fr 52px;align-items:center;gap:12px}
+.bar-row .lab{font-size:13px;color:var(--ink-2)}
+.bar-track{height:12px;background:var(--surface-2);border-radius:var(--r-pill);overflow:hidden}
+.bar-fill{height:100%;border-radius:var(--r-pill);background:var(--accent)}
+.bar-row .pct{font-family:var(--font-mono);font-size:12.5px;color:var(--ink);text-align:right}
+
+/* split bar */
+.split{display:flex;height:42px;border-radius:var(--r-pill);overflow:hidden;border:1px solid var(--border);margin-top:8px}
+.split div{display:flex;align-items:center;justify-content:center;color:#fff;font-family:var(--font-mono);font-size:13px;font-weight:600}
 
 /* table */
 table{width:100%;border-collapse:collapse;font-size:14px}
@@ -119,22 +170,26 @@ th,td{text-align:left;padding:11px 12px;border-bottom:1px solid var(--border)}
 th{font-family:var(--font-mono);font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);font-weight:500}
 td.num,th.num{text-align:right;font-family:var(--font-mono);font-variant-numeric:tabular-nums}
 tbody tr:hover{background:var(--surface-2)}
+td .util{font-family:var(--font-mono);font-weight:600;color:var(--accent-700)}
 
 /* insights */
 .insights{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.ins{display:flex;gap:14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--shadow-sm);padding:18px 20px}
+.ins{display:flex;gap:14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);
+  box-shadow:var(--shadow-sm);padding:18px 20px}
 .ins .n{font-family:var(--font-mono);font-weight:600;color:var(--accent);font-size:14px;flex:none;
   width:30px;height:30px;border-radius:9px;background:var(--accent-soft);display:grid;place-items:center}
 .ins h4{font-size:15.5px;margin-bottom:4px}
 .ins p{font-size:13.5px;color:var(--ink-2)}
 
-/* report's own meta footer (the unified portfolio footer is injected below it) */
+/* report meta footer (the unified portfolio footer is injected below it) */
 footer.report-foot{border-top:1px solid var(--border);padding:34px 0;color:var(--muted);font-size:13px}
 footer.report-foot .mono{font-family:var(--font-mono)}
 
 @media(max-width:860px){
-  .hero-meta,.grid-2,.insights{grid-template-columns:1fr}
+  .hero-grid,.grid-2,.insights{grid-template-columns:1fr}
   .metrics{grid-template-columns:1fr 1fr}
+  .grid-3{grid-template-columns:1fr}
+  h1.title{font-size:38px}
 }
 </style>
 </head>
@@ -154,85 +209,228 @@ footer.report-foot .mono{font-family:var(--font-mono)}
   </div>
 </nav>
 
+<!-- ============ HERO + SIDE PANEL ============ -->
+<header class="hero">
+  <div class="glow"></div>
+  <div class="wrap hero-grid">
+    <div>
+      <span class="eyebrow"><span class="pulse"></span>&nbsp;TODO: domain · period · scope</span>
+      <h1 class="title">TODO: the<br><em>headline finding</em> in one line.</h1>
+      <p class="lead">TODO: 1–2 sentences — what data you combined, what you diagnosed, and the decision it supports.</p>
+      <div class="hero-meta tnum">
+        <div class="m"><div class="v">0,000<small> unit</small></div><div class="k">TODO metric</div></div>
+        <div class="m"><div class="v">00<small> M/yr</small></div><div class="k">TODO metric</div></div>
+        <div class="m"><div class="v">0,000<small> unit</small></div><div class="k">TODO metric</div></div>
+      </div>
+    </div>
+    <!-- side stat panel: a hero chart + headline number + 3 mini-stats -->
+    <div class="panel">
+      <div class="panel-head">
+        <span class="panel-title"><span class="dotg"></span>TODO: primary chart</span>
+        <span class="badge">TODO range</span>
+      </div>
+      <div class="big-num tnum">000<span class="u">unit</span> <span class="delta">▲ TODO peak / delta</span></div>
+      <!-- TODO: drop a figure into report_assets/ -->
+      <img src="report_assets/fig_trend.png" alt="TODO: describe the hero chart">
+      <div class="stat-row tnum">
+        <div class="stat"><div class="v">00</div><div class="k">TODO</div></div>
+        <div class="stat"><div class="v">0</div><div class="k">TODO</div></div>
+        <div class="stat"><div class="v">0.0×</div><div class="k">TODO</div></div>
+      </div>
+    </div>
+  </div>
+</header>
+
 <main>
 
-  <!-- HERO -->
-  <header class="hero"><div class="wrap">
-    <span class="eyebrow"><span class="pulse"></span>&nbsp;TODO: eyebrow / category</span>
-    <h1 class="title">TODO: the <em>headline finding</em> in one line.</h1>
-    <p class="lead">TODO: 1–2 sentences — what the project asked, what data, what you concluded.</p>
-    <div class="hero-meta">
-      <div><div class="v tnum">TODO</div><div class="k">key metric</div></div>
-      <div><div class="v tnum">TODO</div><div class="k">key metric</div></div>
-      <div><div class="v tnum">TODO</div><div class="k">key metric</div></div>
+<!-- ============ PROBLEM & PURPOSE ============ -->
+<section class="block"><div class="wrap">
+  <div class="grid-2">
+    <div class="card raised">
+      <h3><span class="ic"><i data-lucide="help-circle"></i></span>Problem</h3>
+      <p>TODO: why this matters — the gap, the cost of getting it wrong, who is affected.</p>
     </div>
-  </div></header>
+    <div class="card raised">
+      <h3><span class="ic"><i data-lucide="target"></i></span>Goal</h3>
+      <p>TODO: what the analysis sets out to answer — ① diagnose, ② recommend, ③ predict.</p>
+    </div>
+  </div>
+</div></section>
 
-  <!-- METRICS -->
-  <section class="block"><div class="wrap">
-    <div class="metrics">
-      <div class="metric"><div class="k">Metric</div><div class="v tnum">00</div><div class="s">TODO short note</div></div>
-      <div class="metric"><div class="k">Metric</div><div class="v tnum">00%</div><div class="s">TODO short note</div></div>
-      <div class="metric"><div class="k">Metric</div><div class="v tnum">0.00</div><div class="s">TODO short note</div></div>
-      <div class="metric"><div class="k">Metric</div><div class="v tnum">00</div><div class="s">TODO short note</div></div>
+<!-- ============ DATA SOURCES ============ -->
+<section class="block" style="padding-top:0"><div class="wrap">
+  <div class="sec-head">
+    <span class="eyebrow">Data</span>
+    <h2 style="margin-top:10px">TODO: data sources</h2>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <h3><span class="ic"><i data-lucide="database"></i></span>TODO: source A</h3>
+      <p><span class="badge">TODO: format / id</span></p>
+      <p style="margin-top:12px">TODO: what it contains, coverage, how it was collected/aggregated.</p>
     </div>
-  </div></section>
+    <div class="card">
+      <h3><span class="ic"><i data-lucide="map-pin"></i></span>TODO: source B</h3>
+      <p><span class="badge">TODO: format / id</span></p>
+      <p style="margin-top:12px">TODO: what it contains, coverage, how it was collected/aggregated.</p>
+    </div>
+  </div>
+</div></section>
 
-  <!-- FIGURE + EXPLANATION -->
-  <section class="block" style="padding-top:0"><div class="wrap">
-    <div class="sec-head">
-      <span class="eyebrow"><i data-lucide="line-chart" style="width:14px;height:14px"></i>&nbsp;Section</span>
-      <h2 style="margin-top:10px">TODO: section title</h2>
-      <p>TODO: what this chart shows and why it matters.</p>
+<!-- ============ FINDING 01 — single figure ============ -->
+<section class="block"><div class="wrap">
+  <div class="sec-head">
+    <span class="eyebrow">Finding 01</span>
+    <h2 style="margin-top:10px">TODO: the first thing the data shows</h2>
+    <p>TODO: a sentence framing what to look for in the chart below.</p>
+  </div>
+  <div class="fig">
+    <img src="report_assets/fig_trend.png" alt="TODO: describe figure">
+    <p class="cap">TODO caption — <b>the one number a reader should remember</b>, and why it matters.</p>
+  </div>
+</div></section>
+
+<!-- ============ FINDING 02 — figure pair ============ -->
+<section class="block" style="padding-top:0"><div class="wrap">
+  <div class="sec-head">
+    <span class="eyebrow">Finding 02</span>
+    <h2 style="margin-top:10px">TODO: a spatial / comparative finding</h2>
+    <p>TODO: what the two figures together reveal.</p>
+  </div>
+  <div class="grid-2">
+    <div class="fig">
+      <img src="report_assets/fig_map.png" alt="TODO: describe figure">
+      <p class="cap"><b>TODO:</b> caption for the left figure.</p>
     </div>
-    <div class="grid-2">
-      <div class="fig">
-        <!-- TODO: drop a figure image next to report.html -->
-        <img src="report_assets/fig_example.png" alt="TODO: describe the figure">
-        <p class="cap"><b>Read:</b> TODO caption — the one thing a reader should take from this figure.</p>
+    <div class="fig">
+      <img src="report_assets/fig_quadrant.png" alt="TODO: describe figure">
+      <p class="cap"><b>TODO:</b> caption for the right figure.</p>
+    </div>
+  </div>
+</div></section>
+
+<!-- ============ FINDING 03 — segments: bars + split ============ -->
+<section class="block"><div class="wrap">
+  <div class="sec-head">
+    <span class="eyebrow">Finding 03</span>
+    <h2 style="margin-top:10px">TODO: who / what the segments are</h2>
+    <p>TODO: why the breakdown matters for targeting or operations.</p>
+  </div>
+  <div class="grid-3">
+    <div class="card">
+      <h3 style="font-size:16px"><span class="ic"><i data-lucide="users"></i></span>TODO: breakdown A</h3>
+      <div class="bars" style="margin-top:14px">
+        <div class="bar-row"><span class="lab">TODO</span><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div><span class="pct">00%</span></div>
+        <div class="bar-row"><span class="lab">TODO</span><div class="bar-track"><div class="bar-fill" style="width:72%"></div></div><span class="pct">00%</span></div>
+        <div class="bar-row"><span class="lab">TODO</span><div class="bar-track"><div class="bar-fill" style="width:48%"></div></div><span class="pct">00%</span></div>
+        <div class="bar-row"><span class="lab">TODO</span><div class="bar-track"><div class="bar-fill" style="width:26%"></div></div><span class="pct">00%</span></div>
       </div>
-      <div class="card">
-        <h3><span class="ic"><i data-lucide="search"></i></span>What we found</h3>
-        <p>TODO: the interpretation. Keep it specific — numbers, direction, magnitude.</p>
+      <p class="cap"><b>TODO:</b> the takeaway from this breakdown.</p>
+    </div>
+    <div class="card">
+      <h3 style="font-size:16px"><span class="ic"><i data-lucide="ticket"></i></span>TODO: breakdown B</h3>
+      <div class="bars" style="margin-top:14px">
+        <div class="bar-row"><span class="lab">TODO</span><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div><span class="pct">00%</span></div>
+        <div class="bar-row"><span class="lab">TODO</span><div class="bar-track"><div class="bar-fill" style="width:24%;background:var(--viz-teal)"></div></div><span class="pct">00%</span></div>
+        <div class="bar-row"><span class="lab">TODO</span><div class="bar-track"><div class="bar-fill" style="width:6%;background:var(--viz-sand)"></div></div><span class="pct">0%</span></div>
+      </div>
+      <p class="cap"><b>TODO:</b> the takeaway from this breakdown.</p>
+    </div>
+    <div class="card">
+      <h3 style="font-size:16px"><span class="ic"><i data-lucide="pie-chart"></i></span>TODO: split + intensity</h3>
+      <div class="split">
+        <div style="width:60%;background:var(--viz-slate)">A 60%</div>
+        <div style="width:40%;background:var(--viz-mauve)">B 40%</div>
+      </div>
+      <div class="stat-row tnum" style="margin-top:16px">
+        <div class="stat"><div class="v">0.00<small style="font-size:11px"> unit</small></div><div class="k">TODO</div></div>
+        <div class="stat"><div class="v">0,000<small style="font-size:11px"> unit</small></div><div class="k">TODO</div></div>
+      </div>
+      <p class="cap">TODO: short interpretation of the split and intensity stats.</p>
+    </div>
+  </div>
+</div></section>
+
+<!-- ============ FINDING 04 — model comparison: bars + interpretation ============ -->
+<section class="block" style="padding-top:0"><div class="wrap">
+  <div class="sec-head">
+    <span class="eyebrow">Finding 04 · method</span>
+    <h2 style="margin-top:10px">TODO: model / method comparison</h2>
+    <p>TODO: how you evaluated (metric, holdout, why this setup is fair).</p>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <h3 style="font-size:16px"><span class="ic"><i data-lucide="bar-chart-3"></i></span>TODO: error by model (lower = better)</h3>
+      <div class="bars" style="margin-top:16px">
+        <div class="bar-row"><span class="lab">model_a</span><div class="bar-track"><div class="bar-fill" style="width:46%;background:var(--success)"></div></div><span class="pct">00.0</span></div>
+        <div class="bar-row"><span class="lab">model_b</span><div class="bar-track"><div class="bar-fill" style="width:56%"></div></div><span class="pct">00.0</span></div>
+        <div class="bar-row"><span class="lab">model_c</span><div class="bar-track"><div class="bar-fill" style="width:93%;background:var(--viz-clay)"></div></div><span class="pct">00.0</span></div>
+        <div class="bar-row"><span class="lab">model_d</span><div class="bar-track"><div class="bar-fill" style="width:100%;background:var(--danger)"></div></div><span class="pct">00.0</span></div>
       </div>
     </div>
-  </div></section>
+    <div class="card raised">
+      <h3 style="font-size:16px"><span class="ic"><i data-lucide="lightbulb"></i></span>Interpretation</h3>
+      <p>TODO: which model won and why — tie it back to the data's structure.</p>
+      <p style="margin-top:12px">TODO: what you'd actually deploy, and the bar any new model must beat.</p>
+    </div>
+  </div>
+</div></section>
 
-  <!-- TABLE -->
-  <section class="block" style="padding-top:0"><div class="wrap">
-    <div class="sec-head">
-      <span class="eyebrow"><i data-lucide="table" style="width:14px;height:14px"></i>&nbsp;Detail</span>
-      <h2 style="margin-top:10px">TODO: table title</h2>
-    </div>
-    <div class="card" style="padding:8px 8px 4px">
-      <table>
-        <thead><tr><th>Item</th><th class="num">Value</th><th class="num">Share</th></tr></thead>
-        <tbody>
-          <tr><td>TODO row</td><td class="num tnum">000</td><td class="num tnum">00%</td></tr>
-          <tr><td>TODO row</td><td class="num tnum">000</td><td class="num tnum">00%</td></tr>
-          <tr><td>TODO row</td><td class="num tnum">000</td><td class="num tnum">00%</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div></section>
+<!-- ============ RECOMMENDATION — table ============ -->
+<section class="block"><div class="wrap">
+  <div class="sec-head">
+    <span class="eyebrow">Recommendation</span>
+    <h2 style="margin-top:10px">TODO: ranked recommendation</h2>
+    <p>TODO: the rule that ranks the rows below (what makes something top priority).</p>
+  </div>
+  <div class="card" style="padding:8px 8px 4px">
+    <table class="tnum">
+      <thead><tr><th>Item</th><th>Group</th><th class="num">Predicted</th><th class="num">Capacity</th><th class="num">Score</th></tr></thead>
+      <tbody>
+        <tr><td>TODO row</td><td>TODO</td><td class="num">0,000</td><td class="num">0</td><td class="num"><span class="util">000.0</span></td></tr>
+        <tr><td>TODO row</td><td>TODO</td><td class="num">0,000</td><td class="num">0</td><td class="num"><span class="util">000.0</span></td></tr>
+        <tr><td>TODO row</td><td>TODO</td><td class="num">0,000</td><td class="num">0</td><td class="num"><span class="util">000.0</span></td></tr>
+        <tr><td>TODO row</td><td>TODO</td><td class="num">0,000</td><td class="num">0</td><td class="num"><span class="util">000.0</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="cap">※ TODO: caveats — what the numbers assume, where the candidates cluster.</p>
+</div></section>
 
-  <!-- KEY FINDINGS / NEXT STEPS -->
-  <section class="block" style="padding-top:0"><div class="wrap">
-    <div class="sec-head">
-      <span class="eyebrow"><i data-lucide="git-branch" style="width:14px;height:14px"></i>&nbsp;Takeaways</span>
-      <h2 style="margin-top:10px">TODO: findings &amp; next steps</h2>
-    </div>
-    <div class="insights">
-      <div class="ins"><span class="n">A</span><div><h4>TODO finding</h4><p>TODO one-sentence detail.</p></div></div>
-      <div class="ins"><span class="n">B</span><div><h4>TODO finding</h4><p>TODO one-sentence detail.</p></div></div>
-      <div class="ins"><span class="n">C</span><div><h4>TODO finding</h4><p>TODO one-sentence detail.</p></div></div>
-      <div class="ins"><span class="n">D</span><div><h4>TODO finding</h4><p>TODO one-sentence detail.</p></div></div>
-    </div>
-  </div></section>
+<!-- ============ BUSINESS INSIGHT — connect to decisions ============ -->
+<section class="block" style="padding-top:0"><div class="wrap">
+  <div class="sec-head">
+    <span class="eyebrow">Business insight</span>
+    <h2 style="margin-top:10px">TODO: conclusions → decisions</h2>
+  </div>
+  <div class="insights">
+    <div class="ins"><span class="n">1</span><div><h4>TODO insight</h4><p>TODO: one-sentence decision it drives.</p></div></div>
+    <div class="ins"><span class="n">2</span><div><h4>TODO insight</h4><p>TODO: one-sentence decision it drives.</p></div></div>
+    <div class="ins"><span class="n">3</span><div><h4>TODO insight</h4><p>TODO: one-sentence decision it drives.</p></div></div>
+    <div class="ins"><span class="n">4</span><div><h4>TODO insight</h4><p>TODO: one-sentence decision it drives.</p></div></div>
+    <div class="ins"><span class="n">5</span><div><h4>TODO insight</h4><p>TODO: one-sentence decision it drives.</p></div></div>
+    <div class="ins"><span class="n">6</span><div><h4>TODO insight</h4><p>TODO: one-sentence decision it drives.</p></div></div>
+  </div>
+</div></section>
+
+<!-- ============ FUTURE WORK ============ -->
+<section class="block" style="padding-top:0"><div class="wrap">
+  <div class="sec-head">
+    <span class="eyebrow">Future work</span>
+    <h2 style="margin-top:10px">TODO: where this goes next</h2>
+    <p>TODO: the next question this opens up.</p>
+  </div>
+  <div class="insights">
+    <div class="ins"><span class="n">A</span><div><h4>TODO direction</h4><p>TODO: one-sentence detail.</p></div></div>
+    <div class="ins"><span class="n">B</span><div><h4>TODO direction</h4><p>TODO: one-sentence detail.</p></div></div>
+    <div class="ins"><span class="n">C</span><div><h4>TODO direction</h4><p>TODO: one-sentence detail.</p></div></div>
+    <div class="ins"><span class="n">D</span><div><h4>TODO direction</h4><p>TODO: one-sentence detail.</p></div></div>
+  </div>
+</div></section>
 
 </main>
 
-<!-- report-specific meta (data sources, period, limitations) -->
+<!-- report-specific meta (data period, sources, limitations, next step) -->
 <footer class="report-foot"><div class="wrap">
   <div class="brand" style="margin-bottom:10px"><span class="mk"><i data-lucide="bar-chart-3"></i></span><span>Project name<span class="dot">.</span></span></div>
   <p class="mono">TODO: data period · sources · limitations · next step.</p>
@@ -241,7 +439,7 @@ footer.report-foot .mono{font-family:var(--font-mono)}
 <!-- Shared portfolio footer + back-link (keep this line). -->
 <script src="https://sciencemj.github.io/embed/footer.js" defer></script>
 
-<!-- Theme toggle + icons -->
+<!-- Theme toggle + Lucide icons -->
 <script>
   const root=document.documentElement;
   const saved=localStorage.getItem("ddr-theme");

@@ -29,6 +29,10 @@ and links back to it.
 
 ## Blocks included
 
-Hero + metric strip · figure with caption + interpretation · data table ·
-takeaways grid · report meta footer. Delete the blocks you don't need; they're
-independent.
+Based on the `seoul-bike-analysis` report design:
+
+Hero + side stat panel · problem/goal cards · data sources · finding + figure ·
+figure pair · segment bars + split bar · model-comparison bars · recommendation
+table · insight grid · future work · report meta footer.
+
+Delete the blocks you don't need — they're independent.
