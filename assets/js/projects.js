@@ -10,7 +10,11 @@
   // Add/edit topics on GitHub and the cards + filter update on the next load.
   var PROJECTS = [
     { repo: 'seoul-bike-analysis', report: 'report.html' },
-    { repo: 'LCC_Review_Sentiment_Cluster', report: 'report.html' }
+    { repo: 'LCC_Review_Sentiment_Cluster', report: 'report.html' },
+    { repo: 'pybacktest' },
+    { repo: 'pyile_manager' },
+    { repo: 'whisper-transcribe' },
+    { repo: 'python_data_science_examples' }
   ];
 
   // Cover gradient pairs (natural viz palette), cycled per card.
@@ -114,33 +118,37 @@
     var hasReport = !!(p.report && data && data.has_pages);
     var status = hasReport
       ? '<span class="pc-status live">Report</span>'
-      : '<span class="pc-status soon">Code · report soon</span>';
+      : '<span class="pc-status code">Code</span>';
+    var statusText = hasReport ? 'report available' : 'view code';
     var desc = data && data.description ? esc(data.description)
       : 'Open the project repository on GitHub.';
-    var tagList = tagsFor(p, data);
-    var topics = tagList.slice(0, 6).map(function (t) { return '<span class="tag">' + esc(t) + '</span>'; }).join('');
+
+    var tagList = tagsFor(p, data), N = 3;
+    var tags = tagList.slice(0, N).map(function (t) { return '<span class="tag">' + esc(t) + '</span>'; }).join('');
+    if (tagList.length > N) tags += '<span class="pc-more">+' + (tagList.length - N) + '</span>';
     var dataTags = tagList.map(function (t) { return t.toLowerCase(); }).join('|');
-    var lang = data && data.language
-      ? '<span class="pc-lang"><i class="dot"></i>' + esc(data.language) + '</span>' : '';
-    var updated = data && data.pushed_at
-      ? '<span class="pc-updated mono">Updated ' + relTime(data.pushed_at) + '</span>' : '';
-    var yr = data && data.pushed_at ? new Date(data.pushed_at).getFullYear() : '';
+
+    var metaBits = [];
+    if (data && data.language) metaBits.push('<span class="pc-lang"><i class="dot"></i>' + esc(data.language) + '</span>');
+    if (data && data.pushed_at) metaBits.push('<span class="pc-updated">Updated ' + relTime(data.pushed_at) + '</span>');
+    var meta = metaBits.join('<span class="pc-sep">·</span>');
+
     var link = linkFor(p, data);
     var external = hasReport ? '' : ' target="_blank" rel="noopener"';
-    var statusText = hasReport ? 'report available' : 'code, report soon';
 
     return '<a class="project-card" href="' + esc(link) + '"' + external +
       ' data-tags="' + esc(dataTags) + '"' +
       ' aria-label="' + esc(title + ' — ' + statusText) + '">' +
       '<div class="pc-cover" style="--c1:' + cov[0] + ';--c2:' + cov[1] + '">' +
         '<svg class="pc-bars" viewBox="0 0 120 70" aria-hidden="true">' + bars() + '</svg>' +
-        (yr ? '<span class="pc-year mono">' + yr + '</span>' : '') +
       '</div>' +
       '<div class="pc-body">' +
         '<div class="pc-titlerow"><h3 class="pc-title">' + esc(title) + '</h3>' + status + '</div>' +
         '<p class="pc-desc">' + desc + '</p>' +
-        (topics ? '<div class="pc-tags">' + topics + '</div>' : '') +
-        '<div class="pc-meta">' + lang + updated + '<span class="pc-arrow">→</span></div>' +
+        '<div class="pc-row">' +
+          (tags ? '<div class="pc-tags">' + tags + '</div>' : '') +
+          '<div class="pc-meta">' + meta + '<span class="pc-arrow">→</span></div>' +
+        '</div>' +
       '</div></a>';
   }
 
