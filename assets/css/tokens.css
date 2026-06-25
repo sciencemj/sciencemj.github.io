@@ -1,0 +1,99 @@
+/* ============================================================
+   Sciencemj — Design Tokens
+   Warm earth-tone foundation, terracotta accent. Light + dark.
+   Toggle dark mode via  data-theme="dark"  on <html>.
+   ============================================================ */
+
+:root {
+  /* ---- Brand / Accent (Orange · Terracotta) ---- */
+  --accent-50:  #FDF1E8;
+  --accent-100: #FBDFC8;
+  --accent-200: #F6BE91;
+  --accent-300: #F19C5C;
+  --accent-400: #ED7E33;
+  --accent:     #E8682B;   /* primary */
+  --accent-600: #CE551E;
+  --accent-700: #A84417;
+  --accent-800: #7E3413;
+  --accent-soft: #FBEEE2;  /* tinted fill */
+  --grad: linear-gradient(150deg, #F2783A, #CE551E);
+
+  /* ---- Warm Neutrals (Earth / Sand) ---- */
+  --canvas:     #FAF6F0;
+  --surface:    #FFFFFF;
+  --surface-2:  #F3ECE0;
+  --ink:        #221C16;
+  --ink-2:      #4A4036;
+  --muted:      #6E614D;   /* AA: >=4.5:1 on --canvas for small meta text */
+  --muted-2:    #A89A85;
+  --border:     #E8DECE;
+  --border-2:   #D8CBB5;
+
+  /* ---- Data Visualization (natural palette) ---- */
+  --viz-orange: #E8682B;
+  --viz-clay:   #C2613F;
+  --viz-sand:   #D9A441;
+  --viz-olive:  #7E8A4B;
+  --viz-teal:   #4E8A7E;
+  --viz-slate:  #5E6E8A;
+  --viz-mauve:  #B0746A;
+  --viz-brown:  #6B4B33;
+
+  /* ---- Semantic ---- */
+  --success: #5E8A52;
+  --warning: #D9A441;
+  --danger:  #C5503B;
+  --info:    #4E8A7E;
+  --ok-bg:   #EEF3E8;
+  --ok-ink:  #4D6B3F;
+
+  /* ---- Radii ---- */
+  --r-xs: 6px; --r-sm: 10px; --r-md: 14px; --r-lg: 20px; --r-xl: 28px; --r-pill: 999px;
+
+  /* ---- Spacing (4pt) ---- */
+  --s-1: 4px;  --s-2: 8px;  --s-3: 12px; --s-4: 16px;
+  --s-5: 24px; --s-6: 32px; --s-7: 48px; --s-8: 64px; --s-9: 96px;
+
+  /* ---- Shadows (warm-tinted) ---- */
+  --shadow-sm: 0 1px 2px rgba(60,42,24,.06), 0 1px 1px rgba(60,42,24,.04);
+  --shadow-md: 0 4px 14px rgba(60,42,24,.08), 0 2px 4px rgba(60,42,24,.05);
+  --shadow-lg: 0 14px 34px rgba(60,42,24,.12), 0 4px 10px rgba(60,42,24,.07);
+  --shadow-accent: 0 10px 26px rgba(232,104,43,.30);
+  --shadow-raised: inset 0 1px 0 rgba(255,255,255,.7), 0 6px 16px rgba(60,42,24,.10);
+
+  /* ---- Typography ---- */
+  --font-display: "Space Grotesk", "IBM Plex Sans KR", system-ui, sans-serif;
+  --font-body: "Hanken Grotesk", "IBM Plex Sans KR", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  --text-xs: 12px; --text-sm: 14px; --text-base: 16px; --text-lg: 18px;
+  --text-xl: 22px; --text-2xl: 30px; --text-3xl: 40px; --text-4xl: 56px;
+}
+
+/* ============================================================
+   DARK MODE — warm dark brown-black, brighter accent
+   ============================================================ */
+[data-theme="dark"] {
+  --accent:     #F2783A;
+  --accent-600: #E8682B;
+  --accent-700: #F19C5C;
+  --accent-soft: #2E2017;
+
+  --canvas:     #1B1611;
+  --surface:    #251E18;
+  --surface-2:  #2F271F;
+  --ink:        #F3EBDD;
+  --ink-2:      #C9BCA8;
+  --muted:      #998A75;
+  --muted-2:    #7C6F5C;
+  --border:     #392F26;
+  --border-2:   #4A3E31;
+
+  --ok-bg: #22301E;
+  --ok-ink: #9FC78F;
+
+  --shadow-sm: 0 1px 2px rgba(0,0,0,.40);
+  --shadow-md: 0 4px 14px rgba(0,0,0,.45);
+  --shadow-lg: 0 14px 34px rgba(0,0,0,.55);
+  --shadow-raised: inset 0 1px 0 rgba(255,255,255,.06), 0 6px 16px rgba(0,0,0,.5);
+}

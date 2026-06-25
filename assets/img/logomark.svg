@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120" role="img" aria-label="Sciencemj bar-chart mark">
+  <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F2783A"/><stop offset="1" stop-color="#CE551E"/></linearGradient></defs>
+  <rect x="4" y="4" width="112" height="112" rx="32" fill="url(#g)"/>
+  <g transform="translate(10 10)">
+    <rect x="22" y="22" width="9" height="58" rx="2.5" fill="#FFFFFF"/><rect x="34" y="46" width="9" height="34" rx="2.5" fill="#FFE2C0"/><rect x="46" y="36" width="9" height="44" rx="2.5" fill="#FFCBA0"/><rect x="58" y="46" width="9" height="34" rx="2.5" fill="#FFB994"/><rect x="70" y="22" width="9" height="58" rx="2.5" fill="#FFA982"/>
+  </g>
+</svg>

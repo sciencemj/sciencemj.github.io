@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sciencemj — Data &amp; ML portfolio</title>
+<meta name="description" content="MJ — a Business × Computer Science student working at the intersection of analytics, machine learning, and clear visual storytelling.">
+<meta name="color-scheme" content="light dark">
+<meta property="og:title" content="Sciencemj — Data &amp; ML portfolio">
+<meta property="og:description" content="Turning messy data into decisions people can trust.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://sciencemj.github.io/">
+<link rel="icon" href="assets/img/logomark.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/tokens.css">
+<link rel="stylesheet" href="assets/css/site.css">
+<script>
+  /* Apply saved/preferred theme before paint to avoid a flash. */
+  (function () {
+    try {
+      var t = localStorage.getItem('theme');
+      if (!t) t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', t);
+    } catch (e) {}
+  })();
+</script>
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<nav class="nav">
+  <div class="wrap nav-in">
+    <a class="brand" href="/" aria-label="Sciencemj — home">
+      <span class="brand-mk">
+        <svg viewBox="0 0 100 100" aria-hidden="true"><g>
+          <rect x="22" y="22" width="9" height="58" rx="2.5" fill="#FFFFFF"/>
+          <rect x="34" y="46" width="9" height="34" rx="2.5" fill="#FFE2C0"/>
+          <rect x="46" y="36" width="9" height="44" rx="2.5" fill="#FFCBA0"/>
+          <rect x="58" y="46" width="9" height="34" rx="2.5" fill="#FFB994"/>
+          <rect x="70" y="22" width="9" height="58" rx="2.5" fill="#FFA982"/>
+        </g></svg>
+      </span>
+      <span class="brand-name">Science<span class="brand-accent">mj</span></span>
+    </a>
+    <div class="nav-right">
+      <a href="#work" class="nav-link">Work</a>
+      <a href="#about" class="nav-link">About</a>
+      <a href="https://github.com/sciencemj" class="icon-link" target="_blank" rel="noopener" aria-label="GitHub profile">
+        <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+      </a>
+      <button id="theme-toggle" class="icon-btn" aria-label="Toggle color theme" title="Toggle theme"></button>
+      <a href="mailto:sciencemj.park@gmail.com" class="btn btn-primary btn-sm">Contact</a>
+    </div>
+  </div>
+</nav>
+
+<main class="wrap" id="main">
+
+  <!-- HERO -->
+  <header class="hero">
+    <h1 class="hero-title">Turning messy data into <span class="accent">decisions</span> people can trust.</h1>
+    <p class="hero-lead">I'm MJ — a Business × Computer Science student exploring where analytics, machine learning, and clear visual storytelling meet.</p>
+    <div class="hero-actions">
+      <a href="#work" class="btn btn-primary">View my work</a>
+      <a href="https://github.com/sciencemj" class="btn btn-secondary" target="_blank" rel="noopener">
+        <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+        GitHub</a>
+    </div>
+  </header>
+
+  <!-- SELECTED WORK -->
+  <section class="section" id="work">
+    <div class="sec-head">
+      <div>
+        <span class="eyebrow">Selected work</span>
+        <h2 class="sec-title">Things I've built</h2>
+      </div>
+      <a href="https://github.com/sciencemj?tab=repositories" class="sec-link" target="_blank" rel="noopener">All repositories →</a>
+    </div>
+    <div id="project-grid" class="project-grid" aria-busy="true" aria-label="Featured projects"></div>
+    <noscript>
+      <p class="muted">Enable JavaScript to load live project cards, or browse
+        <a href="https://github.com/sciencemj?tab=repositories">my repositories on GitHub</a>.</p>
+    </noscript>
+  </section>
+
+  <!-- ABOUT -->
+  <section class="section" id="about">
+    <div class="sec-head">
+      <div>
+        <span class="eyebrow">About</span>
+        <h2 class="sec-title">Where I'm coming from</h2>
+      </div>
+    </div>
+    <div class="about-grid">
+      <div>
+        <p class="about-lead">I work at the intersection of <strong>business and computer science</strong> — which means I care as much about the question behind the data as the model on top of it.</p>
+        <p class="about-lead">Most projects start messy: raw reviews, station logs, survey dumps. They end as something a decision-maker can act on — a forecast, a segmentation, a clear chart. I like reframing the problem first (is this a supply problem, or a competition problem?) before reaching for an algorithm.</p>
+      </div>
+      <aside class="about-aside">
+        <div class="row"><span class="k">Focus</span><span class="v">Analytics · machine learning · data viz</span></div>
+        <div class="row"><span class="k">Working on</span><span class="v">Sentiment + clustering, demand forecasting</span></div>
+        <div class="row"><span class="k">GitHub</span><span class="v"><a href="https://github.com/sciencemj" target="_blank" rel="noopener">@sciencemj</a></span></div>
+        <div class="row"><span class="k">Email</span><span class="v"><a href="mailto:sciencemj.park@gmail.com">sciencemj.park@gmail.com</a></span></div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- TOOLBELT -->
+  <section class="section" id="toolbelt">
+    <div class="sec-head">
+      <div>
+        <span class="eyebrow">Toolbelt</span>
+        <h2 class="sec-title">Tools I reach for</h2>
+      </div>
+      <span class="sec-link" style="cursor:default">Drawn from the projects above</span>
+    </div>
+    <div class="toolbelt-grid">
+      <div class="skill-group">
+        <span class="gk">Language &amp; data</span>
+        <div class="skills"><span class="skill">Python</span><span class="skill">pandas</span><span class="skill">NumPy</span><span class="skill">Jupyter</span></div>
+      </div>
+      <div class="skill-group">
+        <span class="gk">Machine learning</span>
+        <div class="skills"><span class="skill">scikit-learn</span><span class="skill">K-means clustering</span><span class="skill">NLP · sentiment</span><span class="skill">Time-series forecasting</span></div>
+      </div>
+      <div class="skill-group">
+        <span class="gk">Viz &amp; reporting</span>
+        <div class="skills"><span class="skill">matplotlib</span><span class="skill">Data storytelling</span><span class="skill">HTML reports</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta">
+    <div class="cta-blob" aria-hidden="true"></div>
+    <div class="cta-copy">
+      <h2 class="cta-title">Let's build something measurable.</h2>
+      <p class="cta-sub">Open to collaborations in data &amp; AI.</p>
+    </div>
+    <a href="mailto:sciencemj.park@gmail.com" class="btn btn-primary btn-lg">Get in touch →</a>
+  </section>
+
+</main>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <div class="wrap site-footer-in">
+    <span class="mono muted">© <span id="year">2026</span> MJ · Sciencemj</span>
+    <div class="footer-links">
+      <a href="https://github.com/sciencemj" target="_blank" rel="noopener">
+        <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+        GitHub</a>
+      <a href="mailto:sciencemj.park@gmail.com">Email</a>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/js/theme.js" defer></script>
+<script src="assets/js/projects.js" defer></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var y = document.getElementById('year');
+    if (y) y.textContent = new Date().getFullYear();
+  });
+</script>
+</body>
+</html>
