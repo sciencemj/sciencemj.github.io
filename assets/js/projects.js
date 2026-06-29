@@ -9,12 +9,14 @@
   // Tags come live from each repo's GitHub topics (deduped, prettified).
   // Add/edit topics on GitHub and the cards + filter update on the next load.
   var PROJECTS = [
+    { repo: 'book-review-rank-predict', report: 'report.html' },
+    { repo: 'steam-review', report: 'index.html' },
     { repo: 'seoul-bike-analysis', report: 'report.html' },
     { repo: 'LCC_Review_Sentiment_Cluster', report: 'report.html' },
+    { repo: 'data-analysis-project' },
     { repo: 'pybacktest' },
     { repo: 'pyile_manager' },
-    { repo: 'whisper-transcribe' },
-    { repo: 'python_data_science_examples' }
+    { repo: 'whisper-transcribe' }
   ];
 
   // Cover gradient pairs (natural viz palette), cycled per card.
