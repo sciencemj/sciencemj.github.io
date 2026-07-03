@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Portfolio admin · Featured projects</title>
+<meta name="color-scheme" content="light dark">
+<link rel="stylesheet" href="/assets/css/tokens.css">
+<script>
+  /* Match the site: saved theme, else system preference — set before paint. */
+  (function () {
+    try {
+      var t = localStorage.getItem('theme');
+      if (!t) t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', t);
+    } catch (e) {}
+  })();
+</script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--canvas); color: var(--ink);
+    font-family: var(--font-body); font-size: var(--text-base); line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  h1, h2, h3 { font-family: var(--font-display); font-weight: 600; letter-spacing: -.015em; }
+  .mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+  input { font-family: var(--font-body); }
+
+  /* ---- top bar ---- */
+  .topbar {
+    position: sticky; top: 0; z-index: 30;
+    background: color-mix(in srgb, var(--canvas) 85%, transparent);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+  .topbar-in {
+    max-width: 1180px; margin: 0 auto; padding: 0 24px; height: 66px;
+    display: flex; align-items: center; gap: 16px;
+  }
+  .brand-mk {
+    width: 34px; height: 34px; border-radius: 11px; background: var(--grad); flex-shrink: 0;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.4), 0 6px 14px color-mix(in srgb, var(--accent) 30%, transparent);
+    display: grid; place-items: center;
+  }
+  .brand-mk svg { width: 21px; height: 21px; display: block; }
+  .title-wrap { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+  .title-wrap h1 { font-size: var(--text-lg); line-height: 1.15; }
+  .title-wrap .sub { font-family: var(--font-mono); font-size: 11px; color: var(--muted); letter-spacing: .04em; }
+  .spacer { flex: 1; }
+
+  .dirty {
+    display: none; align-items: center; gap: 8px;
+    font-size: var(--text-sm); color: var(--accent-700); font-weight: 600;
+  }
+  .dirty.on { display: inline-flex; }
+  .dirty .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 22%, transparent); }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px; white-space: nowrap;
+    font-family: var(--font-body); font-weight: 600; font-size: var(--text-sm);
+    border: none; border-radius: 11px; padding: 10px 18px; cursor: pointer;
+    transition: transform .15s ease, box-shadow .15s ease, background .2s, border-color .2s, color .2s;
+  }
+  .btn:disabled { opacity: .5; cursor: not-allowed; transform: none !important; box-shadow: none; }
+  .btn-primary {
+    color: #fff; background: var(--grad);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.35), 0 8px 18px color-mix(in srgb, var(--accent) 30%, transparent);
+  }
+  .btn-primary:not(:disabled):hover { transform: translateY(-2px); box-shadow: inset 0 1px 0 rgba(255,255,255,.35), 0 12px 24px color-mix(in srgb, var(--accent) 40%, transparent); }
+  .btn-secondary {
+    color: var(--ink); background: var(--surface);
+    border: 1px solid var(--border-2); box-shadow: var(--shadow-sm);
+  }
+  .btn-secondary:not(:disabled):hover { transform: translateY(-2px); border-color: var(--accent-200); }
+  .btn-ghost {
+    color: var(--muted); background: transparent; border: 1px solid var(--border);
+    padding: 8px 12px;
+  }
+  .btn-ghost:not(:disabled):hover { color: var(--ink); border-color: var(--accent-200); }
+
+  .icon-btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 38px; height: 38px; border-radius: var(--r-pill); flex-shrink: 0;
+    border: 1px solid var(--border); background: var(--surface); color: var(--muted);
+    cursor: pointer; box-shadow: var(--shadow-sm); transition: transform .15s, color .15s, border-color .2s;
+  }
+  .icon-btn:hover { color: var(--ink); transform: translateY(-1px); border-color: var(--accent-200); }
+  .icon-btn svg { width: 18px; height: 18px; }
+
+  /* ---- layout ---- */
+  main { max-width: 1180px; margin: 0 auto; padding: 26px 24px 80px; }
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; align-items: start; }
+  @media (max-width: 900px) { .cols { grid-template-columns: 1fr; } }
+
+  .panel {
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg);
+    box-shadow: var(--shadow-md); overflow: hidden;
+  }
+  .panel-head {
+    padding: 18px 20px 14px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;
+  }
+  .panel-head h2 { font-size: var(--text-lg); }
+  .panel-head .count {
+    font-family: var(--font-mono); font-size: 12px; color: var(--muted);
+    background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--r-pill);
+    padding: 2px 10px;
+  }
+  .panel-head .hint { font-size: 12px; color: var(--muted); margin-left: auto; }
+  .panel-body { padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+
+  /* ---- featured rows ---- */
+  .frow {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--canvas); border: 1px solid var(--border); border-radius: var(--r-md);
+    padding: 10px 12px; transition: border-color .15s, box-shadow .15s, opacity .15s;
+  }
+  .frow.dragover { border-color: var(--accent); box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 25%, transparent); }
+  .frow.dragging { opacity: .4; }
+  .grip {
+    cursor: grab; color: var(--muted-2); display: grid; place-items: center;
+    width: 20px; height: 26px; flex-shrink: 0;
+  }
+  .grip:active { cursor: grabbing; }
+  .grip svg { width: 14px; height: 16px; }
+  .pos {
+    font-family: var(--font-mono); font-size: 12px; color: var(--muted);
+    width: 22px; text-align: right; flex-shrink: 0;
+  }
+  .frow .name {
+    font-family: var(--font-mono); font-size: 13px; font-weight: 600; color: var(--ink);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 0 1 auto; min-width: 60px;
+  }
+  .report-in {
+    flex: 1 1 120px; min-width: 90px;
+    background: var(--surface); color: var(--ink);
+    border: 1px solid var(--border-2); border-radius: 8px; padding: 7px 10px;
+    font-family: var(--font-mono); font-size: 12px;
+  }
+  .report-in::placeholder { color: var(--muted-2); }
+  .report-in:focus { outline: 2px solid var(--accent); outline-offset: 1px; border-color: transparent; }
+  .rbtns { display: flex; gap: 4px; flex-shrink: 0; }
+  .mini {
+    width: 28px; height: 28px; border-radius: 8px; display: grid; place-items: center;
+    border: 1px solid var(--border-2); background: var(--surface); color: var(--muted); cursor: pointer;
+    transition: color .15s, border-color .15s, background .15s;
+  }
+  .mini:hover:not(:disabled) { color: var(--ink); border-color: var(--accent-200); }
+  .mini:disabled { opacity: .35; cursor: not-allowed; }
+  .mini.danger:hover:not(:disabled) { color: var(--danger); border-color: var(--danger); background: color-mix(in srgb, var(--danger) 8%, transparent); }
+  .mini svg { width: 15px; height: 15px; }
+
+  /* ---- repos panel ---- */
+  .search {
+    width: 100%; background: var(--canvas); color: var(--ink);
+    border: 1px solid var(--border-2); border-radius: var(--r-md); padding: 10px 14px;
+    font-size: var(--text-sm);
+  }
+  .search:focus { outline: 2px solid var(--accent); outline-offset: 1px; border-color: transparent; }
+  .search::placeholder { color: var(--muted-2); }
+
+  .rrow {
+    display: flex; align-items: flex-start; gap: 12px;
+    border: 1px solid var(--border); border-radius: var(--r-md); padding: 12px 14px; background: var(--canvas);
+  }
+  .rrow .info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 5px; }
+  .rrow .top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .rrow .rname { font-family: var(--font-mono); font-size: 13px; font-weight: 600; color: var(--ink); }
+  .rrow .desc { font-size: var(--text-sm); color: var(--ink-2); line-height: 1.45;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .rrow .meta {
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    font-family: var(--font-mono); font-size: 11.5px; color: var(--muted);
+  }
+  .rrow .lang { display: inline-flex; align-items: center; gap: 6px; }
+  .rrow .lang .d { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
+  .badge {
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: .04em; text-transform: uppercase;
+    padding: 2px 8px; border-radius: var(--r-pill); background: var(--ok-bg); color: var(--ok-ink); font-weight: 600;
+  }
+  .add-btn {
+    flex-shrink: 0; align-self: center;
+    font-size: 13px; font-weight: 600; padding: 8px 14px; border-radius: 9px; cursor: pointer;
+    color: #fff; background: var(--accent); border: none; transition: transform .15s, background .2s;
+  }
+  .add-btn:hover:not(:disabled) { transform: translateY(-1px); background: var(--accent-600); }
+  .add-btn:disabled { background: var(--surface-2); color: var(--muted); cursor: default; border: 1px solid var(--border); }
+
+  .empty, .notice {
+    font-size: var(--text-sm); color: var(--muted); text-align: center;
+    padding: 20px; border: 1px dashed var(--border-2); border-radius: var(--r-md);
+  }
+  .notice.error { color: var(--danger); border-color: color-mix(in srgb, var(--danger) 45%, var(--border-2)); background: color-mix(in srgb, var(--danger) 6%, transparent); }
+  .notice.error a { color: var(--danger); text-decoration: underline; }
+
+  /* ---- toast ---- */
+  .toast {
+    position: fixed; left: 50%; bottom: 26px; transform: translate(-50%, 20px);
+    background: var(--ink); color: var(--canvas); font-size: var(--text-sm); font-weight: 500;
+    padding: 12px 20px; border-radius: var(--r-pill); box-shadow: var(--shadow-lg);
+    opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s; z-index: 50; max-width: 90vw;
+  }
+  .toast.show { opacity: 1; transform: translate(-50%, 0); }
+  .toast.err { background: var(--danger); color: #fff; }
+
+  /* ---- git output log ---- */
+  .gitlog {
+    margin-top: 12px; background: var(--ink); color: var(--canvas);
+    border-radius: var(--r-md); padding: 14px 16px; display: none; overflow-x: auto;
+  }
+  .gitlog.show { display: block; }
+  .gitlog .step { font-family: var(--font-mono); font-size: 12px; line-height: 1.5; white-space: pre-wrap; word-break: break-word; }
+  .gitlog .step + .step { margin-top: 8px; border-top: 1px solid rgba(255,255,255,.12); padding-top: 8px; }
+  .gitlog .cmd { color: var(--accent-300); }
+  .gitlog .ok { color: #8fd18a; } .gitlog .fail { color: #ff9b8a; }
+
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-in">
+    <span class="brand-mk">
+      <svg viewBox="0 0 100 100" aria-hidden="true"><g>
+        <rect x="22" y="22" width="9" height="58" rx="2.5" fill="#FFFFFF"/>
+        <rect x="34" y="46" width="9" height="34" rx="2.5" fill="#FFE2C0"/>
+        <rect x="46" y="36" width="9" height="44" rx="2.5" fill="#FFCBA0"/>
+        <rect x="58" y="46" width="9" height="34" rx="2.5" fill="#FFB994"/>
+        <rect x="70" y="22" width="9" height="58" rx="2.5" fill="#FFA982"/>
+      </g></svg>
+    </span>
+    <div class="title-wrap">
+      <h1>Portfolio admin</h1>
+      <span class="sub" id="owner-sub">featured projects</span>
+    </div>
+    <span class="spacer"></span>
+    <span class="dirty" id="dirty"><span class="dot"></span>unsaved changes</span>
+    <button class="icon-btn" id="theme-toggle" title="Toggle theme" aria-label="Toggle theme"></button>
+    <button class="btn btn-secondary" id="commit-btn" disabled>Commit &amp; push</button>
+    <button class="btn btn-primary" id="save-btn" disabled>Save</button>
+  </div>
+</header>
+
+<main>
+  <div class="cols">
+    <!-- LEFT: featured -->
+    <section class="panel">
+      <div class="panel-head">
+        <h2>Featured on site</h2>
+        <span class="count" id="featured-count">0</span>
+        <span class="hint">drag to reorder</span>
+      </div>
+      <div class="panel-body" id="featured-list"></div>
+    </section>
+
+    <!-- RIGHT: github repos -->
+    <section class="panel">
+      <div class="panel-head">
+        <h2>Your GitHub repos</h2>
+        <span class="count" id="repos-count">—</span>
+      </div>
+      <div class="panel-body">
+        <input class="search" id="search" type="search" placeholder="Search repos by name, description, or language…" autocomplete="off">
+        <div id="repos-list"></div>
+      </div>
+    </section>
+  </div>
+  <div class="gitlog" id="gitlog"></div>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function () {
+  "use strict";
+
+  // ---- state ----
+  var owner = "";
+  var featured = [];       // [{ repo, report }]
+  var repos = [];          // GitHub repos
+  var dirty = false;
+  var inFlight = false;
+  var dragIndex = -1;
+
+  // ---- dom refs ----
+  var $ = function (id) { return document.getElementById(id); };
+  var featuredList = $("featured-list");
+  var reposList = $("repos-list");
+  var searchInput = $("search");
+  var saveBtn = $("save-btn");
+  var commitBtn = $("commit-btn");
+  var dirtyEl = $("dirty");
+  var toastEl = $("toast");
+  var gitlog = $("gitlog");
+
+  // ---- helpers ----
+  function el(tag, attrs, kids) {
+    var n = document.createElement(tag);
+    if (attrs) for (var k in attrs) {
+      if (k === "class") n.className = attrs[k];
+      else if (k === "text") n.textContent = attrs[k];
+      else if (k === "html") n.innerHTML = attrs[k];   // static SVG only
+      else if (k in n && typeof attrs[k] !== "string") n[k] = attrs[k];
+      else n.setAttribute(k, attrs[k]);
+    }
+    (kids || []).forEach(function (c) { if (c != null) n.appendChild(c); });
+    return n;
+  }
+
+  function relTime(iso) {
+    var diff = (Date.now() - new Date(iso).getTime()) / 1000;
+    if (isNaN(diff)) return "";
+    var units = [["year", 31536000], ["month", 2592000], ["week", 604800],
+      ["day", 86400], ["hour", 3600], ["minute", 60]];
+    for (var i = 0; i < units.length; i++) {
+      var v = Math.floor(diff / units[i][1]);
+      if (v >= 1) return v + " " + units[i][0] + (v > 1 ? "s" : "") + " ago";
+    }
+    return "just now";
+  }
+
+  var _t;
+  function toast(msg, isErr) {
+    toastEl.textContent = msg;
+    toastEl.className = "toast show" + (isErr ? " err" : "");
+    clearTimeout(_t);
+    _t = setTimeout(function () { toastEl.className = "toast"; }, isErr ? 5000 : 2600);
+  }
+
+  function isFeatured(name) {
+    return featured.some(function (f) { return f.repo === name; });
+  }
+
+  function setDirty(v) {
+    dirty = v;
+    dirtyEl.className = "dirty" + (v ? " on" : "");
+    saveBtn.disabled = inFlight || !v;
+    commitBtn.disabled = inFlight;
+  }
+
+  function setInFlight(v) {
+    inFlight = v;
+    saveBtn.disabled = inFlight || !dirty;
+    commitBtn.disabled = inFlight;
+  }
+
+  // ---- icons (static markup) ----
+  var IC = {
+    grip: '<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.6"/><circle cx="15" cy="6" r="1.6"/><circle cx="9" cy="12" r="1.6"/><circle cx="15" cy="12" r="1.6"/><circle cx="9" cy="18" r="1.6"/><circle cx="15" cy="18" r="1.6"/></svg>',
+    up: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg>',
+    down: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>',
+    trash: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg>',
+    sun: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>',
+    moon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>'
+  };
+
+  // ---- reorder ----
+  function move(from, to) {
+    if (to < 0 || to >= featured.length || from === to) return;
+    var item = featured.splice(from, 1)[0];
+    featured.splice(to, 0, item);
+    setDirty(true);
+    renderFeatured();
+  }
+
+  function removeAt(i) {
+    featured.splice(i, 1);
+    setDirty(true);
+    renderFeatured();
+    renderRepos();
+  }
+
+  // ---- render: featured ----
+  function renderFeatured() {
+    $("featured-count").textContent = String(featured.length);
+    featuredList.textContent = "";
+    if (!featured.length) {
+      featuredList.appendChild(el("div", { class: "empty", text: "No projects featured yet — add repos from the right." }));
+      return;
+    }
+    featured.forEach(function (f, i) {
+      var grip = el("span", { class: "grip", html: IC.grip, title: "Drag to reorder" });
+
+      var input = el("input", {
+        class: "report-in", type: "text", value: f.report || "",
+        placeholder: "report.html — empty = link to repo",
+        "aria-label": "Report path for " + f.repo
+      });
+      input.addEventListener("input", function () {
+        featured[i].report = input.value;
+        setDirty(true);
+      });
+
+      var up = el("button", { class: "mini", html: IC.up, title: "Move up", disabled: i === 0, "aria-label": "Move " + f.repo + " up" });
+      up.addEventListener("click", function () { move(i, i - 1); });
+      var down = el("button", { class: "mini", html: IC.down, title: "Move down", disabled: i === featured.length - 1, "aria-label": "Move " + f.repo + " down" });
+      down.addEventListener("click", function () { move(i, i + 1); });
+      var del = el("button", { class: "mini danger", html: IC.trash, title: "Remove", "aria-label": "Remove " + f.repo });
+      del.addEventListener("click", function () { removeAt(i); });
+
+      var row = el("div", { class: "frow", draggable: true }, [
+        grip,
+        el("span", { class: "pos mono", text: (i + 1) + "." }),
+        el("span", { class: "name", title: f.repo, text: f.repo }),
+        input,
+        el("span", { class: "rbtns" }, [up, down, del])
+      ]);
+
+      // HTML5 drag-and-drop reorder
+      row.addEventListener("dragstart", function (e) {
+        dragIndex = i; row.classList.add("dragging");
+        try { e.dataTransfer.effectAllowed = "move"; e.dataTransfer.setData("text/plain", String(i)); } catch (x) {}
+      });
+      row.addEventListener("dragend", function () {
+        dragIndex = -1; row.classList.remove("dragging");
+        [].forEach.call(featuredList.children, function (c) { c.classList && c.classList.remove("dragover"); });
+      });
+      row.addEventListener("dragover", function (e) {
+        if (dragIndex === -1) return;
+        e.preventDefault();
+        try { e.dataTransfer.dropEffect = "move"; } catch (x) {}
+        row.classList.add("dragover");
+      });
+      row.addEventListener("dragleave", function () { row.classList.remove("dragover"); });
+      row.addEventListener("drop", function (e) {
+        e.preventDefault();
+        row.classList.remove("dragover");
+        if (dragIndex > -1) move(dragIndex, i);
+      });
+
+      featuredList.appendChild(row);
+    });
+  }
+
+  // ---- render: repos ----
+  var reposError = null;
+  function renderRepos() {
+    reposList.textContent = "";
+    if (reposError) {
+      reposList.appendChild(reposError);
+      return;
+    }
+    var q = searchInput.value.trim().toLowerCase();
+    var list = repos.filter(function (r) {
+      if (!q) return true;
+      return (r.name && r.name.toLowerCase().indexOf(q) > -1) ||
+             (r.description && r.description.toLowerCase().indexOf(q) > -1) ||
+             (r.language && r.language.toLowerCase().indexOf(q) > -1);
+    });
+    $("repos-count").textContent = String(repos.length);
+
+    if (!list.length) {
+      reposList.appendChild(el("div", { class: "empty", text: repos.length ? "No repos match your search." : "No repositories found." }));
+      return;
+    }
+
+    var frag = document.createDocumentFragment();
+    list.forEach(function (r) {
+      var top = el("div", { class: "top" }, [ el("span", { class: "rname", text: r.name }) ]);
+      if (r.has_pages) top.appendChild(el("span", { class: "badge", text: "has Pages" }));
+
+      var kids = [top];
+      if (r.description) kids.push(el("div", { class: "desc", text: r.description }));
+
+      var meta = el("div", { class: "meta" });
+      if (r.language) meta.appendChild(el("span", { class: "lang" }, [ el("span", { class: "d" }), el("span", { text: r.language }) ]));
+      if (r.pushed_at) meta.appendChild(el("span", { text: relTime(r.pushed_at) }));
+      if (r.language || r.pushed_at) kids.push(meta);
+
+      var added = isFeatured(r.name);
+      var addBtn = el("button", { class: "add-btn", text: added ? "Added" : "Add", disabled: added });
+      addBtn.addEventListener("click", function () {
+        if (isFeatured(r.name)) return;
+        featured.push({ repo: r.name, report: r.has_pages ? "report.html" : "" });
+        setDirty(true);
+        renderFeatured();
+        renderRepos();
+      });
+
+      frag.appendChild(el("div", { class: "rrow" }, [ el("div", { class: "info" }, kids), addBtn ]));
+    });
+    reposList.appendChild(frag);
+  }
+
+  searchInput.addEventListener("input", renderRepos);
+
+  // ---- data load ----
+  function loadProjects() {
+    return fetch("/api/projects").then(function (res) { return res.json(); }).then(function (data) {
+      owner = data.owner || "";
+      featured = (data.projects || []).map(function (p) {
+        return { repo: p.repo, report: p.report || "" };
+      });
+      $("owner-sub").textContent = "@" + owner + " · featured projects";
+      renderFeatured();
+    });
+  }
+
+  function loadRepos() {
+    if (!owner) return;
+    var url = "https://api.github.com/users/" + encodeURIComponent(owner) +
+      "/repos?per_page=100&sort=pushed";
+    fetch(url, { headers: { "Accept": "application/vnd.github+json" } })
+      .then(function (res) {
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        return res.json();
+      })
+      .then(function (data) {
+        reposError = null;
+        repos = Array.isArray(data) ? data : [];
+        renderRepos();
+      })
+      .catch(function (err) {
+        var msg = el("div", { class: "notice error" });
+        msg.appendChild(el("div", { text: "Couldn't load repos from GitHub (" + err.message + ")." }));
+        msg.appendChild(el("div", { text: "The API may be rate-limited. Reorder, edit, remove, and save still work." }));
+        var retry = el("a", { href: "#", text: "Retry" });
+        retry.addEventListener("click", function (e) { e.preventDefault(); reposError = null; renderRepos(); loadRepos(); });
+        msg.appendChild(retry);
+        reposError = msg;
+        $("repos-count").textContent = "—";
+        renderRepos();
+      });
+  }
+
+  // ---- save ----
+  function buildPayload() {
+    return featured.map(function (f) {
+      var o = { repo: f.repo };
+      var rep = (f.report || "").trim();
+      if (rep) o.report = rep;
+      return o;
+    });
+  }
+
+  saveBtn.addEventListener("click", function () {
+    if (inFlight || !dirty) return;
+    setInFlight(true);
+    fetch("/api/save", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ projects: buildPayload() })
+    })
+      .then(function (res) { return res.json().then(function (b) { return { ok: res.ok, body: b }; }); })
+      .then(function (r) {
+        setInFlight(false);
+        if (r.ok && r.body.ok) {
+          setDirty(false);
+          toast("Saved " + r.body.count + " project" + (r.body.count === 1 ? "" : "s") + ".");
+        } else {
+          toast("Save failed: " + (r.body.error || "unknown error"), true);
+        }
+      })
+      .catch(function (err) { setInFlight(false); toast("Save failed: " + err.message, true); });
+  });
+
+  // ---- commit & push ----
+  function renderGitLog(steps) {
+    gitlog.textContent = "";
+    (steps || []).forEach(function (s) {
+      var d = el("div", { class: "step" });
+      d.appendChild(el("span", { class: "cmd", text: "$ " + s.cmd + "\n" }));
+      var status = el("span", { class: s.code === 0 ? "ok" : "fail", text: "exit " + s.code + (s.output ? "\n" : "") });
+      d.appendChild(status);
+      if (s.output) d.appendChild(document.createTextNode(s.output));
+      gitlog.appendChild(d);
+    });
+    gitlog.className = "gitlog show";
+  }
+
+  commitBtn.addEventListener("click", function () {
+    if (inFlight) return;
+    var msg = "Update featured projects";
+    if (!confirm("Commit assets/js/projects.data.js and push to origin?\n\nMessage: \"" + msg + "\"")) return;
+    setInFlight(true);
+    gitlog.className = "gitlog";
+    fetch("/api/git", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: msg })
+    })
+      .then(function (res) { return res.json(); })
+      .then(function (r) {
+        setInFlight(false);
+        if (r.ok) {
+          toast("Committed and pushed.");
+          gitlog.className = "gitlog";
+        } else if (r.nothingToCommit) {
+          toast("Nothing to commit — save your changes first.", true);
+          gitlog.className = "gitlog";
+        } else {
+          toast("Commit & push failed — see log below.", true);
+          renderGitLog(r.steps);
+        }
+      })
+      .catch(function (err) { setInFlight(false); toast("Request failed: " + err.message, true); });
+  });
+
+  // ---- theme toggle ----
+  var themeBtn = $("theme-toggle");
+  function syncTheme() {
+    var dark = document.documentElement.getAttribute("data-theme") === "dark";
+    themeBtn.innerHTML = dark ? IC.sun : IC.moon;
+  }
+  themeBtn.addEventListener("click", function () {
+    var next = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
+    document.documentElement.setAttribute("data-theme", next);
+    try { localStorage.setItem("theme", next); } catch (e) {}
+    syncTheme();
+  });
+  syncTheme();
+
+  // ---- warn on unsaved navigation ----
+  window.addEventListener("beforeunload", function (e) {
+    if (dirty) { e.preventDefault(); e.returnValue = ""; }
+  });
+
+  // ---- boot ----
+  loadProjects().then(loadRepos).catch(function (err) {
+    toast("Failed to load projects: " + err.message, true);
+  });
+})();
+</script>
+</body>
+</html>

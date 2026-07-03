@@ -6,18 +6,11 @@
 
   // Local config: which repos to feature + per-repo report link.
   //   report: a path under the repo's GitHub Pages site (used only if has_pages).
+  // The list itself now lives in assets/js/projects.data.js (edited via the
+  // local admin tool: `bun admin/server.js`, or by hand).
   // Tags come live from each repo's GitHub topics (deduped, prettified).
   // Add/edit topics on GitHub and the cards + filter update on the next load.
-  var PROJECTS = [
-    { repo: 'book-review-rank-predict', report: 'report.html' },
-    { repo: 'steam-review', report: 'index.html' },
-    { repo: 'seoul-bike-analysis', report: 'report.html' },
-    { repo: 'LCC_Review_Sentiment_Cluster', report: 'report.html' },
-    { repo: 'data-analysis-project' },
-    { repo: 'pybacktest' },
-    { repo: 'pyile_manager' },
-    { repo: 'whisper-transcribe' }
-  ];
+  var PROJECTS = window.PORTFOLIO_PROJECTS || [];
 
   // Cover gradient pairs (natural viz palette), cycled per card.
   var COVERS = [
