@@ -44,6 +44,12 @@ export function cleanProjects(projects) {
   });
 }
 
+export function prepareProjects(raw) {
+  const error = validateProjects(raw);
+  if (error) return { error };
+  return { projects: cleanProjects(raw) };
+}
+
 export function serializeProjects(projects) {
   const rows = projects.map((project) => "  " + JSON.stringify(project)).join(",\n");
   return HEADER + "\nwindow.PORTFOLIO_PROJECTS = [\n" + rows + "\n];\n";

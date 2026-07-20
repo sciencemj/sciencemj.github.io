@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { cleanProjects, parseProjects, serializeProjects, validateProjects } from "../admin/projects-store.js";
+import { cleanProjects, parseProjects, prepareProjects, serializeProjects, validateProjects } from "../admin/projects-store.js";
 
 const project = {
   repo: "demo", report: "report.html", featured: true,
@@ -34,5 +34,13 @@ describe("admin project store", () => {
   test("rejects preview paths with traversal segments", () => {
     const invalid = [{ ...project, preview: { ...project.preview, src: "assets/img/projects/../../secret.webp" } }];
     expect(validateProjects(invalid)).toBe("preview src must be under assets/img/projects/");
+  });
+
+  test.each([
+    [{ ...project, report: 42 }, "invalid report path"],
+    [{ ...project, categories: "apps" }, "invalid project category"],
+    [{ ...project, preview: "bad" }, "invalid preview kind"],
+  ])("rejects malformed optional fields before cleaning", (invalid, error) => {
+    expect(prepareProjects([invalid])).toEqual({ error });
   });
 });

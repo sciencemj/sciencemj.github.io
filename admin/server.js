@@ -1,7 +1,7 @@
 // Local admin tool for the portfolio's featured-projects list.
 // Zero dependencies — Bun stdlib only. Localhost only. Run: `bun admin/server.js`.
 import { resolve } from "node:path";
-import { cleanProjects, parseProjects, serializeProjects, validateProjects } from "./projects-store.js";
+import { parseProjects, prepareProjects, serializeProjects } from "./projects-store.js";
 
 const ROOT = resolve(import.meta.dir, "..");
 const DATA_FILE = resolve(ROOT, "assets/js/projects.data.js");
@@ -99,12 +99,10 @@ Bun.serve({
     if (path === "/api/save" && req.method === "POST") {
       if (!isSameOrigin(req)) return json({ ok: false, error: "cross-origin request rejected" }, 403);
       const body = await readBody(req);
-      const projects = body && body.projects;
-      const clean = Array.isArray(projects) ? cleanProjects(projects) : projects;
-      const err = validateProjects(clean);
-      if (err) return json({ ok: false, error: err }, 400);
-      await Bun.write(DATA_FILE, serializeProjects(clean));
-      return json({ ok: true, count: clean.length });
+      const prepared = prepareProjects(body && body.projects);
+      if (prepared.error) return json({ ok: false, error: prepared.error }, 400);
+      await Bun.write(DATA_FILE, serializeProjects(prepared.projects));
+      return json({ ok: true, count: prepared.projects.length });
     }
 
     if (path === "/api/git" && req.method === "POST") {
