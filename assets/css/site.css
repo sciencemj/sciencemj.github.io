@@ -319,7 +319,6 @@ p { text-wrap: pretty; }
   font-size: 12px; padding: 4px 11px; border-radius: var(--r-pill); white-space: nowrap;
   background: var(--surface-2); color: var(--ink-2); border: 1px solid var(--border);
 }
-.pc-more { font-size: 12px; color: var(--muted); align-self: center; white-space: nowrap; }
 .pc-meta { margin-left: auto; display: flex; align-items: center; gap: 10px; font-family: var(--font-mono); font-size: 12px; color: var(--muted); white-space: nowrap; }
 .pc-lang { display: inline-flex; align-items: center; gap: 7px; }
 .pc-lang .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
