@@ -25,13 +25,14 @@ This branch will:
   a compact grid;
 - reduce the visible filter taxonomy to five useful categories;
 - add a preview data contract that a later admin-page feature can edit;
+- preserve the new preview metadata when the existing admin page saves projects;
 - preserve light/dark themes, keyboard navigation, reduced-motion behavior,
   and the no-build static deployment.
 
 This branch will not:
 
 - add the enhancement-game easter egg;
-- add image upload, file storage, or thumbnail editing to the admin page;
+- add image upload, file storage, or thumbnail editing controls to the admin page;
 - add a backend, framework, bundler, or external animation library;
 - rewrite project reports or unrelated portfolio copy.
 
@@ -205,12 +206,13 @@ Project configuration maps repository topics into these categories. The `All`
 control remains the default. Multiple active categories keep OR behavior.
 Specific repository topics still appear on cards, capped at two visible tags.
 
-If JavaScript or GitHub metadata fails, all cards remain visible and the filter
-bar hides rather than presenting unusable controls.
+If JavaScript fails, the existing `noscript` route still points visitors to all
+repositories. If GitHub metadata fails, local project configuration still
+renders every card and the five editorial filters remain usable.
 
 ## Data Flow
 
-1. Static configuration renders skeleton dimensions and supplies preview,
+1. Static configuration renders cards and previews immediately, supplying
    feature status, category, and curated highlight.
 2. Existing GitHub API requests add description, topics, language, update time,
    Pages availability, and link targets.
@@ -218,8 +220,9 @@ bar hides rather than presenting unusable controls.
 4. Layout separates featured and compact cards.
 5. Filters operate on editorial categories, independent of API topic wording.
 
-The existing `sessionStorage` cache remains. Preview assets are local and do not
-wait on GitHub API responses.
+The existing `sessionStorage` cache remains. GitHub results hydrate descriptions,
+topics, language, update time, link targets, and report status after the local
+cards appear. Preview assets never wait on GitHub API responses.
 
 ## Accessibility
 
@@ -253,9 +256,13 @@ Expected changes:
   editorial filtering
 - `assets/js/data-canvas.js`: bounded hero-state animation
 - `assets/img/projects/`: optimized project preview assets
+- `admin/projects-store.js`: validated serialization that preserves preview data
+- `admin/server.js`: use the shared project-store helpers without changing its UI
 - `tests/`: preview-schema, fallback, filter, and rendering behavior tests
 
-Unrelated admin server behavior and report templates remain untouched.
+Admin UI behavior and report templates remain untouched. The admin save path is
+updated only enough to retain and validate the new project metadata instead of
+silently deleting it.
 
 ## Verification
 
