@@ -336,6 +336,7 @@ p { text-wrap: pretty; }
 @media (max-width: 560px) {
   .wrap { padding-inline: 20px; }
   .project-card--compact { grid-template-columns: 1fr; }
+  .project-card--lead .pc-preview,
   .project-card--compact .pc-preview { min-height: 0; aspect-ratio: 16 / 10; }
   .project-card--lead .pc-body { padding: 24px 20px; }
   .project-card--featured .pc-body,
