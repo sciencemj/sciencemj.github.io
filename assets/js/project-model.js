@@ -15,12 +15,25 @@
   var ASSET_KINDS = ["image", "chart", "app"];
 
   function text(value) { return typeof value === "string" ? value.trim() : ""; }
+  function isSafePreviewSrc(src) {
+    if (src.indexOf("assets/img/projects/") !== 0 || src.indexOf("\\") > -1) return false;
+    var decoded = src;
+    for (var index = 0; index < 4; index += 1) {
+      var next;
+      try { next = decodeURIComponent(decoded); } catch (error) { return false; }
+      if (next === decoded) break;
+      decoded = next;
+    }
+    return decoded.indexOf("assets/img/projects/") === 0 &&
+      decoded.indexOf("\\") === -1 &&
+      decoded.split("/").indexOf("..") === -1;
+  }
   function normalizePreview(raw) {
     raw = raw && typeof raw === "object" ? raw : {};
     var kind = KINDS.indexOf(raw.kind) > -1 ? raw.kind : "workflow";
     var src = text(raw.src), alt = text(raw.alt);
     var needsAsset = ASSET_KINDS.indexOf(kind) > -1;
-    var valid = !needsAsset || (src.indexOf("assets/img/projects/") === 0 && alt);
+    var valid = !needsAsset || (isSafePreviewSrc(src) && alt);
     return { kind: kind, src: valid && needsAsset ? src : "", alt: valid && needsAsset ? alt : "", fallback: !valid || !needsAsset };
   }
   function normalizeProject(raw) {

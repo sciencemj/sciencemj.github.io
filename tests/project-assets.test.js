@@ -23,3 +23,12 @@ test("configures featured projects and local preview assets", async () => {
     expect(project.preview.alt.trim().length).toBeGreaterThan(0);
   }
 });
+
+test("describes the Pybacktest preview as the chart shown in its asset", () => {
+  const pybacktest = readProjects().find((project) => project.repo === "pybacktest");
+  expect(pybacktest.preview).toEqual({
+    kind: "chart",
+    src: "assets/img/projects/pybacktest.webp",
+    alt: "Pybacktest Portfolio Value Over Time chart",
+  });
+});

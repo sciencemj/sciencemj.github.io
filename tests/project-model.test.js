@@ -19,6 +19,19 @@ describe("project model", () => {
     expect(project.preview).toEqual({ kind: "app", src: "", alt: "", fallback: true });
   });
 
+  test.each([
+    "assets/img/projects/../secret.webp",
+    "assets/img/projects/nested/../../secret.webp",
+    "assets/img/projects\\secret.webp",
+    "assets/img/projects/%2e%2e/secret.webp",
+    "assets/img/projects/%252e%252e/secret.webp",
+    "assets/img/projects/%5c..%5csecret.webp",
+  ])("rejects unsafe local preview path %s", (src) => {
+    expect(Model.normalizePreview({ kind: "chart", src, alt: "Unsafe preview" })).toEqual({
+      kind: "chart", src: "", alt: "", fallback: true,
+    });
+  });
+
   test("keeps only three featured projects", () => {
     const split = Model.splitProjects([
       { repo: "a", featured: true }, { repo: "b", featured: true },
