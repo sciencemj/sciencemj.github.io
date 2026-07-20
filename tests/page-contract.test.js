@@ -13,11 +13,23 @@ test("loads living-data scripts in dependency order", () => {
   expect(model).toBeGreaterThan(-1);
   expect(view).toBeGreaterThan(model);
   expect(projects).toBeGreaterThan(view);
+  expect(sceneModel).toBeGreaterThan(-1);
   expect(scene).toBeGreaterThan(sceneModel);
 });
 
-test("keeps every mobile project preview at 16:10", () => {
+test("defines 16:10 previews for lead, featured, and compact mobile cards", () => {
   const css = readFileSync(resolve(import.meta.dir, "../assets/css/site.css"), "utf8");
   const mobile = css.slice(css.indexOf("@media (max-width: 560px)"), css.indexOf("/* skeleton */"));
-  expect(mobile).toMatch(/\.project-card--lead \.pc-preview[\s\S]*?aspect-ratio:\s*16\s*\/\s*10/);
+
+  function declarationsFor(source, selector) {
+    const blocks = [...source.matchAll(/([^{}]+)\{([^{}]*)\}/g)];
+    const block = blocks.find((match) => match[1].split(",").some((item) => item.trim() === selector));
+    return block ? block[2] : "";
+  }
+
+  ["lead", "featured", "compact"].forEach((variant) => {
+    const selector = `.project-card--${variant} .pc-preview`;
+    const source = variant === "featured" ? css : mobile;
+    expect(declarationsFor(source, selector)).toMatch(/aspect-ratio:\s*16\s*\/\s*10/);
+  });
 });
