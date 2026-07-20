@@ -1,4 +1,6 @@
 const { describe, expect, test } = require("bun:test");
+const { readFileSync } = require("node:fs");
+const { resolve } = require("node:path");
 const View = require("../assets/js/project-view.js");
 
 const github = {
@@ -48,5 +50,15 @@ describe("project view", () => {
     const html = View.renderFilters([]);
     expect((html.match(/<button/g) || []).length).toBe(6);
     expect(html).toContain("ML &amp; NLP");
+  });
+
+  test("hidden cards and layout groups always leave the layout", () => {
+    const css = readFileSync(resolve(import.meta.dir, "../assets/css/site.css"), "utf8");
+    expect(css).toMatch(/\[hidden\]\s*\{\s*display:\s*none\s*!important;\s*\}/);
+  });
+
+  test("names the filter group by category", () => {
+    const html = readFileSync(resolve(import.meta.dir, "../index.html"), "utf8");
+    expect(html).toContain('aria-label="Filter projects by category"');
   });
 });
