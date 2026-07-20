@@ -492,7 +492,7 @@
     return fetch("/api/projects").then(function (res) { return res.json(); }).then(function (data) {
       owner = data.owner || "";
       featured = (data.projects || []).map(function (p) {
-        return { repo: p.repo, report: p.report || "" };
+        return { ...p, report: p.report || "" };
       });
       $("owner-sub").textContent = "@" + owner + " · featured projects";
       renderFeatured();
@@ -529,9 +529,10 @@
   // ---- save ----
   function buildPayload() {
     return featured.map(function (f) {
-      var o = { repo: f.repo };
+      var o = { ...f };
       var rep = (f.report || "").trim();
       if (rep) o.report = rep;
+      else delete o.report;
       return o;
     });
   }

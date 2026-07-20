@@ -20,4 +20,19 @@ describe("admin project store", () => {
     const invalid = [{ ...project, preview: { kind: "chart", src: "../secret.webp", alt: "Bad" } }];
     expect(validateProjects(invalid)).toBe("preview src must be under assets/img/projects/");
   });
+
+  test("rejects paths that become unsafe after trimming", () => {
+    const invalid = [{ ...project, report: " /outside" }];
+    expect(validateProjects(invalid)).toBe("invalid report path");
+  });
+
+  test("rejects a whitespace-only preview alt after trimming", () => {
+    const invalid = [{ ...project, preview: { ...project.preview, alt: "  " } }];
+    expect(validateProjects(invalid)).toBe("preview alt is required when src is set");
+  });
+
+  test("rejects preview paths with traversal segments", () => {
+    const invalid = [{ ...project, preview: { ...project.preview, src: "assets/img/projects/../../secret.webp" } }];
+    expect(validateProjects(invalid)).toBe("preview src must be under assets/img/projects/");
+  });
 });

@@ -100,9 +100,9 @@ Bun.serve({
       if (!isSameOrigin(req)) return json({ ok: false, error: "cross-origin request rejected" }, 403);
       const body = await readBody(req);
       const projects = body && body.projects;
-      const err = validateProjects(projects);
+      const clean = Array.isArray(projects) ? cleanProjects(projects) : projects;
+      const err = validateProjects(clean);
       if (err) return json({ ok: false, error: err }, 400);
-      const clean = cleanProjects(projects);
       await Bun.write(DATA_FILE, serializeProjects(clean));
       return json({ ok: true, count: clean.length });
     }
