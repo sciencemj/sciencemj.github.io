@@ -1,6 +1,7 @@
 // Local admin tool for the portfolio's featured-projects list.
 // Zero dependencies — Bun stdlib only. Localhost only. Run: `bun admin/server.js`.
 import { resolve } from "node:path";
+import { cleanProjects, parseProjects, serializeProjects, validateProjects } from "./projects-store.js";
 
 const ROOT = resolve(import.meta.dir, "..");
 const DATA_FILE = resolve(ROOT, "assets/js/projects.data.js");
@@ -8,60 +9,9 @@ const ADMIN_INDEX = resolve(import.meta.dir, "index.html");
 const OWNER = "sciencemj";
 const PORT = Number(process.env.PORT) || 4747;
 
-// --- projects.data.js serialization (must stay byte-exact) ------------------
-const HEADER =
-  "/* Portfolio projects list — single source of truth for which repos appear on the site.\n" +
-  "   Edited by the local admin tool (`bun admin/server.js`) or by hand.\n" +
-  "   Array body must stay valid JSON: projects.js and the admin server both parse it. */";
-
-function serialize(projects) {
-  return (
-    HEADER +
-    "\n" +
-    "window.PORTFOLIO_PROJECTS = [\n" +
-    projects
-      .map(
-        (p) =>
-          '  { "repo": ' +
-          JSON.stringify(p.repo) +
-          (p.report ? ', "report": ' + JSON.stringify(p.report) : "") +
-          " }"
-      )
-      .join(",\n") +
-    "\n];\n"
-  );
-}
-
 async function readProjects() {
-  try {
-    const text = await Bun.file(DATA_FILE).text();
-    // Greedy to the LAST `];` — the file always ends with the array terminator,
-    // so a report string containing `];` no longer truncates the capture.
-    const match = text.match(/window\.PORTFOLIO_PROJECTS\s*=\s*(\[[\s\S]*\]);/);
-    if (!match) return [];
-    return JSON.parse(match[1]);
-  } catch {
-    return [];
-  }
-}
-
-// --- validation -------------------------------------------------------------
-const REPO_RE = /^[A-Za-z0-9_.-]+$/;
-
-function validate(projects) {
-  if (!Array.isArray(projects)) return "projects must be an array";
-  for (const p of projects) {
-    if (!p || typeof p !== "object") return "each project must be an object";
-    if (typeof p.repo !== "string" || !REPO_RE.test(p.repo)) {
-      return "invalid repo name: " + JSON.stringify(p.repo);
-    }
-    if (p.report !== undefined && p.report !== null && p.report !== "") {
-      if (typeof p.report !== "string") return "report must be a string";
-      if (p.report.startsWith("/")) return 'report must not start with "/"';
-      if (p.report.split("/").includes("..")) return 'report must not contain a ".." segment';
-    }
-  }
-  return null;
+  try { return parseProjects(await Bun.file(DATA_FILE).text()); }
+  catch { return []; }
 }
 
 // --- git --------------------------------------------------------------------
@@ -149,24 +99,11 @@ Bun.serve({
     if (path === "/api/save" && req.method === "POST") {
       if (!isSameOrigin(req)) return json({ ok: false, error: "cross-origin request rejected" }, 403);
       const body = await readBody(req);
-      const raw = body && body.projects;
-      // Trim report values BEFORE validating so the guards run on the exact
-      // string that gets serialized (leading whitespace can't smuggle past them).
-      const projects = Array.isArray(raw)
-        ? raw.map((p) =>
-            p && typeof p === "object" && typeof p.report === "string"
-              ? { ...p, report: p.report.trim() }
-              : p
-          )
-        : raw;
-      const err = validate(projects);
+      const projects = body && body.projects;
+      const err = validateProjects(projects);
       if (err) return json({ ok: false, error: err }, 400);
-      const clean = projects.map((p) => {
-        const o = { repo: p.repo };
-        if (typeof p.report === "string" && p.report !== "") o.report = p.report;
-        return o;
-      });
-      await Bun.write(DATA_FILE, serialize(clean));
+      const clean = cleanProjects(projects);
+      await Bun.write(DATA_FILE, serializeProjects(clean));
       return json({ ok: true, count: clean.length });
     }
 
