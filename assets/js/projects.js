@@ -1,209 +1,77 @@
-/* Project preview cards — pulls live repo metadata from the GitHub REST API
-   so cards reflect repo changes automatically. No build, no auth.
-   Configure which repos appear (and their report link) in PROJECTS below. */
+/* Project cards render immediately from local configuration, then enrich with
+   live GitHub metadata. No build, authentication, or runtime dependency. */
 (function () {
-  var OWNER = 'sciencemj';
-
-  // Local config: which repos to feature + per-repo report link.
-  //   report: a path under the repo's GitHub Pages site (used only if has_pages).
-  // The list itself now lives in assets/js/projects.data.js (edited via the
-  // local admin tool: `bun admin/server.js`, or by hand).
-  // Tags come live from each repo's GitHub topics (deduped, prettified).
-  // Add/edit topics on GitHub and the cards + filter update on the next load.
+  var OWNER = "sciencemj";
   var PROJECTS = window.PORTFOLIO_PROJECTS || [];
+  var Model = window.PortfolioProjectModel;
+  var View = window.PortfolioProjectView;
+  if (!Model || !View) return;
 
-  // Cover gradient pairs (natural viz palette), cycled per card.
-  var COVERS = [
-    ['#F6BE91', '#E8682B'],
-    ['#A7C4A0', '#4E8A7E'],
-    ['#E7C77B', '#C2613F'],
-    ['#9FB0CC', '#5E6E8A']
-  ];
-
-  var grid = document.getElementById('project-grid');
+  var grid = document.getElementById("project-grid");
   if (!grid) return;
-  var filterBar = document.getElementById('project-filter');
+  var filterBar = document.getElementById("project-filter");
+  var active = [];
 
-  function esc(s) {
-    return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) {
-      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
-    });
-  }
-
-  function humanize(name) {
-    return name.split(/[-_]/).filter(Boolean).map(function (w) {
-      return /^[A-Z0-9]+$/.test(w) ? w : w.charAt(0).toUpperCase() + w.slice(1);
-    }).join(' ');
-  }
-
-  // Prettify a GitHub topic for display: hyphen-words -> Title Case, a few
-  // acronyms forced upper. "data-analysis" -> "Data Analysis", "nlp" -> "NLP".
-  var ACRONYMS = { nlp: 'NLP', ml: 'ML', ai: 'AI', eda: 'EDA', api: 'API', llm: 'LLM', umap: 'UMAP', cv: 'CV', sql: 'SQL', ocr: 'OCR' };
-  function prettyTag(t) {
-    return String(t).split('-').map(function (w) {
-      return ACRONYMS[w.toLowerCase()] || (w.charAt(0).toUpperCase() + w.slice(1));
-    }).join(' ');
-  }
-
-  // Tags come live from the repo's GitHub topics (deduped, prettified).
-  function tagsFor(p, data) {
-    var out = [], seen = {};
-    ((data && data.topics) || []).forEach(function (t) {
-      var pretty = prettyTag(t), k = pretty.toLowerCase();
-      if (k && !seen[k]) { seen[k] = 1; out.push(pretty); }
-    });
-    return out;
-  }
-
-  function relTime(iso) {
-    var diff = (Date.now() - new Date(iso).getTime()) / 1000;
-    if (isNaN(diff)) return '';
-    var units = [['year', 31536000], ['month', 2592000], ['week', 604800],
-      ['day', 86400], ['hour', 3600], ['minute', 60]];
-    for (var i = 0; i < units.length; i++) {
-      var v = Math.floor(diff / units[i][1]);
-      if (v >= 1) return v + ' ' + units[i][0] + (v > 1 ? 's' : '') + ' ago';
-    }
-    return 'just now';
-  }
-
-  function bars() {
-    var h = [45, 70, 55, 90, 78, 100, 62], out = '';
-    for (var i = 0; i < h.length; i++) {
-      var ht = h[i] * 0.6;
-      out += '<rect x="' + (8 + i * 16) + '" y="' + (70 - ht).toFixed(1) +
-        '" width="10" height="' + ht.toFixed(1) + '" rx="2" fill="rgba(255,255,255,' +
-        (0.45 + 0.06 * i).toFixed(2) + ')"/>';
-    }
-    return out;
-  }
-
-  function fetchRepo(p) {
-    var ck = 'gh:' + OWNER + '/' + p.repo;
+  function fetchRepo(project) {
+    var cacheKey = "gh:" + OWNER + "/" + project.repo;
     try {
-      var cached = sessionStorage.getItem(ck);
+      var cached = sessionStorage.getItem(cacheKey);
       if (cached) return Promise.resolve(JSON.parse(cached));
-    } catch (e) {}
-    return fetch('https://api.github.com/repos/' + OWNER + '/' + p.repo,
-      { headers: { 'Accept': 'application/vnd.github+json' } })
-      .then(function (res) {
-        if (!res.ok) throw new Error('HTTP ' + res.status);
-        return res.json();
-      })
-      .then(function (data) {
-        try { sessionStorage.setItem(ck, JSON.stringify(data)); } catch (e) {}
-        return data;
-      });
+    } catch (error) {}
+    return fetch("https://api.github.com/repos/" + OWNER + "/" + project.repo, {
+      headers: { Accept: "application/vnd.github+json" },
+    }).then(function (response) {
+      if (!response.ok) throw new Error("HTTP " + response.status);
+      return response.json();
+    }).then(function (data) {
+      try { sessionStorage.setItem(cacheKey, JSON.stringify(data)); } catch (error) {}
+      return data;
+    });
   }
 
-  function linkFor(p, data) {
-    if (p.report && data && data.has_pages) {
-      return 'https://' + OWNER + '.github.io/' + p.repo + '/' + p.report;
-    }
-    // Only trust homepage if it's an absolute http(s) URL — a scheme-less value
-    // resolves as a relative link, and javascript:/data: would be an href sink.
-    if (data && data.homepage && /^https?:\/\//i.test(data.homepage)) return data.homepage;
-    return data && data.html_url ? data.html_url
-      : 'https://github.com/' + OWNER + '/' + p.repo;
+  function updateGroupVisibility() {
+    [".featured-projects__pair", ".compact-projects", ".featured-projects"].forEach(function (selector) {
+      var group = grid.querySelector(selector);
+      if (group) group.hidden = !group.querySelector(".project-card:not([hidden])");
+    });
   }
 
-  function card(p, data, i) {
-    var cov = COVERS[i % COVERS.length];
-    var title = humanize(p.repo);
-    var hasReport = !!(p.report && data && data.has_pages);
-    var status = hasReport
-      ? '<span class="pc-status live">Report</span>'
-      : '<span class="pc-status code">Code</span>';
-    var statusText = hasReport ? 'report available' : 'view code';
-    var desc = data && data.description ? esc(data.description)
-      : 'Open the project repository on GitHub.';
-
-    var tagList = tagsFor(p, data), N = 3;
-    var tags = tagList.slice(0, N).map(function (t) { return '<span class="tag">' + esc(t) + '</span>'; }).join('');
-    if (tagList.length > N) tags += '<span class="pc-more">+' + (tagList.length - N) + '</span>';
-    var dataTags = tagList.map(function (t) { return t.toLowerCase(); }).join('|');
-
-    var metaBits = [];
-    if (data && data.language) metaBits.push('<span class="pc-lang"><i class="dot"></i>' + esc(data.language) + '</span>');
-    if (data && data.pushed_at) metaBits.push('<span class="pc-updated">Updated ' + relTime(data.pushed_at) + '</span>');
-    var meta = metaBits.join('<span class="pc-sep">·</span>');
-
-    var link = linkFor(p, data);
-    var external = hasReport ? '' : ' target="_blank" rel="noopener"';
-
-    return '<a class="project-card" href="' + esc(link) + '"' + external +
-      ' data-tags="' + esc(dataTags) + '"' +
-      ' aria-label="' + esc(title + ' — ' + statusText) + '">' +
-      '<div class="pc-cover" style="--c1:' + cov[0] + ';--c2:' + cov[1] + '">' +
-        '<svg class="pc-bars" viewBox="0 0 120 70" aria-hidden="true">' + bars() + '</svg>' +
-      '</div>' +
-      '<div class="pc-body">' +
-        '<div class="pc-titlerow"><h3 class="pc-title">' + esc(title) + '</h3>' + status + '</div>' +
-        '<p class="pc-desc">' + desc + '</p>' +
-        '<div class="pc-row">' +
-          (tags ? '<div class="pc-tags">' + tags + '</div>' : '') +
-          '<div class="pc-meta">' + meta + '<span class="pc-arrow">→</span></div>' +
-        '</div>' +
-      '</div></a>';
+  function applyFilters() {
+    [].slice.call(grid.querySelectorAll(".project-card")).forEach(function (card) {
+      var categories = (card.getAttribute("data-categories") || "").split("|").filter(Boolean);
+      card.hidden = !Model.matchesAnyCategory({ categories: categories }, active);
+    });
+    updateGroupVisibility();
   }
 
-  function skeletons() {
-    grid.innerHTML = PROJECTS.map(function () {
-      return '<div class="project-card skeleton"><div class="pc-cover"></div>' +
-        '<div class="pc-body"><div class="sk-line w60"></div><div class="sk-line w90"></div>' +
-        '<div class="sk-line w40"></div></div></div>';
-    }).join('');
-  }
-
-  // Build the tag filter from the union of all cards' tags. Hidden if < 2 tags.
-  function buildFilter(perCardTags) {
+  function drawFilters() {
     if (!filterBar) return;
-    var seen = {}, tags = [];
-    perCardTags.forEach(function (arr) {
-      arr.forEach(function (t) { var k = t.toLowerCase(); if (!seen[k]) { seen[k] = 1; tags.push(t); } });
-    });
-    if (tags.length < 2) { filterBar.hidden = true; return; }
+    filterBar.innerHTML = View.renderFilters(active);
+  }
 
-    var active = {};
-    function draw() {
-      var any = Object.keys(active).length > 0;
-      filterBar.innerHTML =
-        '<button type="button" class="filter-chip' + (any ? '' : ' active') + '" data-all="1" aria-pressed="' + (!any) + '">All</button>' +
-        tags.map(function (t) {
-          var k = t.toLowerCase(), on = !!active[k];
-          return '<button type="button" class="filter-chip' + (on ? ' active' : '') + '" data-tag="' + esc(k) + '" aria-pressed="' + on + '">' + esc(t) + '</button>';
-        }).join('');
-    }
-    function apply() {
-      var keys = Object.keys(active);
-      [].slice.call(grid.querySelectorAll('.project-card')).forEach(function (c) {
-        if (keys.length === 0) { c.style.display = ''; return; }
-        var ctags = (c.getAttribute('data-tags') || '').split('|');
-        var show = keys.some(function (k) { return ctags.indexOf(k) > -1; });
-        c.style.display = show ? '' : 'none';
-      });
-    }
-    filterBar.addEventListener('click', function (e) {
-      var btn = e.target.closest('.filter-chip');
-      if (!btn) return;
-      if (btn.getAttribute('data-all')) active = {};
-      else { var k = btn.getAttribute('data-tag'); if (active[k]) delete active[k]; else active[k] = 1; }
-      draw(); apply();
-    });
+  grid.innerHTML = View.renderProjectSections(PROJECTS, []);
+  if (filterBar) {
+    filterBar.innerHTML = View.renderFilters([]);
     filterBar.hidden = false;
-    draw();
-  }
-
-  function render() {
-    skeletons();
-    Promise.all(PROJECTS.map(function (p) {
-      return fetchRepo(p).then(function (d) { return d; }, function () { return null; });
-    })).then(function (results) {
-      grid.innerHTML = PROJECTS.map(function (p, i) { return card(p, results[i], i); }).join('');
-      grid.setAttribute('aria-busy', 'false');
-      buildFilter(PROJECTS.map(function (p, i) { return tagsFor(p, results[i]); }));
+    filterBar.addEventListener("click", function (event) {
+      var button = event.target.closest(".filter-chip");
+      if (!button) return;
+      if (button.getAttribute("data-all")) active = [];
+      else {
+        var key = button.getAttribute("data-category");
+        var index = active.indexOf(key);
+        if (index > -1) active.splice(index, 1); else active.push(key);
+      }
+      drawFilters();
+      applyFilters();
     });
   }
 
-  render();
+  Promise.all(PROJECTS.map(function (project) {
+    return fetchRepo(project).then(function (data) { return data; }, function () { return null; });
+  })).then(function (results) {
+    grid.innerHTML = View.renderProjectSections(PROJECTS, results);
+    grid.setAttribute("aria-busy", "false");
+    applyFilters();
+  });
 })();
