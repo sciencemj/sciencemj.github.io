@@ -21,6 +21,7 @@ const json = (data, status = 200) => new Response(JSON.stringify(data), {
 function clientError(code, message) {
   const error = new Error(message);
   error.code = code;
+  error.expose = true;
   return error;
 }
 
@@ -86,9 +87,10 @@ async function readSaveBody(request) {
 }
 
 function publicError(error) {
-  const code = typeof error?.code === "string" ? error.code : "save-failed";
-  const status = code === "save-failed" ? 500 : 400;
-  const message = status === 500 ? "Unable to save projects." : error.message;
+  const exposed = error?.expose === true;
+  const code = exposed ? error.code : "save-failed";
+  const status = exposed ? 400 : 500;
+  const message = exposed ? error.message : "Unable to save projects.";
   return json({ ok: false, code, error: message, field: error.field || undefined }, status);
 }
 

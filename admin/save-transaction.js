@@ -6,6 +6,7 @@ import { parseProjects, prepareProjects, serializeProjects } from "./projects-st
 function transactionError(code, field, message) {
   const error = new Error(message);
   error.code = code;
+  error.expose = true;
   if (field) error.field = field;
   return error;
 }
@@ -40,6 +41,14 @@ export async function saveProjectTransaction(options) {
   const uploadTargets = new Set();
   const stagedUploads = [];
 
+  for (const upload of uploads.values()) {
+    if (uploadTargets.has(upload?.target)) {
+      throw transactionError("duplicate-upload-target", "preview", "Two uploads cannot share a target path.");
+    }
+    uploadTargets.add(upload?.target);
+  }
+  uploadTargets.clear();
+
   for (const [repo, upload] of uploads) {
     const matches = projects.filter((project) => project.repo === repo);
     if (matches.length !== 1 || matches[0].preview?.src !== upload?.target) {
@@ -49,6 +58,9 @@ export async function saveProjectTransaction(options) {
     if (pathError) throw transactionError(pathError, "preview", "Invalid preview path.");
     if (uploadTargets.has(upload.target)) {
       throw transactionError("duplicate-upload-target", "preview", "Two uploads cannot share a target path.");
+    }
+    if ((nextRefs.get(upload.target) || 0) > 1) {
+      throw transactionError("shared-upload-target", "preview", "An upload cannot overwrite an image shared by multiple projects.");
     }
     uploadTargets.add(upload.target);
     const bytes = upload.bytes instanceof Uint8Array ? upload.bytes : new Uint8Array();

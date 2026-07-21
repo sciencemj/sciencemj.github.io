@@ -30,6 +30,8 @@ test("implements approved responsive and accessibility contracts", () => {
   expect(css).toContain("@media (prefers-reduced-motion: reduce)");
   expect(css).toContain(":focus-visible");
   expect(css).toContain("aspect-ratio: 16 / 10");
+  expect(css).toContain(".command-actions .button-secondary { display: none; }");
+  expect(css).not.toContain("\n  .button-secondary { display: none; }");
   expect(script).toContain("new Map()");
   expect(script).toContain('asset:" + repo');
   expect(script).toContain("Switch to light theme");

@@ -38,11 +38,16 @@
     }
     var url = environment.createObjectURL(file);
     var image = new Image();
-    await new Promise(function (resolve, reject) {
-      image.onload = resolve;
-      image.onerror = reject;
-      image.src = url;
-    });
+    try {
+      await new Promise(function (resolve, reject) {
+        image.onload = resolve;
+        image.onerror = reject;
+        image.src = url;
+      });
+    } catch (error) {
+      environment.revokeObjectURL(url);
+      throw error;
+    }
     return { source: image, width: image.naturalWidth, height: image.naturalHeight, url: url };
   }
 

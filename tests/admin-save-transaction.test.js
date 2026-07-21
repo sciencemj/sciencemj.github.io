@@ -100,6 +100,20 @@ describe("project save transaction", () => {
     })).rejects.toMatchObject({ code: "duplicate-upload-target" });
   });
 
+  test("rejects an upload that would overwrite a shared active image", async () => {
+    const shared = "assets/img/projects/shared.webp";
+    const fixture = await makeFixture([project("one", shared), project("two", shared)]);
+    const before = await Bun.file(fixture.dataFile).text();
+    await expect(saveProjectTransaction({
+      root: fixture.root,
+      transactionId: "tx-shared",
+      projects: [project("one", shared), project("two", shared)],
+      uploads: new Map([["one", { bytes: fixture.bytes, target: shared }]]),
+    })).rejects.toMatchObject({ code: "shared-upload-target", field: "preview" });
+    expect(await Bun.file(fixture.dataFile).text()).toBe(before);
+    expect(await Bun.file(resolve(fixture.root, shared)).exists()).toBe(true);
+  });
+
   test("keeps a shared asset when one project still references it", async () => {
     const shared = "assets/img/projects/shared.webp";
     const fixture = await makeFixture([project("one", shared), project("two", shared)]);

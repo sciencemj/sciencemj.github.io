@@ -126,4 +126,19 @@ describe("admin HTTP app", () => {
     expect(commands[0]).toEqual(["git", "add", "assets/js/projects.data.js", "assets/img/projects"]);
     expect(commands).toHaveLength(3);
   });
+
+  test("sanitizes unexpected filesystem failures", async () => {
+    const fixture = await makeFixture();
+    await rm(resolve(fixture.root, "assets/js/projects.data.js"));
+    const app = createAdminApp({ root: fixture.root, owner: "sciencemj", port: 4747 });
+    const response = await app.fetch(new Request("http://127.0.0.1:4747/api/save", {
+      method: "POST",
+      headers: { ...sameOrigin, "content-type": "application/json" },
+      body: JSON.stringify({ projects: [project()] }),
+    }));
+    const body = await response.json();
+    expect(response.status).toBe(500);
+    expect(body).toEqual({ ok: false, code: "save-failed", error: "Unable to save projects." });
+    expect(JSON.stringify(body)).not.toContain(fixture.root);
+  });
 });

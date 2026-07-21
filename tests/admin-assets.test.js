@@ -4,9 +4,12 @@ import {
   archiveRelativePath,
   listActiveAssets,
   readWebpDimensions,
+  resolveInside,
   validatePreviewPath,
   validateWebp,
 } from "../admin/asset-store.js";
+import { mkdir, mkdtemp, rm, symlink, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
 
 function vp8x(width, height) {
   const bytes = new Uint8Array(30);
@@ -65,5 +68,19 @@ describe("admin asset store", () => {
     expect(assets).toHaveLength(5);
     expect(assets[0]).toHaveProperty("path");
     expect(new Set(assets.map((asset) => `${asset.width}x${asset.height}`))).toEqual(new Set(["1280x800"]));
+  });
+
+  test("rejects an active file symlink that resolves outside the repository", async () => {
+    const root = await mkdtemp(resolve(tmpdir(), "admin-assets-root-"));
+    const outside = await mkdtemp(resolve(tmpdir(), "admin-assets-outside-"));
+    try {
+      await mkdir(resolve(root, "assets/img/projects"), { recursive: true });
+      await writeFile(resolve(outside, "secret.webp"), vp8x(1280, 800));
+      await symlink(resolve(outside, "secret.webp"), resolve(root, "assets/img/projects/link.webp"));
+      await expect(resolveInside(root, "assets/img/projects/link.webp")).rejects.toThrow("path escapes active directory");
+    } finally {
+      await rm(root, { recursive: true, force: true });
+      await rm(outside, { recursive: true, force: true });
+    }
   });
 });

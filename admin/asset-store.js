@@ -87,11 +87,18 @@ export async function resolveInside(root, relativePath) {
     throw new Error("path escapes root");
   }
   const target = resolve(root, relativePath);
-  const prefix = resolve(root) + sep;
-  if (!target.startsWith(prefix)) throw new Error("path escapes root");
-  const resolvedRoot = await realpath(root);
-  const parent = await realpath(resolve(target, ".."));
-  if (parent !== resolvedRoot && !parent.startsWith(resolvedRoot + sep)) throw new Error("path escapes root");
+  const active = resolve(root, ACTIVE_PREFIX);
+  if (!target.startsWith(active + sep)) throw new Error("path escapes active directory");
+  const resolvedActive = await realpath(active);
+  try {
+    const resolvedTarget = await realpath(target);
+    if (!resolvedTarget.startsWith(resolvedActive + sep)) throw new Error("path escapes active directory");
+  } catch (error) {
+    if (error.message === "path escapes active directory") throw error;
+    if (error.code !== "ENOENT") throw error;
+    const parent = await realpath(resolve(target, ".."));
+    if (parent !== resolvedActive) throw new Error("path escapes active directory");
+  }
   return target;
 }
 
