@@ -106,7 +106,7 @@ export async function listActiveAssets(root) {
     const bytes = new Uint8Array(await file.arrayBuffer());
     const dimensions = readWebpDimensions(bytes);
     if (!dimensions) continue;
-    assets.push({ path, bytes: file.size, ...dimensions });
+    assets.push({ path, size: file.size, ...dimensions });
   }
   return assets.sort((a, b) => a.path.localeCompare(b.path));
 }
