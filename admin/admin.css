@@ -335,7 +335,7 @@ button:disabled { cursor: not-allowed; opacity: .48; }
 .dropzone { min-height: 112px; padding: 18px; display: grid; place-items: center; align-content: center; border: 1px dashed var(--border-2); border-radius: 10px; color: var(--muted); background: var(--surface); text-align: center; cursor: pointer; }
 .dropzone strong { color: var(--ink); font-family: var(--font-display); }
 .dropzone span { font-size: 11px; }
-.dropzone input { width: min(100%, 260px); margin-top: 10px; min-height: 32px; font-size: 11px; }
+.dropzone input { width: min(100%, 260px); margin-top: 10px; min-height: 40px; font-size: 11px; }
 .dropzone.is-dragging { border-color: var(--accent); background: var(--accent-soft); }
 .field-note { margin: 9px 2px 0; color: var(--muted); font-size: 10px; }
 .asset-metrics { margin-top: 9px; display: flex; flex-wrap: wrap; gap: 6px; }
