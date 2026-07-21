@@ -83,4 +83,18 @@ describe("admin asset store", () => {
       await rm(outside, { recursive: true, force: true });
     }
   });
+
+  test("rejects an active directory symlink that resolves outside the repository", async () => {
+    const root = await mkdtemp(resolve(tmpdir(), "admin-assets-root-"));
+    const outside = await mkdtemp(resolve(tmpdir(), "admin-assets-outside-"));
+    try {
+      await mkdir(resolve(root, "assets/img"), { recursive: true });
+      await writeFile(resolve(outside, "demo.webp"), vp8x(1280, 800));
+      await symlink(outside, resolve(root, "assets/img/projects"));
+      await expect(resolveInside(root, "assets/img/projects/demo.webp")).rejects.toThrow("path escapes active directory");
+    } finally {
+      await rm(root, { recursive: true, force: true });
+      await rm(outside, { recursive: true, force: true });
+    }
+  });
 });

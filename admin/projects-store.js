@@ -11,6 +11,7 @@ export function parseProjects(text) {
 
 export function validateProjects(projects) {
   if (!Array.isArray(projects)) return "projects must be an array";
+  let featuredCount = 0;
   for (const p of projects) {
     if (!p || typeof p !== "object" || Array.isArray(p)) return "each project must be an object";
     if (typeof p.repo !== "string" || !REPO_RE.test(p.repo)) return "invalid repo name: " + JSON.stringify(p.repo);
@@ -20,12 +21,12 @@ export function validateProjects(projects) {
       if (report && (report.startsWith("/") || report.split("/").includes(".."))) return "invalid report path";
     }
     if (hasOwn(p, "featured") && typeof p.featured !== "boolean") return "invalid featured flag";
+    if (p.featured === true && ++featuredCount > 3) return "only three projects can be featured";
     if (hasOwn(p, "highlight") && typeof p.highlight !== "string") return "invalid project highlight";
-    if (hasOwn(p, "categories")) {
-      if (!Array.isArray(p.categories)) return "invalid project category";
-      for (const key of p.categories) {
-        if (typeof key !== "string" || !CATEGORY_KEYS.includes(key)) return "invalid project category";
-      }
+    if (!hasOwn(p, "categories") || !Array.isArray(p.categories)) return hasOwn(p, "categories") ? "invalid project category" : "at least one project category is required";
+    if (!p.categories.length) return "at least one project category is required";
+    for (const key of p.categories) {
+      if (typeof key !== "string" || !CATEGORY_KEYS.includes(key)) return "invalid project category";
     }
     if (hasOwn(p, "preview")) {
       if (!p.preview || typeof p.preview !== "object" || Array.isArray(p.preview)) return "invalid project preview";

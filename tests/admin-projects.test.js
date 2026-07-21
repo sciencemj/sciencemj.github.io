@@ -36,6 +36,14 @@ describe("admin project store", () => {
     expect(validateProjects(invalid)).toBe("preview src must be under assets/img/projects/");
   });
 
+  test("enforces save-time category and featured limits", () => {
+    expect(prepareProjects([{ repo: "minimal" }])).toEqual({ error: "at least one project category is required" });
+    expect(prepareProjects([{ ...project, categories: [] }])).toEqual({ error: "at least one project category is required" });
+    expect(prepareProjects(Array.from({ length: 4 }, (_, index) => ({ ...project, repo: `featured-${index}` })))).toEqual({
+      error: "only three projects can be featured",
+    });
+  });
+
   test.each([
     [{ ...project, report: 42 }, "invalid report path"],
     [{ ...project, categories: "apps" }, "invalid project category"],
@@ -89,12 +97,11 @@ describe("admin project store", () => {
     expect(prepareProjects([invalid])).toEqual({ error });
   });
 
-  test("preserves omitted metadata and valid false or empty collection values", () => {
-    expect(prepareProjects([{ repo: "minimal" }])).toEqual({ projects: [{ repo: "minimal" }] });
+  test("preserves valid false values and workflow previews", () => {
     expect(prepareProjects([{
-      repo: "valid", featured: false, categories: [], preview: { kind: "workflow" },
+      repo: "valid", featured: false, categories: ["apps"], preview: { kind: "workflow" },
     }])).toEqual({
-      projects: [{ repo: "valid", featured: false, categories: [], preview: { kind: "workflow" } }],
+      projects: [{ repo: "valid", featured: false, categories: ["apps"], preview: { kind: "workflow" } }],
     });
   });
 });

@@ -141,4 +141,16 @@ describe("admin HTTP app", () => {
     expect(body).toEqual({ ok: false, code: "save-failed", error: "Unable to save projects." });
     expect(JSON.stringify(body)).not.toContain(fixture.root);
   });
+
+  test("identifies the project responsible for a preview error", async () => {
+    const fixture = await makeFixture();
+    const app = createAdminApp({ root: fixture.root, owner: "sciencemj", port: 4747 });
+    const response = await app.fetch(new Request("http://127.0.0.1:4747/api/save", {
+      method: "POST",
+      headers: { ...sameOrigin, "content-type": "application/json" },
+      body: JSON.stringify({ projects: [project("assets/img/projects/missing.webp")] }),
+    }));
+    expect(response.status).toBe(400);
+    expect(await response.json()).toMatchObject({ ok: false, code: "missing-preview", field: "preview", repo: "demo" });
+  });
 });

@@ -3,11 +3,12 @@ import { basename, resolve } from "node:path";
 import { archiveRelativePath, resolveInside, validatePreviewPath, validateWebp } from "./asset-store.js";
 import { parseProjects, prepareProjects, serializeProjects } from "./projects-store.js";
 
-function transactionError(code, field, message) {
+function transactionError(code, field, message, repo) {
   const error = new Error(message);
   error.code = code;
   error.expose = true;
   if (field) error.field = field;
+  if (repo) error.repo = repo;
   return error;
 }
 
@@ -41,9 +42,9 @@ export async function saveProjectTransaction(options) {
   const uploadTargets = new Set();
   const stagedUploads = [];
 
-  for (const upload of uploads.values()) {
+  for (const [repo, upload] of uploads) {
     if (uploadTargets.has(upload?.target)) {
-      throw transactionError("duplicate-upload-target", "preview", "Two uploads cannot share a target path.");
+      throw transactionError("duplicate-upload-target", "preview", "Two uploads cannot share a target path.", repo);
     }
     uploadTargets.add(upload?.target);
   }
@@ -52,35 +53,36 @@ export async function saveProjectTransaction(options) {
   for (const [repo, upload] of uploads) {
     const matches = projects.filter((project) => project.repo === repo);
     if (matches.length !== 1 || matches[0].preview?.src !== upload?.target) {
-      throw transactionError("upload-target-mismatch", "preview", `Upload does not match project ${repo}.`);
+      throw transactionError("upload-target-mismatch", "preview", `Upload does not match project ${repo}.`, repo);
     }
     const pathError = validatePreviewPath(upload.target);
-    if (pathError) throw transactionError(pathError, "preview", "Invalid preview path.");
+    if (pathError) throw transactionError(pathError, "preview", "Invalid preview path.", repo);
     if (uploadTargets.has(upload.target)) {
-      throw transactionError("duplicate-upload-target", "preview", "Two uploads cannot share a target path.");
+      throw transactionError("duplicate-upload-target", "preview", "Two uploads cannot share a target path.", repo);
     }
     if ((nextRefs.get(upload.target) || 0) > 1) {
-      throw transactionError("shared-upload-target", "preview", "An upload cannot overwrite an image shared by multiple projects.");
+      throw transactionError("shared-upload-target", "preview", "An upload cannot overwrite an image shared by multiple projects.", repo);
     }
     uploadTargets.add(upload.target);
     const bytes = upload.bytes instanceof Uint8Array ? upload.bytes : new Uint8Array();
     const fileError = validateWebp(bytes);
-    if (fileError) throw transactionError(fileError, "preview", "Preview must be a 1280×800 WebP under 180KB.");
+    if (fileError) throw transactionError(fileError, "preview", "Preview must be a 1280×800 WebP under 180KB.", repo);
     stagedUploads.push({ repo, target: upload.target, bytes });
   }
 
   for (const path of nextRefs.keys()) {
+    const repo = projects.find((project) => project.preview?.src === path)?.repo;
     const pathError = validatePreviewPath(path);
-    if (pathError) throw transactionError(pathError, "preview", "Invalid preview path.");
+    if (pathError) throw transactionError(pathError, "preview", "Invalid preview path.", repo);
     if (uploadTargets.has(path)) continue;
     let bytes;
     try {
       bytes = new Uint8Array(await readFile(await resolveInside(root, path)));
     } catch {
-      throw transactionError("missing-preview", "preview", `Preview does not exist: ${path}`);
+      throw transactionError("missing-preview", "preview", `Preview does not exist: ${path}`, repo);
     }
     const fileError = validateWebp(bytes);
-    if (fileError) throw transactionError(fileError, "preview", `Invalid preview: ${path}`);
+    if (fileError) throw transactionError(fileError, "preview", `Invalid preview: ${path}`, repo);
   }
 
   const oldRefs = references(previous);

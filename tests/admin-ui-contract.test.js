@@ -36,4 +36,6 @@ test("implements approved responsive and accessibility contracts", () => {
   expect(script).toContain('asset:" + repo');
   expect(script).toContain("Switch to light theme");
   expect(script).toContain("Switch to dark theme");
+  expect(script).toContain("state.drafts.findIndex");
+  expect(script).toContain("error.repo");
 });

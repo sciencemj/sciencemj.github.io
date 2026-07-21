@@ -234,10 +234,15 @@
       var previous = state.pendingUploads.get(project.repo);
       if (previous) URL.revokeObjectURL(previous.url);
       var target = Model.targetPathFor(project);
+      var projectIndex = state.drafts.findIndex(function (draft) { return draft.repo === project.repo; });
+      if (projectIndex < 0) {
+        URL.revokeObjectURL(result.url);
+        throw new Error("Project was removed while processing its image.");
+      }
       state.pendingUploads.set(project.repo, Object.assign({}, result, { target: target }));
-      state.drafts = Model.updateProject(state.drafts, state.selectedIndex, { preview: { src: target } });
-      delete state.errors[state.selectedIndex];
-      state.sourceMode = "upload";
+      state.drafts = Model.updateProject(state.drafts, projectIndex, { preview: { src: target } });
+      delete state.errors[projectIndex];
+      if (state.selectedIndex === projectIndex) state.sourceMode = "upload";
       announce("Image ready: 1280 × 800, " + (result.size / 1024).toFixed(1) + "KB.", false);
     } catch (error) {
       announce(error.message || "Image processing failed.", true);
@@ -271,6 +276,7 @@
     setInFlight(true);
     var projects = Model.buildPayload(state.drafts);
     var options = { method: "POST" };
+    var errorFocus = null;
     if (state.pendingUploads.size) {
       var body = new FormData();
       body.set("projects", JSON.stringify(projects));
@@ -296,14 +302,26 @@
       await loadAssets();
       announce("Saved " + result.count + " projects, " + result.savedAssets.length + " images; " + result.archivedAssets.length + " archived.", false);
     } catch (error) {
-      if (error.field) {
-        state.errors[state.selectedIndex] = state.errors[state.selectedIndex] || {};
-        state.errors[state.selectedIndex][error.field] = error.message;
+      var errorIndex = error.repo
+        ? state.drafts.findIndex(function (project) { return project.repo === error.repo; })
+        : state.selectedIndex;
+      if (error.field && errorIndex >= 0) {
+        state.selectedIndex = errorIndex;
+        state.errors[errorIndex] = state.errors[errorIndex] || {};
+        state.errors[errorIndex][error.field] = error.message;
+        errorFocus = error.field;
+        if (error.field === "preview" && !state.pendingUploads.has(state.drafts[errorIndex].repo)) state.sourceMode = "existing";
       }
       announce(error.message || "Save failed.", true);
     } finally {
       setInFlight(false);
       renderAll();
+      if (errorFocus) {
+        var focusTarget = errorFocus === "preview"
+          ? inspector.querySelector(state.sourceMode === "upload" ? '[data-field="upload"]' : '[data-field="preview.src"]')
+          : inspector.querySelector('[data-field="' + errorFocus + '"]');
+        if (focusTarget) focusTarget.focus();
+      }
     }
   });
 

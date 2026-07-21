@@ -46,6 +46,14 @@ describe("admin editor view", () => {
     expect(html).toContain("117.2 KB");
   });
 
+  test("renders a generic server preview error beside source controls", () => {
+    const html = View.renderInspector(projects[0], {
+      index: 0, sourceMode: "upload", errors: { preview: "Preview is missing" }, assets: [],
+    });
+    expect(html).toContain('id="error-preview"');
+    expect(html).toContain("Preview is missing");
+  });
+
   test("renders card preview and change summary", () => {
     expect(View.renderCardPreview(projects[0], { url: "blob:preview" })).toContain("blob:preview");
     expect(View.renderCardPreview(projects[1])).toContain("APP PREVIEW");

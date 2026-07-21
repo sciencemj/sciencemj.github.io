@@ -89,7 +89,9 @@ export async function resolveInside(root, relativePath) {
   const target = resolve(root, relativePath);
   const active = resolve(root, ACTIVE_PREFIX);
   if (!target.startsWith(active + sep)) throw new Error("path escapes active directory");
+  const resolvedRoot = await realpath(root);
   const resolvedActive = await realpath(active);
+  if (!resolvedActive.startsWith(resolvedRoot + sep)) throw new Error("path escapes active directory");
   try {
     const resolvedTarget = await realpath(target);
     if (!resolvedTarget.startsWith(resolvedActive + sep)) throw new Error("path escapes active directory");

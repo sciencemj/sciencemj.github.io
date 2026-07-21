@@ -91,7 +91,7 @@ function publicError(error) {
   const code = exposed ? error.code : "save-failed";
   const status = exposed ? 400 : 500;
   const message = exposed ? error.message : "Unable to save projects.";
-  return json({ ok: false, code, error: message, field: error.field || undefined }, status);
+  return json({ ok: false, code, error: message, field: error.field || undefined, repo: error.repo || undefined }, status);
 }
 
 export function createAdminApp({ root, owner, port, gitRunner }) {
