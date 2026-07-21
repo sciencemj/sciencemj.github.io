@@ -2,3 +2,5 @@
 .preview/
 .worktrees/
 .superpowers/
+.admin-archive/
+.admin-tmp/
