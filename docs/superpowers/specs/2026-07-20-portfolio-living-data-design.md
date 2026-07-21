@@ -1,6 +1,6 @@
 # Portfolio Living Data Design
 
-Date: 2026-07-20  
+Date: 2026-07-20
 Status: Approved design; implementation pending
 
 ## Goal
