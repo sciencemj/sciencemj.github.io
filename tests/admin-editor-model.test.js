@@ -54,6 +54,18 @@ describe("admin editor model", () => {
     });
   });
 
+  test("rejects unsafe report and preview paths beside their fields", () => {
+    expect(Model.validateDrafts([{
+      repo: "x", report: "/outside", categories: ["apps"],
+      preview: { kind: "image", src: "assets/img/projects/%2e%2e/secret.webp", alt: "Preview" },
+    }])).toEqual({
+      0: {
+        report: "Use a relative report path without traversal.",
+        "preview.src": "Use one WebP directly under assets/img/projects/.",
+      },
+    });
+  });
+
   test("summarizes changed projects, uploads, and archive candidates", () => {
     const drafts = Model.updateProject(projects, 0, { highlight: "Changed" });
     const uploads = new Map([["one", { target: "assets/img/projects/one.webp" }]]);

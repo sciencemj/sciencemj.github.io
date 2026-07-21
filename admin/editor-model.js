@@ -107,16 +107,35 @@
     });
   }
 
+  function safeReportPath(value) {
+    var path = String(value || "").trim();
+    return !path || (!path.startsWith("/") && path.split("/").indexOf("..") === -1);
+  }
+
+  function safePreviewPath(value) {
+    var path = String(value || "").trim();
+    if (!path) return true;
+    if (path.indexOf("\\") > -1) return false;
+    try {
+      path = decodeURIComponent(decodeURIComponent(path));
+    } catch (error) {
+      return false;
+    }
+    return /^assets\/img\/projects\/[A-Za-z0-9._-]+\.webp$/i.test(path);
+  }
+
   function validateDrafts(projects) {
     var errors = {};
     normalizeDrafts(projects).forEach(function (project, index) {
       var item = {};
       if (!project.repo.trim()) item.repo = "Repository name is required.";
+      if (!safeReportPath(project.report)) item.report = "Use a relative report path without traversal.";
       if (!project.categories.length) item.categories = "Choose at least one category.";
       if (project.categories.some(function (key) { return CATEGORY_KEYS.indexOf(key) === -1; })) item.categories = "Choose valid categories.";
       if (PREVIEW_KINDS.indexOf(project.preview.kind) === -1) item["preview.kind"] = "Choose a valid preview kind.";
       var src = typeof project.preview.src === "string" ? project.preview.src.trim() : "";
       var alt = typeof project.preview.alt === "string" ? project.preview.alt.trim() : "";
+      if (src && !safePreviewPath(src)) item["preview.src"] = "Use one WebP directly under assets/img/projects/.";
       if (src && !alt) item["preview.alt"] = "Describe the preview image.";
       if (Object.keys(item).length) errors[index] = item;
     });
