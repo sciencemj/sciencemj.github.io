@@ -9,7 +9,14 @@
 
   function current() { return root.getAttribute('data-theme') === 'dark' ? 'dark' : 'light'; }
 
-  function sync(btn) { if (btn) btn.innerHTML = current() === 'dark' ? SUN : MOON; }
+  function sync(btn) {
+    if (!btn) return;
+    var dark = current() === 'dark';
+    var label = dark ? 'Switch to light theme' : 'Switch to dark theme';
+    btn.innerHTML = dark ? SUN : MOON;
+    btn.setAttribute('aria-label', label);
+    btn.setAttribute('title', label);
+  }
 
   function init() {
     var btn = document.getElementById('theme-toggle');

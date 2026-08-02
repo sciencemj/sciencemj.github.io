@@ -17,41 +17,41 @@
 .bg-art .orb {
   position: absolute;
   border-radius: 50%;
-  filter: blur(72px);
-  opacity: .42;
+  filter: blur(90px);
+  opacity: .18;
   mix-blend-mode: multiply;          /* tints the warm paper */
   will-change: transform;
 }
 [data-theme="dark"] .bg-art .orb {
-  filter: blur(86px);
-  opacity: .5;
+  filter: blur(104px);
+  opacity: .24;
   mix-blend-mode: screen;            /* glows on the dark brown */
 }
 
 .bg-art .o1 {
   width: 48vw; height: 48vw; left: -10vw; top: -8vw;
   background: radial-gradient(circle at 32% 32%, var(--accent), transparent 70%);
-  animation: drift1 34s ease-in-out infinite alternate;
+  animation: drift1 68s ease-in-out infinite alternate;
 }
 .bg-art .o2 {
   width: 42vw; height: 42vw; right: -12vw; top: 8vh;
   background: radial-gradient(circle at 50% 50%, var(--viz-teal), transparent 70%);
-  animation: drift2 43s ease-in-out infinite alternate;
+  animation: drift2 86s ease-in-out infinite alternate;
 }
 .bg-art .o3 {
   width: 40vw; height: 40vw; left: 16vw; bottom: -16vw;
   background: radial-gradient(circle at 50% 50%, var(--viz-sand), transparent 71%);
-  animation: drift3 38s ease-in-out infinite alternate;
+  animation: drift3 76s ease-in-out infinite alternate;
 }
 .bg-art .o4 {
   width: 34vw; height: 34vw; right: 4vw; bottom: -10vw;
   background: radial-gradient(circle at 50% 50%, var(--viz-olive), transparent 72%);
-  animation: drift4 47s ease-in-out infinite alternate;
+  animation: drift4 94s ease-in-out infinite alternate;
 }
 .bg-art .o5 {
   width: 30vw; height: 30vw; left: 40vw; top: 26vh;
   background: radial-gradient(circle at 50% 50%, var(--viz-clay), transparent 72%);
-  animation: drift5 30s ease-in-out infinite alternate;
+  animation: drift5 60s ease-in-out infinite alternate;
 }
 
 @keyframes drift1 { from { transform: translate(0,0) scale(1); }    to { transform: translate(9vw,7vh) scale(1.16); } }

@@ -1,2 +1,6 @@
 .DS_Store
 .preview/
+.worktrees/
+.superpowers/
+.admin-archive/
+.admin-tmp/
