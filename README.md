@@ -10,27 +10,40 @@ accent, Space Grotesk / Hanken Grotesk / JetBrains Mono, light + dark).
 ## Layout
 
 ```
-index.html              Landing page
-assets/css/tokens.css   Design tokens (light + dark)
-assets/css/site.css     Page styles
-assets/js/theme.js      Theme toggle (localStorage + prefers-color-scheme)
-assets/js/projects.js   Live project cards from the GitHub API
-assets/img/logomark.svg Bar-chart "M" mark / favicon
-embed/footer.js         Shared footer + back-link injector for report repos
+index.html                 Landing — profile, writing (4), education, projects (4)
+writing.html               Full writing archive
+projects.html              Full project list
+contact.html               Contact details
+assets/css/tokens.css      Design tokens (light + dark)
+assets/css/pages.css       Page styles (CV-style rows, no cards)
+assets/css/bg-art.css      Background orbs + grain
+assets/js/theme.js         Theme toggle (localStorage + prefers-color-scheme)
+assets/js/posts.data.js    Writing entries
+assets/js/projects.data.js Which repos appear, plus previews and highlights
+assets/js/project-model.js Project normalisation shared with the admin tool
+assets/js/pages.js         Renders the writing and project rows
+assets/img/logomark.svg    Bar-chart "M" mark / favicon
+embed/footer.js            Shared footer + back-link injector for report repos
 ```
+
+The landing page caps a list with `data-limit` on the `<ul>`; the archive pages
+leave it off and render everything.
+
+Unused since the CV-style rewrite, kept for reference: `assets/css/site.css`,
+`assets/js/projects.js`, `assets/js/project-view.js`, `assets/js/data-canvas.js`,
+`assets/js/data-canvas-model.js`.
 
 ## Project cards
 
-Cards are rendered client-side from the **GitHub REST API**, so they reflect
+Rows are rendered client-side from the **GitHub REST API**, so they reflect
 repo changes (description, topics, last-pushed) automatically — no rebuild.
 
-To feature a project, add it to `PROJECTS` in `assets/js/projects.js`:
+To list a project, add it to `window.PORTFOLIO_PROJECTS` in
+`assets/js/projects.data.js`:
 
 ```js
-var PROJECTS = [
-  { repo: 'seoul-bike-analysis', report: 'report.html' }, // links to the Pages report
-  { repo: 'LCC_Review_Sentiment_Cluster' }                // no Pages yet -> links to repo
-];
+{ "repo": "seoul-bike-analysis", "report": "report.html" }, // links to the Pages report
+{ "repo": "LCC_Review_Sentiment_Cluster" }                  // no Pages yet -> links to repo
 ```
 
 - `report` is a path under that repo's GitHub Pages site. It is used only when

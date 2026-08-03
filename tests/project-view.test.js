@@ -56,9 +56,4 @@ describe("project view", () => {
     const css = readFileSync(resolve(import.meta.dir, "../assets/css/site.css"), "utf8");
     expect(css).toMatch(/\[hidden\]\s*\{\s*display:\s*none\s*!important;\s*\}/);
   });
-
-  test("names the filter group by category", () => {
-    const html = readFileSync(resolve(import.meta.dir, "../index.html"), "utf8");
-    expect(html).toContain('aria-label="Filter projects by category"');
-  });
 });
