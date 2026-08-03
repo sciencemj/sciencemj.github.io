@@ -153,9 +153,33 @@
     });
   }
 
+  /* ---------- Nav ambient glow ---------- */
+
+  /* Writes the pointer position onto the nav as CSS custom properties; the glow
+     itself is a ::after gradient in pages.css. Pointer-driven only — skipped
+     where there is no hover, so touch devices never paint it. */
+  function wireNavGlow() {
+    var nav = doc.querySelector(".nav");
+    if (!nav || !root.matchMedia || !root.matchMedia("(hover: hover)").matches) return;
+    var queued = false, x = 0, y = 0;
+    nav.addEventListener("pointermove", function (event) {
+      var box = nav.getBoundingClientRect();
+      x = event.clientX - box.left;
+      y = event.clientY - box.top;
+      if (queued) return;
+      queued = true;
+      root.requestAnimationFrame(function () {
+        queued = false;
+        nav.style.setProperty("--glow-x", x + "px");
+        nav.style.setProperty("--glow-y", y + "px");
+      });
+    });
+  }
+
   function init() {
     drawPosts();
     drawProjects();
+    wireNavGlow();
     var year = doc.getElementById("year");
     if (year) year.textContent = new Date().getFullYear();
   }

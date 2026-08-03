@@ -44,12 +44,26 @@ img { max-width: 100%; height: auto; }
 /* ---------- Nav ---------- */
 
 .nav {
-  position: sticky; top: 0; z-index: 20;
+  position: sticky; top: 0; z-index: 20; overflow: hidden;
   background: color-mix(in srgb, var(--canvas) 88%, transparent);
   backdrop-filter: saturate(140%) blur(10px);
   border-bottom: var(--rule);
+  /* pages.js writes --glow-x/--glow-y on pointermove */
+  --glow-x: 50%; --glow-y: 50%;
+  --glow-tint: color-mix(in srgb, var(--accent) 20%, transparent);
 }
+[data-theme="dark"] .nav { --glow-tint: color-mix(in srgb, var(--accent) 30%, transparent); }
+
+.nav::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(220px circle at var(--glow-x) var(--glow-y),
+    var(--glow-tint), transparent 70%);
+  opacity: 0; transition: opacity .4s ease;
+}
+.nav:hover::after, .nav:focus-within::after { opacity: 1; }
+
 .nav-in {
+  position: relative; z-index: 1;
   display: flex; align-items: center; justify-content: space-between;
   gap: var(--s-4); min-height: 56px;
 }
@@ -253,6 +267,7 @@ a.row-title:hover { color: var(--accent); }
 /* ---------- Motion ---------- */
 
 @media (prefers-reduced-motion: reduce) {
+  .nav::after { transition: none; }
   .skills-track { animation: none; width: auto; }
   .skills-set { flex-wrap: wrap; }
   .skills-set[aria-hidden="true"] { display: none; }
