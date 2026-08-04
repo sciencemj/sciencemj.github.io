@@ -1,0 +1,67 @@
+<svg viewBox="0 0 900 330" xmlns="http://www.w3.org/2000/svg" font-family="Pretendard, -apple-system, 'Noto Sans KR', 'Malgun Gothic', sans-serif">
+  <defs>
+    <marker id="fb" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#a8b0bc"/>
+    </marker>
+    <marker id="bb" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#D95F1E"/>
+    </marker>
+  </defs>
+
+  <rect width="900" height="330" rx="12" fill="#fbfaf7"/>
+
+  <text x="36" y="36" font-size="12.5" font-weight="700" fill="#a8b0bc" letter-spacing="1">FORWARD  →</text>
+  <text x="768" y="36" font-size="12.5" font-weight="700" fill="#D95F1E" letter-spacing="1">←  BACKWARD</text>
+
+  <!-- forward arrows (faded) -->
+  <g stroke="#a8b0bc" stroke-width="1.4" fill="none" marker-end="url(#fb)">
+    <line x1="116" y1="105" x2="182" y2="105"/>
+    <line x1="242" y1="105" x2="358" y2="105"/>
+    <line x1="418" y1="105" x2="536" y2="105"/>
+    <line x1="596" y1="105" x2="712" y2="105"/>
+    <line x1="150" y1="176" x2="196" y2="132"/>
+  </g>
+
+  <!-- forward edge labels -->
+  <g font-size="13" font-style="italic" fill="#8b93a0" text-anchor="middle">
+    <text x="300" y="94">z</text>
+    <text x="477" y="94">ŷ</text>
+  </g>
+
+  <!-- nodes -->
+  <g text-anchor="middle" font-size="15" font-style="italic">
+    <rect x="52" y="86" width="62" height="38" rx="9" fill="#DFF2EA" stroke="#177E5B" stroke-width="1.8"/><text x="83" y="111" fill="#1e2430">b</text>
+    <rect x="106" y="160" width="88" height="34" rx="9" fill="#fff" stroke="#cbd5e1"/><text x="150" y="183" fill="#a8b0bc" font-size="13">Wx</text>
+
+    <circle cx="212" cy="105" r="30" fill="#fff" stroke="#5a6472" stroke-width="1.8"/><text x="212" y="112" fill="#1e2430">+</text>
+    <circle cx="388" cy="105" r="30" fill="#fff" stroke="#5a6472" stroke-width="1.8"/><text x="388" y="112" fill="#1e2430">σ</text>
+    <circle cx="566" cy="105" r="30" fill="#fff" stroke="#5a6472" stroke-width="1.8"/><text x="566" y="111" font-size="13" font-style="normal" fill="#1e2430">Loss</text>
+    <rect x="716" y="84" width="66" height="42" rx="9" fill="#FBEADF" stroke="#D95F1E" stroke-width="1.8"/><text x="749" y="112" fill="#1e2430">L</text>
+  </g>
+
+  <!-- backward arrows -->
+  <g stroke="#D95F1E" stroke-width="1.8" fill="none" marker-end="url(#bb)">
+    <line x1="712" y1="168" x2="596" y2="168"/>
+    <line x1="536" y1="168" x2="418" y2="168"/>
+    <line x1="358" y1="168" x2="120" y2="168"/>
+  </g>
+
+  <!-- backward labels -->
+  <g font-size="13.5" fill="#D95F1E" text-anchor="middle" font-style="italic">
+    <text x="654" y="196">dL/dŷ = ŷ − y</text>
+    <text x="477" y="196">dŷ/dz = σ′(z)</text>
+    <text x="239" y="196">dz/db = 1</text>
+  </g>
+  <g font-size="11.5" fill="#b08060" text-anchor="middle">
+    <text x="654" y="214">(손실 노드의 국소 미분)</text>
+    <text x="477" y="214">(활성화 노드의 국소 미분)</text>
+    <text x="239" y="214">(덧셈 노드는 그대로 통과)</text>
+  </g>
+
+  <!-- result box -->
+  <rect x="150" y="240" width="600" height="52" rx="10" fill="#FBEADF" stroke="#D95F1E" stroke-width="1.6"/>
+  <text x="450" y="264" text-anchor="middle" font-size="14.5" font-style="italic" fill="#1e2430">dL/db = (ŷ − y) · σ′(z) · 1 = (ŷ − y) ŷ(1 − ŷ)</text>
+  <text x="450" y="282" text-anchor="middle" font-size="11.5" fill="#8a5a3a">오른쪽 끝에서 출발해 화살표를 따라오며 만난 값들을 곱하기만 하면 된다</text>
+
+  <text x="450" y="316" text-anchor="middle" font-size="12.5" fill="#6b7280">그림 3. b에 대한 역전파 경로</text>
+</svg>

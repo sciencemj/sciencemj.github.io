@@ -1,0 +1,53 @@
+<svg viewBox="0 0 900 360" xmlns="http://www.w3.org/2000/svg" font-family="Pretendard, -apple-system, 'Noto Sans KR', 'Malgun Gothic', sans-serif">
+  <defs>
+    <marker id="f1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#5a6472"/>
+    </marker>
+  </defs>
+
+  <rect width="900" height="360" rx="12" fill="#fbfaf7"/>
+
+  <text x="40" y="42" font-size="13" font-weight="700" fill="#3056C8" letter-spacing="1">FORWARD  →</text>
+
+  <!-- arrows -->
+  <g stroke="#5a6472" stroke-width="1.5" fill="none" marker-end="url(#f1)">
+    <line x1="98" y1="90" x2="152" y2="112"/>
+    <line x1="98" y1="160" x2="152" y2="138"/>
+    <line x1="212" y1="125" x2="292" y2="125"/>
+    <line x1="222" y1="248" x2="300" y2="150"/>
+    <line x1="352" y1="125" x2="430" y2="125"/>
+    <line x1="490" y1="125" x2="572" y2="125"/>
+    <line x1="500" y1="248" x2="578" y2="150"/>
+    <line x1="632" y1="125" x2="742" y2="125"/>
+  </g>
+
+  <!-- edge labels -->
+  <g font-size="13.5" font-style="italic" fill="#1e2430" text-anchor="middle">
+    <text x="252" y="112">Wx</text>
+    <text x="391" y="112">z</text>
+    <text x="531" y="112">ŷ</text>
+  </g>
+
+  <!-- nodes -->
+  <g text-anchor="middle" font-size="15" font-style="italic">
+    <rect x="34" y="72" width="62" height="38" rx="9" fill="#E3EAFB" stroke="#3056C8" stroke-width="1.6"/><text x="65" y="97" fill="#1e2430">x</text>
+    <rect x="34" y="142" width="62" height="38" rx="9" fill="#DFF2EA" stroke="#177E5B" stroke-width="1.6"/><text x="65" y="167" fill="#1e2430">W</text>
+    <rect x="160" y="230" width="62" height="38" rx="9" fill="#DFF2EA" stroke="#177E5B" stroke-width="1.6"/><text x="191" y="255" fill="#1e2430">b</text>
+    <rect x="438" y="230" width="62" height="38" rx="9" fill="#E3EAFB" stroke="#3056C8" stroke-width="1.6"/><text x="469" y="255" fill="#1e2430">y</text>
+
+    <circle cx="182" cy="125" r="30" fill="#fff" stroke="#5a6472" stroke-width="1.8"/><text x="182" y="132" fill="#1e2430">×</text>
+    <circle cx="322" cy="125" r="30" fill="#fff" stroke="#5a6472" stroke-width="1.8"/><text x="322" y="132" fill="#1e2430">+</text>
+    <circle cx="460" cy="125" r="30" fill="#fff" stroke="#5a6472" stroke-width="1.8"/><text x="460" y="132" fill="#1e2430">σ</text>
+    <circle cx="602" cy="125" r="30" fill="#fff" stroke="#5a6472" stroke-width="1.8"/><text x="602" y="131" font-size="13" font-style="normal" fill="#1e2430">Loss</text>
+
+    <rect x="746" y="104" width="66" height="42" rx="9" fill="#FBEADF" stroke="#D95F1E" stroke-width="1.8"/><text x="779" y="132" fill="#1e2430">L</text>
+  </g>
+
+  <!-- legend -->
+  <g font-size="12" fill="#6b7280">
+    <text x="40" y="304">■ 사각형 = 변수 · ● 원 = 연산 · 파랑 = 입력/정답 · 초록 = 학습 대상 파라미터 · 주황 = 손실</text>
+    <text x="40" y="324" fill="#D95F1E">※ 순전파에서 나온 Wx, z, ŷ 값은 역전파에서 그대로 다시 쓰이므로 각 노드에 저장해 둔다.</text>
+  </g>
+
+  <text x="450" y="350" text-anchor="middle" font-size="12.5" fill="#6b7280">그림 2. 순전파의 계산 그래프</text>
+</svg>
