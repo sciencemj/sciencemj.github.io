@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Post editor · Portfolio admin</title>
+  <link rel="stylesheet" href="/assets/css/tokens.css">
+  <link rel="stylesheet" href="/admin/admin.css">
+  <link rel="stylesheet" href="/admin/posts.css">
+  <script>
+    try {
+      var savedTheme = localStorage.getItem("theme");
+      var initialTheme = savedTheme || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+      document.documentElement.setAttribute("data-theme", initialTheme);
+    } catch (error) {}
+  </script>
+  <!-- Markdown parser. Without it the editor cannot render or save. -->
+  <script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
+  <script type="module" src="/admin/posts.js"></script>
+</head>
+<body>
+  <header class="command-bar">
+    <div class="command-inner">
+      <a class="brand" href="/admin/" aria-label="Back to the project editor">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
+        <span><strong>Post editor</strong><small>← project editor</small></span>
+      </a>
+      <div class="save-state" id="dirty-indicator"><span></span><span>No changes</span></div>
+      <div class="command-actions">
+        <button class="icon-button" type="button" id="theme-toggle" aria-label="Switch theme" title="Switch theme"><span aria-hidden="true">◐</span></button>
+        <button class="button button-secondary" type="button" id="commit-btn">Commit &amp; push</button>
+        <button class="button button-primary" type="button" id="save-btn" disabled>Save post</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="workspace">
+    <p class="offline-warning" id="offline-warning" hidden>
+      The markdown parser did not load. Check the connection and reload — the editor
+      cannot render or save without it.
+    </p>
+
+    <div class="draft-banner" id="draft-banner" role="status" hidden>
+      <span id="draft-message"></span>
+      <span class="draft-actions">
+        <button class="text-button" type="button" id="draft-restore">Restore draft</button>
+        <button class="text-button" type="button" id="draft-discard">Discard</button>
+      </span>
+    </div>
+
+    <section class="editor-intro">
+      <div>
+        <span class="eyebrow">LOCAL EDITOR / WRITING</span>
+        <h1>Write a post in markdown.</h1>
+      </div>
+      <div class="post-picker">
+        <label class="sr-only" for="post-select">Open an existing post</label>
+        <select id="post-select">
+          <option value="">New post…</option>
+        </select>
+      </div>
+    </section>
+
+    <form class="post-meta-grid" id="post-meta" autocomplete="off">
+      <label class="field field-wide">
+        <span>Title</span>
+        <input id="f-title" type="text" placeholder="역전파의 원리" required>
+      </label>
+      <label class="field">
+        <span>Slug <small>posts/&lt;slug&gt;.html</small></span>
+        <input id="f-slug" type="text" placeholder="backpropagation" pattern="[a-z0-9-]+" required>
+      </label>
+      <label class="field">
+        <span>Date</span>
+        <input id="f-date" type="date" required>
+      </label>
+      <label class="field">
+        <span>Kind</span>
+        <select id="f-kind">
+          <option>Post</option><option>Report</option><option>Talk</option>
+        </select>
+      </label>
+      <label class="field">
+        <span>Language</span>
+        <select id="f-lang">
+          <option value="ko">한국어</option><option value="en">English</option>
+        </select>
+      </label>
+      <label class="field field-wide">
+        <span>Tags <small>comma separated, up to 3</small></span>
+        <input id="f-tags" type="text" placeholder="Deep learning, Backprop">
+      </label>
+      <label class="field field-wide">
+        <span>Lead <small>one or two sentences under the title</small></span>
+        <input id="f-lead" type="text">
+      </label>
+    </form>
+
+    <div class="post-grid">
+      <section class="pane" aria-labelledby="source-title">
+        <div class="pane-head">
+          <h2 id="source-title">Markdown</h2>
+          <div class="pane-actions">
+            <button class="text-button" type="button" id="insert-image-btn">+ Image</button>
+            <input id="image-input" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml,.svg" multiple hidden>
+          </div>
+        </div>
+        <textarea id="markdown" spellcheck="false" placeholder="## 첫 소제목
+
+본문. 인라인 수식은 $a^2 + b^2 = c^2$ 처럼.
+
+$$\frac{\partial L}{\partial w_{ij}} = \delta_j a_i$$
+
+이미지는 이 영역에 끌어다 놓으면 자동으로 삽입됩니다."></textarea>
+        <p class="pane-note" id="image-note">Drag an image in, or paste one from the clipboard. It is converted to WebP before upload.</p>
+      </section>
+
+      <section class="pane" aria-labelledby="preview-title">
+        <div class="pane-head">
+          <h2 id="preview-title">Preview</h2>
+          <span class="pane-note" id="preview-note">exactly what gets written</span>
+        </div>
+        <iframe id="preview" title="Post preview" sandbox="allow-same-origin allow-scripts"></iframe>
+      </section>
+    </div>
+
+    <section class="gitlog" id="gitlog" aria-label="Git command output" hidden></section>
+  </main>
+
+  <div class="toast" id="toast" role="status"></div>
+  <div class="sr-only" id="status-live" aria-live="polite"></div>
+</body>
+</html>

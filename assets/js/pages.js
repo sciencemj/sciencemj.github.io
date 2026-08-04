@@ -40,16 +40,23 @@
 
   /* ---------- Writing ---------- */
 
+  function isExternal(url) { return /^https?:\/\//i.test(String(url || "")); }
+
   function renderPost(post) {
     var tags = (post.tags || []).map(function (tag) {
       return '<span class="tag">' + esc(tag) + "</span>";
     }).join("");
+    /* Posts live either in posts/ or on another site; only the latter opens
+       in a new tab. */
+    var target = isExternal(post.url) ? ' target="_blank" rel="noopener"' : "";
+    var lang = post.lang === "ko" || post.lang === "en" ? post.lang.toUpperCase() : "";
     return '<li class="row">' +
       '<span class="row-when">' + esc(monthYear(post.date)) + "</span>" +
       '<div class="row-body">' +
-        '<a class="row-title" href="' + esc(post.url) + '" target="_blank" rel="noopener">' + esc(post.title) + "</a>" +
+        '<a class="row-title" href="' + esc(post.url) + '"' + target + ">" + esc(post.title) + "</a>" +
         '<div class="row-foot">' +
           '<span class="row-kind">' + esc(post.kind || "Post") + "</span>" +
+          (lang ? '<span class="row-kind">' + lang + "</span>" : "") +
           (tags ? '<span class="row-tags">' + tags + "</span>" : "") +
         "</div>" +
       "</div></li>";

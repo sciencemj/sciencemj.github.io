@@ -123,7 +123,11 @@ describe("admin HTTP app", () => {
       body: JSON.stringify({ message: "Update projects" }),
     }));
     expect(response.status).toBe(200);
-    expect(commands[0]).toEqual(["git", "add", "assets/js/projects.data.js", "assets/img/projects"]);
+    expect(commands[0]).toEqual([
+      "git", "add",
+      "assets/js/projects.data.js", "assets/img/projects",
+      "assets/js/posts.data.js", "posts",
+    ]);
     expect(commands).toHaveLength(3);
   });
 
@@ -138,7 +142,7 @@ describe("admin HTTP app", () => {
     }));
     const body = await response.json();
     expect(response.status).toBe(500);
-    expect(body).toEqual({ ok: false, code: "save-failed", error: "Unable to save projects." });
+    expect(body).toEqual({ ok: false, code: "save-failed", error: "Unable to save." });
     expect(JSON.stringify(body)).not.toContain(fixture.root);
   });
 

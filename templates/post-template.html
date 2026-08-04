@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<!-- Post shell. The admin editor (bun admin/server.js) fills the {{TOKENS}} when it
+     saves a post; to hand-write one, copy this to ../posts/<slug>.html and replace
+     them yourself. Keep the token names — admin/posts-store.js looks for them. -->
+<html lang="{{LANG}}" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{TITLE}} — MJ Park</title>
+<meta name="description" content="{{DESCRIPTION}}">
+<meta name="color-scheme" content="light dark">
+<meta property="og:title" content="{{TITLE}}">
+<meta property="og:description" content="{{DESCRIPTION}}">
+<meta property="og:type" content="article">
+<link rel="icon" href="../assets/img/logomark.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/tokens.css">
+<link rel="stylesheet" href="../assets/css/pages.css">
+<link rel="stylesheet" href="../assets/css/post.css">
+<link rel="stylesheet" href="../assets/css/bg-art.css">
+<!-- Math. Loaded on every post; harmless when there are no equations. -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"
+  onload="renderMathInElement(document.querySelector('.post-body'), {delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+<script>
+  /* Apply saved/preferred theme before paint to avoid a flash. */
+  (function () {
+    try {
+      var t = localStorage.getItem('theme');
+      if (!t) t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', t);
+    } catch (e) {}
+  })();
+</script>
+</head>
+<body>
+
+<div class="bg-art" aria-hidden="true">
+  <span class="orb o1"></span><span class="orb o2"></span><span class="orb o3"></span>
+  <span class="orb o4"></span><span class="orb o5"></span>
+  <span class="grain"></span>
+</div>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<nav class="nav">
+  <div class="wrap nav-in">
+    <a class="brand" href="../index.html" aria-label="MJ Park — home">
+      <span class="brand-mk">
+        <svg viewBox="0 0 100 100" aria-hidden="true"><g>
+          <rect x="22" y="22" width="9" height="58" rx="2.5" fill="#FFFFFF"/>
+          <rect x="34" y="46" width="9" height="34" rx="2.5" fill="#FFE2C0"/>
+          <rect x="46" y="36" width="9" height="44" rx="2.5" fill="#FFCBA0"/>
+          <rect x="58" y="46" width="9" height="34" rx="2.5" fill="#FFB994"/>
+          <rect x="70" y="22" width="9" height="58" rx="2.5" fill="#FFA982"/>
+        </g></svg>
+      </span>
+      <span class="brand-name">Science<span class="brand-accent">mj</span></span>
+    </a>
+    <div class="nav-right">
+      <a href="../writing.html" class="nav-link" aria-current="page">Writing</a>
+      <a href="../projects.html" class="nav-link">Projects</a>
+      <a href="../contact.html" class="nav-link">Contact</a>
+      <button id="theme-toggle" class="icon-btn" aria-label="Toggle color theme" title="Toggle theme"></button>
+    </div>
+  </div>
+</nav>
+
+<main class="wrap" id="main">
+
+  <header class="post-head">
+    <div class="post-meta">{{META}}</div>
+    <h1 class="post-title">{{TITLE}}</h1>
+    <p class="post-lead">{{LEAD}}</p>
+  </header>
+
+  <article class="post-body">
+{{BODY}}
+  </article>
+
+  <div class="post-foot">
+    <a class="more" href="../writing.html">← All writing</a>
+  </div>
+
+</main>
+
+<footer class="site-footer">
+  <div class="wrap site-footer-in">
+    <span class="mono">© <span id="year">2026</span> MJ Park</span>
+    <span class="mono"><a href="https://github.com/sciencemj" target="_blank" rel="noopener">GitHub</a>
+      · <a href="https://www.linkedin.com/in/%EB%AF%BC%EC%A4%80-%EB%B0%95-438b08420/" target="_blank" rel="noopener">LinkedIn</a>
+      · <a href="mailto:sciencemj.park@gmail.com">Email</a></span>
+  </div>
+</footer>
+
+<script src="../assets/js/theme.js" defer></script>
+<script src="../assets/js/pages.js" defer></script>
+</body>
+</html>

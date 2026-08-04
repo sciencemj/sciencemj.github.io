@@ -1,3 +1,10 @@
+# Templates
+
+- `post-template.html` — a short post for `../posts/`. Concept write-ups, notes.
+  Ships with KaTeX for equations, styled code blocks, figures and tables. See
+  `../posts/README.md`.
+- `report-template.html` — a long analysis, published from its own project repo.
+
 # Report template
 
 `report-template.html` is a reusable, design-system-styled report page for any

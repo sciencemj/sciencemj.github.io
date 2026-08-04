@@ -1,0 +1,93 @@
+/* Post editor — layered on admin.css, which already styles the command bar,
+   buttons, toast and gitlog. */
+
+.offline-warning {
+  margin: 0 0 var(--s-4);
+  padding: var(--s-3) var(--s-4);
+  border: 1px solid var(--danger); border-radius: var(--r-sm);
+  background: var(--surface); color: var(--danger);
+  font-size: var(--text-sm);
+}
+
+.draft-banner {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+  gap: var(--s-3); margin: 0 0 var(--s-4);
+  padding: var(--s-3) var(--s-4);
+  border: 1px solid var(--accent); border-radius: var(--r-sm);
+  background: var(--accent-soft); color: var(--ink);
+  font-size: var(--text-sm);
+}
+.draft-actions { display: inline-flex; gap: var(--s-4); }
+
+.post-picker select {
+  font: inherit; font-size: var(--text-sm);
+  padding: var(--s-2) var(--s-3);
+  border: 1px solid var(--border-2); border-radius: var(--r-sm);
+  background: var(--surface); color: var(--ink);
+}
+
+.post-meta-grid {
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--s-3); margin-bottom: var(--s-5);
+}
+.field { display: grid; gap: var(--s-1); min-width: 0; }
+.field-wide { grid-column: span 2; }
+.field > span {
+  font-family: var(--font-mono); font-size: var(--text-xs);
+  text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted);
+}
+.field > span small {
+  display: block; text-transform: none; letter-spacing: 0;
+  font-family: var(--font-body); color: var(--muted-2);
+}
+.field input, .field select {
+  font: inherit; padding: var(--s-2) var(--s-3);
+  border: 1px solid var(--border-2); border-radius: var(--r-sm);
+  background: var(--surface); color: var(--ink);
+}
+.field input:focus-visible, .field select:focus-visible {
+  outline: 2px solid var(--accent); outline-offset: 1px;
+}
+
+.post-grid {
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--s-4); align-items: stretch;
+}
+.pane {
+  display: flex; flex-direction: column; min-width: 0;
+  border: 1px solid var(--border); border-radius: var(--r-md);
+  background: var(--surface); overflow: hidden;
+}
+.pane-head {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--s-3);
+  padding: var(--s-3) var(--s-4); border-bottom: 1px solid var(--border);
+}
+.pane-head h2 {
+  margin: 0; font-family: var(--font-mono); font-size: var(--text-xs);
+  text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); font-weight: 600;
+}
+.pane-note { margin: 0; font-size: var(--text-xs); color: var(--muted-2); }
+
+#markdown {
+  flex: 1; min-height: 60vh; resize: vertical;
+  border: 0; padding: var(--s-4);
+  background: transparent; color: var(--ink);
+  font-family: var(--font-mono); font-size: 13px; line-height: 1.7;
+  tab-size: 2;
+}
+#markdown:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+#markdown.dropping { background: var(--accent-soft); }
+
+#image-note { padding: var(--s-2) var(--s-4) var(--s-3); border-top: 1px solid var(--border); }
+
+#preview {
+  flex: 1; min-height: 60vh; width: 100%; border: 0;
+  background: var(--canvas);
+}
+
+@media (max-width: 900px) {
+  .post-meta-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .field-wide { grid-column: span 2; }
+  .post-grid { grid-template-columns: 1fr; }
+  #markdown, #preview { min-height: 44vh; }
+}

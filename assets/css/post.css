@@ -1,0 +1,104 @@
+/* ============================================================
+   Sciencemj — post pages
+   Loaded on top of pages.css. Prose, code, figures and math only —
+   the nav, footer and tokens come from pages.css / tokens.css.
+   ============================================================ */
+
+.post-head { padding-block: var(--s-7) var(--s-5); }
+.post-meta {
+  display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-3);
+  font-family: var(--font-mono); font-size: var(--text-xs); color: var(--muted);
+}
+.post-title {
+  font-family: var(--font-display); font-size: var(--text-3xl);
+  font-weight: 600; letter-spacing: -0.02em; line-height: 1.2;
+  margin: var(--s-3) 0 0;
+}
+.post-lead { margin: var(--s-4) 0 0; color: var(--ink-2); font-size: var(--text-lg); }
+
+.post-body {
+  border-top: var(--rule-strong);
+  padding-top: var(--s-6); padding-bottom: var(--s-7);
+  max-width: 68ch;
+}
+
+/* Korean bodies break on word boundaries and want more leading. */
+.post-body:lang(ko) { line-height: 1.9; word-break: keep-all; }
+.post-body:lang(ko) p, .post-body:lang(ko) li { text-wrap: pretty; }
+
+/* Flow spacing. These two must stay above the element rules below — a
+   `margin: 0` shorthand further down would otherwise wipe out the margin-top. */
+.post-body > * { margin: 0; }
+.post-body > * + * { margin-top: var(--s-4); }
+
+.post-body h2, .post-body h3 {
+  font-family: var(--font-display); font-weight: 600; letter-spacing: -0.01em;
+  margin-top: var(--s-7); margin-bottom: var(--s-3); scroll-margin-top: 72px;
+}
+.post-body h2 { font-size: var(--text-xl); }
+.post-body h3 { font-size: var(--text-lg); color: var(--ink-2); }
+.post-body a { color: var(--accent); text-underline-offset: 3px; }
+.post-body ul, .post-body ol { padding-left: 1.3em; }
+.post-body li + li { margin-top: var(--s-2); }
+.post-body strong { font-weight: 600; color: var(--ink); }
+
+.post-body blockquote {
+  padding: var(--s-2) 0 var(--s-2) var(--s-4);
+  border-left: 2px solid var(--accent); color: var(--ink-2);
+}
+
+/* ---------- Code ---------- */
+
+.post-body code {
+  font-family: var(--font-mono); font-size: 0.88em;
+  background: var(--surface-2); border: 1px solid var(--border);
+  border-radius: var(--r-xs); padding: 1px 5px;
+}
+.post-body pre {
+  overflow-x: auto;
+  background: var(--surface-2); border: 1px solid var(--border-2);
+  border-radius: var(--r-sm); padding: var(--s-4);
+  font-size: var(--text-sm); line-height: 1.6;
+}
+.post-body pre code { background: none; border: 0; padding: 0; font-size: inherit; }
+
+/* ---------- Figures ---------- */
+
+.post-body figure img {
+  display: block; width: 100%; height: auto;
+  border: 1px solid var(--border-2); border-radius: var(--r-sm);
+  background: var(--surface-2);
+}
+.post-body figcaption {
+  margin-top: var(--s-2);
+  font-size: var(--text-xs); color: var(--muted); line-height: 1.5;
+}
+
+/* ---------- Tables ---------- */
+
+.post-table-wrap { overflow-x: auto; }
+.post-body table { border-collapse: collapse; width: 100%; font-size: var(--text-sm); }
+.post-body th, .post-body td {
+  text-align: left; padding: var(--s-2) var(--s-3);
+  border-bottom: 1px solid var(--border);
+}
+.post-body th {
+  font-family: var(--font-mono); font-size: var(--text-xs);
+  text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted);
+  border-bottom: var(--rule);
+}
+
+/* ---------- Math (KaTeX) ---------- */
+
+/* Long display equations scroll instead of widening the page. */
+.post-body .katex-display { overflow-x: auto; overflow-y: hidden; padding-block: var(--s-1); }
+.post-body .katex { font-size: 1.04em; }
+
+/* ---------- Footer nav ---------- */
+
+.post-foot { border-top: var(--rule); padding-block: var(--s-5); }
+
+@media (max-width: 640px) {
+  .post-head { padding-block: var(--s-6) var(--s-4); }
+  .post-title { font-size: var(--text-2xl); }
+}
