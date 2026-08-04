@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import {
-  cleanMeta, metaError, parsePosts, postUrl, renderPostPage, serializePosts, slugError, upsertPost,
+  cleanMeta, fullDate, metaError, parsePosts, postUrl, renderPostPage, serializePosts, slugError, upsertPost,
 } from "../admin/posts-store.js";
 
 const META = {
@@ -78,6 +78,7 @@ describe("renderPostPage", () => {
     '<div class="post-meta">{{META}}</div>',
     '<h1 class="post-title">{{TITLE}}</h1>',
     '<p class="post-lead">{{LEAD}}</p>',
+    '<p class="post-date"><time datetime="{{DATE_ISO}}">{{DATE_FULL}}</time></p>',
     '<article class="post-body">',
     "{{BODY}}",
     "</article>",
@@ -88,8 +89,14 @@ describe("renderPostPage", () => {
     expect(page).not.toMatch(/\{\{[A-Z_]+\}\}/);
     expect(page).toContain('<html lang="ko">');
     expect(page).toContain("<p>Body</p>");
-    expect(page).toContain("Aug 2026");
     expect(page).toContain("Deep learning");
+  });
+
+  test("puts the exact day under the title, machine-readable", () => {
+    const page = renderPostPage(template, cleanMeta(META), "<p>x</p>");
+    expect(page).toContain('<time datetime="2026-08-04">2026년 8월 4일</time>');
+    /* The strip above the title no longer repeats it. */
+    expect(page.slice(0, page.indexOf("post-title"))).not.toContain("Aug 2026");
   });
 
   test("drops the shell's own instructions", () => {
@@ -119,10 +126,24 @@ describe("renderPostPage", () => {
   });
 });
 
+describe("fullDate", () => {
+  test("writes the day the way the post's language writes it", () => {
+    expect(fullDate("2026-08-04", "ko")).toBe("2026년 8월 4일");
+    expect(fullDate("2026-08-04", "en")).toBe("4 Aug 2026");
+    expect(fullDate("2026-12-25", "ko")).toBe("2026년 12월 25일");
+  });
+
+  test("returns nothing for a date it cannot read", () => {
+    expect(fullDate("2026-08", "ko")).toBe("");
+    expect(fullDate("", "ko")).toBe("");
+    expect(fullDate("2026-13-01", "ko")).toBe("");
+  });
+});
+
 describe("the real shell", () => {
   test("carries every token renderPostPage fills", async () => {
     const shell = await Bun.file(new URL("../templates/post-template.html", import.meta.url)).text();
-    for (const token of ["{{LANG}}", "{{TITLE}}", "{{DESCRIPTION}}", "{{META}}", "{{LEAD}}", "{{BODY}}"]) {
+    for (const token of ["{{LANG}}", "{{TITLE}}", "{{DESCRIPTION}}", "{{META}}", "{{DATE_ISO}}", "{{DATE_FULL}}", "{{LEAD}}", "{{BODY}}"]) {
       expect(shell, `shell is missing ${token}`).toContain(token);
     }
     const page = renderPostPage(shell, cleanMeta(META), "<p>Body</p>");

@@ -16,10 +16,16 @@
 }
 .post-lead { margin: var(--s-4) 0 0; color: var(--ink-2); font-size: var(--text-lg); }
 
+.post-date {
+  margin: var(--s-4) 0 0;
+  font-family: var(--font-mono); font-size: var(--text-xs); color: var(--muted);
+}
+
+/* Full width of .wrap on purpose, so the body lines up with the nav, the
+   figures and the footer instead of leaving a gutter down the right. */
 .post-body {
   border-top: var(--rule-strong);
   padding-top: var(--s-6); padding-bottom: var(--s-7);
-  max-width: 68ch;
 }
 
 /* Korean bodies break on word boundaries and want more leading. */

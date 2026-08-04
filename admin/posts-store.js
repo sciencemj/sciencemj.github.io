@@ -93,6 +93,16 @@ export function monthYear(date) {
   return month ? month + " " + parts[0] : "";
 }
 
+/* The exact day, written the way the post's own language writes it. */
+export function fullDate(date, lang) {
+  const parts = String(date || "").split("-");
+  if (parts.length !== 3) return "";
+  const [year, month, day] = parts.map(Number);
+  if (!year || !month || !day || !MONTHS[month - 1]) return "";
+  if (lang === "ko") return `${year}년 ${month}월 ${day}일`;
+  return `${day} ${MONTHS[month - 1]} ${year}`;
+}
+
 /* Upserts the entry for this slug and keeps the list newest-first. */
 export function upsertPost(posts, meta) {
   const url = postUrl(meta.slug);
@@ -105,7 +115,9 @@ export function upsertPost(posts, meta) {
 }
 
 export function renderPostPage(template, meta, bodyHtml) {
-  const metaLine = [monthYear(meta.date), meta.kind, meta.tags.join(", ")]
+  /* The day itself sits under the title, so the strip above it only carries the
+     kind and the tags. */
+  const metaLine = [meta.kind, meta.tags.join(", ")]
     .filter(Boolean)
     .map((part) => "<span>" + escapeHtml(part) + "</span>")
     .join('<span aria-hidden="true">·</span>');
@@ -115,6 +127,8 @@ export function renderPostPage(template, meta, bodyHtml) {
     TITLE: escapeHtml(meta.title),
     DESCRIPTION: escapeHtml(description),
     META: metaLine,
+    DATE_ISO: escapeHtml(meta.date),
+    DATE_FULL: escapeHtml(fullDate(meta.date, meta.lang)),
     LEAD: escapeHtml(meta.lead),
     BODY: bodyHtml,
   };
