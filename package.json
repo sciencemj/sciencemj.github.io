@@ -1,0 +1,13 @@
+{
+  "name": "sciencemj-portfolio",
+  "private": true,
+  "type": "module",
+  "description": "Static portfolio site. The only dependency is the markdown parser the post build needs.",
+  "scripts": {
+    "build": "bun tools/build-site.js",
+    "test": "bun test"
+  },
+  "dependencies": {
+    "marked": "12.0.2"
+  }
+}

@@ -4,3 +4,8 @@
 .superpowers/
 .admin-archive/
 .admin-tmp/
+node_modules/
+dist/
+
+# Built from posts/<slug>.md by tools/build-site.js — the CI build owns these.
+posts/*.html

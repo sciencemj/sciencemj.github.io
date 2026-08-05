@@ -33,11 +33,16 @@ describe("posts.data.js", () => {
     });
   });
 
-  test("internal urls point at files that exist", () => {
+  /* posts/<slug>.html is built by tools/build-site.js and is not in the
+     repository, so the thing that has to exist is the markdown source. */
+  test("every internal post has a markdown source to build from", () => {
     posts
       .filter((post) => !/^https?:\/\//i.test(post.url))
       .forEach((post) => {
-        expect(existsSync(resolve(ROOT, post.url)), `missing file for "${post.title}": ${post.url}`).toBe(true);
+        const match = /^posts\/([a-z0-9-]+)\.html$/.exec(post.url);
+        expect(match, `internal url must look like posts/<slug>.html: ${post.url}`).not.toBeNull();
+        const source = `posts/${match[1]}.md`;
+        expect(existsSync(resolve(ROOT, source)), `missing source for "${post.title}": ${source}`).toBe(true);
       });
   });
 

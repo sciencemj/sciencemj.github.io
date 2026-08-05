@@ -68,8 +68,14 @@ function insideRoot(root, relativePath) {
 
 /* Writes posts/<slug>.md, posts/<slug>.html, any new images, and the
    posts.data.js entry. Anything that fails halfway is rolled back. */
+/* Multipart form fields arrive with CRLF line endings — the browser normalises
+   them on the way out. Text written into the repository stays LF. */
+const lf = (text) => String(text == null ? "" : text).replace(/\r\n/g, "\n");
+
 export async function savePostTransaction(options) {
-  const { root, transactionId, markdown, bodyHtml } = options;
+  const { root, transactionId } = options;
+  const markdown = lf(options.markdown);
+  const bodyHtml = lf(options.bodyHtml);
   const images = options.images instanceof Map ? options.images : new Map();
   if (!root || !/^[A-Za-z0-9_-]+$/.test(transactionId || "")) {
     throw transactionError("invalid-transaction", "Invalid save transaction.");

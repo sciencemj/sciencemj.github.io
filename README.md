@@ -1,11 +1,29 @@
 # sciencemj.github.io
 
 Personal portfolio for **MJ (Sciencemj)** — a Business × Computer Science
-student working in data and ML. Static site, no build step, served by GitHub
-Pages at <https://sciencemj.github.io/>.
+student working in data and ML. Served by GitHub Pages at
+<https://sciencemj.github.io/>.
 
 It applies the *Sciencemj* design system (warm earth-tone palette, terracotta
 accent, Space Grotesk / Hanken Grotesk / JetBrains Mono, light + dark).
+
+## Build
+
+Every page except the posts is plain static HTML, committed as-is. Posts are
+built from their markdown:
+
+```
+bun install
+bun tools/build-site.js   # -> dist/
+```
+
+`.github/workflows/pages.yml` runs the tests and this build on every push to
+`main`, then deploys `dist/` to Pages. `posts/*.html` is therefore **not** in
+the repository — `posts/<slug>.md` is the source, and editing
+`templates/post-template.html` re-renders every post on the next push.
+
+`dist/` carries only what a reader needs; `admin/`, `tests/`, `tools/`,
+`templates/` and `docs/` stay out of it.
 
 ## Layout
 
