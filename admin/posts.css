@@ -91,3 +91,9 @@
   .post-grid { grid-template-columns: 1fr; }
   #markdown, #preview { min-height: 44vh; }
 }
+
+/* CodeMirror fills the pane the textarea used to. */
+#editor-host { flex: 1; min-height: 60vh; overflow: auto; }
+#editor-host.dropping { background: var(--accent-soft); }
+#editor-host .cm-editor { height: 100%; }
+#editor-host .cm-editor.cm-focused { outline: 2px solid var(--accent); outline-offset: -2px; }

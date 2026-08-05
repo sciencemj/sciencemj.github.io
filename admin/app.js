@@ -20,6 +20,7 @@ const ADMIN_FILES = new Map([
   ["/admin/posts-store.js", ["posts-store.js", "text/javascript; charset=utf-8"]],
   ["/admin/markdown.js", ["markdown.js", "text/javascript; charset=utf-8"]],
   ["/admin/draft.js", ["draft.js", "text/javascript; charset=utf-8"]],
+  ["/admin/live-markdown.js", ["live-markdown.js", "text/javascript; charset=utf-8"]],
 ]);
 
 const json = (data, status = 200) => new Response(JSON.stringify(data), {

@@ -17,6 +17,9 @@
   </script>
   <!-- Markdown parser. Without it the editor cannot render or save. -->
   <script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
+  <!-- Maths, for the inline widgets in the editor and the preview. -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
   <script type="module" src="/admin/posts.js"></script>
 </head>
 <body>
@@ -106,6 +109,9 @@
             <input id="image-input" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml,.svg" multiple hidden>
           </div>
         </div>
+        <!-- The live editor mounts here. The textarea below is the fallback when
+             CodeMirror cannot be fetched, and the value both paths read. -->
+        <div id="editor-host"></div>
         <textarea id="markdown" spellcheck="false" placeholder="## 첫 소제목
 
 본문. 인라인 수식은 $a^2 + b^2 = c^2$ 처럼.

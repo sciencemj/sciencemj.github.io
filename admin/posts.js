@@ -15,6 +15,21 @@ const fields = {
   kind: el("f-kind"), lang: el("f-lang"), tags: el("f-tags"), lead: el("f-lead"),
 };
 const markdownInput = el("markdown");
+
+/* The editing surface: CodeMirror when it loads, the textarea when it does not.
+   Everything below talks to this, never to a widget directly. */
+let surface = {
+  getValue: () => markdownInput.value,
+  setValue(text) { markdownInput.value = text; },
+  insertAtCursor(text) {
+    const start = markdownInput.selectionStart;
+    const end = markdownInput.selectionEnd;
+    const value = markdownInput.value;
+    markdownInput.value = value.slice(0, start) + text + value.slice(end);
+    markdownInput.selectionStart = markdownInput.selectionEnd = start + text.length;
+    markdownInput.focus();
+  },
+};
 const preview = el("preview");
 const saveBtn = el("save-btn");
 const dirty = el("dirty-indicator");
@@ -62,7 +77,7 @@ function dropDraft(key) {
 }
 
 function storeDraft() {
-  const draft = makeDraft(readMeta(), markdownInput.value, new Date().toISOString());
+  const draft = makeDraft(readMeta(), surface.getValue(), new Date().toISOString());
   if (!worthKeeping(draft)) { dropDraft(draftKey); return; }
   try {
     localStorage.setItem(draftKey, JSON.stringify(draft));
@@ -118,7 +133,7 @@ function restoreDraft() {
   fields.lang.value = draft.lang;
   fields.tags.value = (draft.tags || []).join(", ");
   fields.lead.value = draft.lead;
-  markdownInput.value = draft.markdown;
+  surface.setValue(draft.markdown);
   slugTouched = true;
   setDirty(true);
   renderPreview();
@@ -156,7 +171,7 @@ function renderPreview() {
   if (!template) return;
   let body;
   try {
-    body = render(markdownInput.value, { resolveSrc: resolvePreviewSrc });
+    body = render(surface.getValue(), { resolveSrc: resolvePreviewSrc });
   } catch (error) {
     el("preview-note").textContent = error.message;
     return;
@@ -218,11 +233,78 @@ async function toWebp(file) {
 /* One counter across both extensions so a .svg and a .webp never collide. */
 function nextImageName(slug, extension) {
   const used = new Set(pendingImages.keys());
-  (markdownInput.value.match(/assets\/[a-z0-9-]+-\d+\.(?:webp|svg)/g) || []).forEach((path) => used.add(path));
+  (surface.getValue().match(/assets\/[a-z0-9-]+-\d+\.(?:webp|svg)/g) || []).forEach((path) => used.add(path));
   const taken = (index) => used.has(`assets/${slug}-${index}.webp`) || used.has(`assets/${slug}-${index}.svg`);
   let index = 1;
   while (taken(index)) index += 1;
   return `assets/${slug}-${index}.${extension}`;
+}
+
+/* Dropping or pasting an image adds it, wherever the editing surface lives. */
+function imagesFrom(event) {
+  const list = event.dataTransfer?.files || event.clipboardData?.files || [];
+  return [...list].filter(isImage);
+}
+
+function attachDropTarget(node) {
+  ["dragenter", "dragover"].forEach((type) => node.addEventListener(type, (event) => {
+    event.preventDefault();
+    node.classList.add("dropping");
+  }));
+  ["dragleave", "drop"].forEach((type) => node.addEventListener(type, () => {
+    node.classList.remove("dropping");
+  }));
+  node.addEventListener("drop", (event) => {
+    const files = imagesFrom(event);
+    if (!files.length) return;
+    event.preventDefault();
+    addImages(files);
+  });
+  node.addEventListener("paste", (event) => {
+    const files = imagesFrom(event);
+    if (!files.length) return;
+    event.preventDefault();
+    addImages(files);
+  });
+}
+
+/* Swaps the textarea for CodeMirror once it loads. If the CDN is unreachable
+   the textarea simply stays, and everything else keeps working. */
+async function mountLiveEditor() {
+  try {
+    const { createLiveEditor } = await import("./live-markdown.js");
+    const host = el("editor-host");
+    const editor = createLiveEditor({
+      parent: host,
+      doc: surface.getValue(),
+      onChange: refresh,
+      resolveSrc: resolvePreviewSrc,
+      onDrop(event) {
+        const files = imagesFrom(event);
+        if (!files.length) return false;
+        event.preventDefault();
+        addImages(files);
+        return true;
+      },
+      onPaste(event) {
+        const files = imagesFrom(event);
+        if (!files.length) return false;
+        event.preventDefault();
+        addImages(files);
+        return true;
+      },
+    });
+    markdownInput.hidden = true;
+    host.hidden = false;
+    surface = editor;
+    attachDropTarget(host);
+    el("image-note").textContent =
+      "Drag an image in, or paste one. Syntax shows on the line you are editing.";
+  } catch (error) {
+    el("editor-host").hidden = true;
+    el("image-note").textContent =
+      "Live preview unavailable — editing plain markdown. " + (error?.message || error);
+  }
 }
 
 /* A dragged .svg sometimes arrives with an empty type, so fall back to the name. */
@@ -240,15 +322,6 @@ async function prepareImage(file) {
   return { blob: await toWebp(file), extension: "webp" };
 }
 
-function insertAtCursor(text) {
-  const start = markdownInput.selectionStart;
-  const end = markdownInput.selectionEnd;
-  const value = markdownInput.value;
-  markdownInput.value = value.slice(0, start) + text + value.slice(end);
-  markdownInput.selectionStart = markdownInput.selectionEnd = start + text.length;
-  markdownInput.focus();
-}
-
 async function addImages(files) {
   const slug = fields.slug.value.trim() || slugify(fields.title.value) || "post";
   if (!/^[a-z0-9-]+$/.test(slug)) {
@@ -260,7 +333,7 @@ async function addImages(files) {
       const { blob, extension } = await prepareImage(file);
       const name = nextImageName(slug, extension);
       pendingImages.set(name, { blob, url: URL.createObjectURL(blob) });
-      insertAtCursor(`\n\n![${file.name.replace(/\.[^.]+$/, "")}](${name})\n\n`);
+      surface.insertAtCursor(`\n\n![${file.name.replace(/\.[^.]+$/, "")}](${name})\n\n`);
       refresh();
       toast(`Added ${name} (${Math.round(blob.size / 1024)}KB)`, "success");
     } catch (error) {
@@ -277,7 +350,7 @@ async function save() {
 
   let body;
   try {
-    body = render(markdownInput.value, {});
+    body = render(surface.getValue(), {});
   } catch (error) {
     toast(error.message, "error");
     return;
@@ -286,11 +359,11 @@ async function save() {
 
   const form = new FormData();
   form.set("meta", JSON.stringify(meta));
-  form.set("markdown", markdownInput.value);
+  form.set("markdown", surface.getValue());
   form.set("html", body);
   /* Only ship images the body still references. */
   for (const [name, image] of pendingImages) {
-    if (markdownInput.value.includes(name)) form.set("image:" + name, image.blob, name.split("/").pop());
+    if (surface.getValue().includes(name)) form.set("image:" + name, image.blob, name.split("/").pop());
   }
 
   saveBtn.disabled = true;
@@ -299,7 +372,7 @@ async function save() {
     const result = await response.json();
     if (!result.ok) throw new Error(result.error || "Save failed.");
     for (const [name, image] of pendingImages) {
-      if (markdownInput.value.includes(name)) URL.revokeObjectURL(image.url);
+      if (surface.getValue().includes(name)) URL.revokeObjectURL(image.url);
     }
     pendingImages.clear();
     clearTimeout(draftTimer);
@@ -359,7 +432,7 @@ async function openPost(slug) {
   draftKey = draftKeyFor(slug);
 
   if (!slug) {
-    markdownInput.value = "";
+    surface.setValue("");
     Object.values(fields).forEach((field) => { if (field.type !== "select-one") field.value = ""; });
     fields.date.value = new Date().toISOString().slice(0, 10);
     slugTouched = false;
@@ -376,14 +449,14 @@ async function openPost(slug) {
     fields.kind.value = entry.kind || "Post";
     fields.lang.value = entry.lang || "ko";
     fields.tags.value = (entry.tags || []).join(", ");
-    markdownInput.value = result.markdown;
+    surface.setValue(result.markdown);
     slugTouched = true;
     setDirty(false);
     renderPreview();
   }
 
   const draft = readDraft(draftKey);
-  if (shouldOffer(draft, { markdown: markdownInput.value, title: fields.title.value })) offerDraft(draft);
+  if (shouldOffer(draft, { markdown: surface.getValue(), title: fields.title.value })) offerDraft(draft);
   else if (draft) dropDraft(draftKey);
 }
 
@@ -407,25 +480,7 @@ function wire() {
     event.target.value = "";
   });
 
-  ["dragenter", "dragover"].forEach((type) => markdownInput.addEventListener(type, (event) => {
-    event.preventDefault();
-    markdownInput.classList.add("dropping");
-  }));
-  ["dragleave", "drop"].forEach((type) => markdownInput.addEventListener(type, () => {
-    markdownInput.classList.remove("dropping");
-  }));
-  markdownInput.addEventListener("drop", (event) => {
-    const files = [...(event.dataTransfer?.files || [])].filter(isImage);
-    if (!files.length) return;
-    event.preventDefault();
-    addImages(files);
-  });
-  markdownInput.addEventListener("paste", (event) => {
-    const files = [...(event.clipboardData?.files || [])].filter(isImage);
-    if (!files.length) return;
-    event.preventDefault();
-    addImages(files);
-  });
+  attachDropTarget(markdownInput);
 
   saveBtn.addEventListener("click", save);
   el("commit-btn").addEventListener("click", commit);
@@ -449,6 +504,7 @@ function wire() {
 
 async function start() {
   wire();
+  await mountLiveEditor();
   try {
     template = await (await fetch("/templates/post-template.html")).text();
   } catch {

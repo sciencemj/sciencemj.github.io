@@ -17,8 +17,11 @@ bun admin/server.js
 Then open **Write a post** from the admin bar, or go straight to
 <http://127.0.0.1:4747/admin/posts>.
 
-- Left pane is markdown, right pane is the page itself — the preview runs the
-  same `renderPostPage()` the server writes with, so it cannot drift.
+- The left pane edits markdown in place: headings, emphasis, links, images,
+  maths and rules render where you type, and the raw syntax comes back on the
+  line the cursor is on. The document itself never stops being markdown.
+- The right pane is the page itself — it runs the same `renderPostPage()` the
+  build writes with, so it cannot drift.
 - Drag an image onto the editor, paste one from the clipboard, or use **+ Image**.
   The markdown link is inserted for you.
   - PNG / JPEG / WebP are resized to 1600px wide and re-encoded as WebP (≤400KB).
