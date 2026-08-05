@@ -50,7 +50,7 @@
        in a new tab. */
     var target = isExternal(post.url) ? ' target="_blank" rel="noopener"' : "";
     var lang = post.lang === "ko" || post.lang === "en" ? post.lang.toUpperCase() : "";
-    return '<li class="row">' +
+    return '<li class="row row--dated">' +
       '<span class="row-when">' + esc(monthYear(post.date)) + "</span>" +
       '<div class="row-body">' +
         '<a class="row-title" href="' + esc(post.url) + '"' + target + ">" + esc(post.title) + "</a>" +

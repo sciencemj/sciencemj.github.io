@@ -199,6 +199,12 @@ img { max-width: 100%; height: auto; }
 .row { display: grid; grid-template-columns: 96px 1fr; gap: var(--s-4); }
 .row--proj { grid-template-columns: 128px 1fr; gap: var(--s-5); }
 
+/* Dated rows read body-first with the date trailing at the right edge. The
+   contact page keeps the plain .row, where that column is a label, not a date. */
+.row--dated { grid-template-columns: 1fr auto; }
+.row--dated .row-body { grid-column: 1; grid-row: 1; }
+.row--dated .row-when { grid-column: 2; grid-row: 1; text-align: right; }
+
 .row-when {
   font-family: var(--font-mono); font-size: var(--text-xs);
   color: var(--muted); line-height: 1.5; padding-top: 4px; white-space: nowrap;
@@ -290,6 +296,10 @@ a.row-title:hover { color: var(--accent); }
   .row { grid-template-columns: 1fr; gap: var(--s-2); }
   .row--proj { grid-template-columns: 88px 1fr; gap: var(--s-4); }
   .row-when { padding-top: 0; }
+  /* Too narrow to sit two columns side by side — the date goes back on top. */
+  .row--dated { grid-template-columns: 1fr; }
+  .row--dated .row-body, .row--dated .row-when { grid-column: 1; grid-row: auto; }
+  .row--dated .row-when { text-align: left; }
   /* The nav links are the only way between pages — keep them on small screens. */
   .nav-right { gap: var(--s-3); }
   .nav-link { font-size: var(--text-xs); }
