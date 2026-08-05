@@ -1,7 +1,6 @@
 /* ============================================================
-   Atmosphere — one light source above the page.
-   A radial aurora in the accent over a soft wash, and nothing else.
-   Sections below the fold sit on flat canvas on purpose.
+   Background art — blurred, slow-drifting earth-tone orbs.
+   Fixed behind all content. Theme-aware, reduced-motion safe.
    ============================================================ */
 
 .bg-art {
@@ -10,30 +9,65 @@
   z-index: -1;
   overflow: hidden;
   pointer-events: none;
-  background: var(--wash);
+  /* gentle fade-in on load so it doesn't pop */
+  animation: bgFade 1.2s ease both;
 }
+@keyframes bgFade { from { opacity: 0; } to { opacity: 1; } }
 
-/* The glow itself. Only the top of the page is lit. */
-.bg-art::before {
-  content: "";
+.bg-art .orb {
   position: absolute;
-  inset: 0 0 auto 0;
-  height: 72vh;
-  background: var(--aurora);
-  opacity: .55;
+  border-radius: 50%;
+  filter: blur(90px);
+  opacity: .18;
+  mix-blend-mode: multiply;          /* tints the warm paper */
+  will-change: transform;
 }
-[data-theme="dark"] .bg-art::before { opacity: .7; }
-
-/* A hairline where the lit area ends, so the hero reads as a surface. */
-.bg-art::after {
-  content: "";
-  position: absolute;
-  left: 0; right: 0; top: 72vh;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, var(--border), transparent);
-  opacity: .6;
+[data-theme="dark"] .bg-art .orb {
+  filter: blur(104px);
+  opacity: .24;
+  mix-blend-mode: screen;            /* glows on the dark brown */
 }
 
-/* The old orb markup is still in the pages; it has no job now. */
-.bg-art .orb,
-.bg-art .grain { display: none; }
+.bg-art .o1 {
+  width: 48vw; height: 48vw; left: -10vw; top: -8vw;
+  background: radial-gradient(circle at 32% 32%, var(--accent), transparent 70%);
+  animation: drift1 68s ease-in-out infinite alternate;
+}
+.bg-art .o2 {
+  width: 42vw; height: 42vw; right: -12vw; top: 8vh;
+  background: radial-gradient(circle at 50% 50%, var(--viz-teal), transparent 70%);
+  animation: drift2 86s ease-in-out infinite alternate;
+}
+.bg-art .o3 {
+  width: 40vw; height: 40vw; left: 16vw; bottom: -16vw;
+  background: radial-gradient(circle at 50% 50%, var(--viz-sand), transparent 71%);
+  animation: drift3 76s ease-in-out infinite alternate;
+}
+.bg-art .o4 {
+  width: 34vw; height: 34vw; right: 4vw; bottom: -10vw;
+  background: radial-gradient(circle at 50% 50%, var(--viz-olive), transparent 72%);
+  animation: drift4 94s ease-in-out infinite alternate;
+}
+.bg-art .o5 {
+  width: 30vw; height: 30vw; left: 40vw; top: 26vh;
+  background: radial-gradient(circle at 50% 50%, var(--viz-clay), transparent 72%);
+  animation: drift5 60s ease-in-out infinite alternate;
+}
+
+@keyframes drift1 { from { transform: translate(0,0) scale(1); }    to { transform: translate(9vw,7vh) scale(1.16); } }
+@keyframes drift2 { from { transform: translate(0,0) scale(1); }    to { transform: translate(-8vw,6vh) scale(1.1); } }
+@keyframes drift3 { from { transform: translate(0,0) scale(1.04); } to { transform: translate(7vw,-8vh) scale(1.18); } }
+@keyframes drift4 { from { transform: translate(0,0) scale(1.06); } to { transform: translate(-6vw,-6vh) scale(1); } }
+@keyframes drift5 { from { transform: translate(0,0) scale(1); }    to { transform: translate(6vw,9vh) scale(1.13); } }
+
+/* faint film grain for texture */
+.bg-art .grain {
+  position: absolute; inset: 0; opacity: .04; pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+[data-theme="dark"] .bg-art .grain { opacity: .06; }
+
+@media (prefers-reduced-motion: reduce) {
+  .bg-art { animation: none; }
+  .bg-art .orb { animation: none; }
+}
