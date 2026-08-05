@@ -12,6 +12,7 @@
    Edited by the local admin tool (`bun admin/server.js`) or by hand.
    Array body must stay valid JSON: pages.js and the admin server both parse it. */
 window.PORTFOLIO_POSTS = [
+  {"date":"2026-08-05","kind":"Post","lang":"ko","title":"Batch Normalization","url":"posts/batch-normalization.html","tags":["Deep Learning"]},
   {"date":"2026-08-04","kind":"Post","lang":"ko","title":"역전파의 원리","url":"posts/backpropagation.html","tags":["Deep learning"]},
   {"date":"2026-07-12","kind":"Post","lang":"ko","title":"Dummy post — replace with a real one","url":"https://github.com/sciencemj","tags":["Placeholder"]}
 ];
