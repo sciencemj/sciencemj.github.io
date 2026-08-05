@@ -1,48 +1,56 @@
 /* ============================================================
    Sciencemj — post pages
-   Loaded on top of pages.css. Prose, code, figures and math only —
-   the nav, footer and tokens come from pages.css / tokens.css.
+   Loaded on top of pages.css. Prose, code, figures and maths only.
+   Body copy is the UI sans; only the headings take the display serif.
    ============================================================ */
 
-.post-head { padding-block: var(--s-7) var(--s-5); }
+.post-head { padding-block: 80px var(--s-5); max-width: var(--reading); }
 .post-meta {
   display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-3);
-  font-family: var(--font-mono); font-size: var(--text-xs); color: var(--muted);
+  font-family: var(--font-mono); font-size: var(--fs-label); font-weight: 500;
+  text-transform: uppercase; letter-spacing: var(--tr-label); color: var(--muted);
 }
 .post-title {
-  font-family: var(--font-display); font-size: var(--text-3xl);
-  font-weight: 600; letter-spacing: -0.02em; line-height: 1.2;
-  margin: var(--s-3) 0 0;
+  font-family: var(--font-serif); font-weight: 400;
+  font-size: clamp(34px, 5.5vw, var(--fs-h-lg));
+  line-height: var(--lh-h-lg); letter-spacing: var(--tr-h-lg);
+  color: var(--ink); margin: var(--s-4) 0 0;
 }
-.post-lead { margin: var(--s-4) 0 0; color: var(--ink-2); font-size: var(--text-lg); }
-
+.post-lead {
+  margin: var(--s-4) 0 0; color: var(--ink-2);
+  font-size: var(--fs-lead); line-height: var(--lh-lead);
+}
 .post-date {
   margin: var(--s-4) 0 0;
-  font-family: var(--font-mono); font-size: var(--text-xs); color: var(--muted);
+  font-family: var(--font-mono); font-size: var(--fs-caption);
+  text-transform: uppercase; letter-spacing: var(--tr-caption); color: var(--muted);
 }
 
-/* Full width of .wrap on purpose, so the body lines up with the nav, the
-   figures and the footer instead of leaving a gutter down the right. */
 .post-body {
-  border-top: var(--rule-strong);
-  padding-top: var(--s-6); padding-bottom: var(--s-7);
+  border-top: var(--rule);
+  padding-top: var(--s-7); padding-bottom: var(--s-8);
+  max-width: var(--reading);
+  font-size: var(--fs-lead);
 }
 
-/* Korean bodies break on word boundaries and want more leading. */
-.post-body:lang(ko) { line-height: 1.9; word-break: keep-all; }
+/* Korean breaks on word boundaries and wants more leading. */
+.post-body:lang(ko) { line-height: 1.85; word-break: keep-all; }
 .post-body:lang(ko) p, .post-body:lang(ko) li { text-wrap: pretty; }
 
 /* Flow spacing. These two must stay above the element rules below — a
    `margin: 0` shorthand further down would otherwise wipe out the margin-top. */
 .post-body > * { margin: 0; }
 .post-body > * + * { margin-top: var(--s-4); }
-
 .post-body h2, .post-body h3 {
-  font-family: var(--font-display); font-weight: 600; letter-spacing: -0.01em;
-  margin-top: var(--s-7); margin-bottom: var(--s-3); scroll-margin-top: 72px;
+  font-family: var(--font-serif); font-weight: 400; color: var(--ink);
+  margin-top: var(--s-8); margin-bottom: var(--s-3); scroll-margin-top: 72px;
+  letter-spacing: -0.015em; line-height: 1.2;
 }
-.post-body h2 { font-size: var(--text-xl); }
-.post-body h3 { font-size: var(--text-lg); color: var(--ink-2); }
+.post-body h2 { font-size: 32px; }
+.post-body h3 { font-size: 23px; }
+/* The rule above the article is the separation; the first block adds none.
+   Declared after the heading rule so a leading h2 loses its top margin too. */
+.post-body > :first-child { margin-top: 0; }
 .post-body a { color: var(--accent); text-underline-offset: 3px; }
 .post-body ul, .post-body ol { padding-left: 1.3em; }
 .post-body li + li { margin-top: var(--s-2); }
@@ -56,15 +64,15 @@
 /* ---------- Code ---------- */
 
 .post-body code {
-  font-family: var(--font-mono); font-size: 0.88em;
+  font-family: var(--font-mono); font-size: 0.86em;
   background: var(--surface-2); border: 1px solid var(--border);
-  border-radius: var(--r-xs); padding: 1px 5px;
+  border-radius: var(--r-surface); padding: 1px 5px;
 }
 .post-body pre {
   overflow-x: auto;
   background: var(--surface-2); border: 1px solid var(--border-2);
-  border-radius: var(--r-sm); padding: var(--s-4);
-  font-size: var(--text-sm); line-height: 1.6;
+  border-radius: var(--r-surface); padding: var(--s-4);
+  font-size: var(--fs-body); line-height: 1.6;
 }
 .post-body pre code { background: none; border: 0; padding: 0; font-size: inherit; }
 
@@ -72,39 +80,46 @@
 
 .post-body figure img {
   display: block; width: 100%; height: auto;
-  border: 1px solid var(--border-2); border-radius: var(--r-sm);
+  border: 1px solid var(--border); border-radius: var(--r-surface);
   background: var(--surface-2);
 }
 .post-body figcaption {
   margin-top: var(--s-2);
-  font-size: var(--text-xs); color: var(--muted); line-height: 1.5;
+  font-family: var(--font-mono); font-size: var(--fs-caption);
+  text-transform: uppercase; letter-spacing: var(--tr-caption);
+  color: var(--muted); line-height: 1.5;
 }
 
 /* ---------- Tables ---------- */
 
-.post-table-wrap { overflow-x: auto; }
-.post-body table { border-collapse: collapse; width: 100%; font-size: var(--text-sm); }
+.post-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--border); border-radius: var(--r-surface);
+}
+.post-body table { border-collapse: collapse; width: 100%; font-size: var(--fs-body); }
 .post-body th, .post-body td {
-  text-align: left; padding: var(--s-2) var(--s-3);
+  text-align: left; padding: var(--s-3) var(--s-4);
   border-bottom: 1px solid var(--border);
 }
+.post-body tr:last-child td { border-bottom: 0; }
 .post-body th {
-  font-family: var(--font-mono); font-size: var(--text-xs);
-  text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted);
-  border-bottom: var(--rule);
+  font-family: var(--font-mono); font-size: var(--fs-caption);
+  text-transform: uppercase; letter-spacing: var(--tr-caption); color: var(--muted);
+  background: var(--surface-2);
 }
 
 /* ---------- Math (KaTeX) ---------- */
 
 /* Long display equations scroll instead of widening the page. */
-.post-body .katex-display { overflow-x: auto; overflow-y: hidden; padding-block: var(--s-1); }
-.post-body .katex { font-size: 1.04em; }
+.post-body .katex-display { overflow-x: auto; overflow-y: hidden; padding-block: var(--s-2); }
+.post-body .katex { font-size: 1.02em; }
 
 /* ---------- Footer nav ---------- */
 
-.post-foot { border-top: var(--rule); padding-block: var(--s-5); }
+.post-foot { border-top: var(--rule); padding-block: var(--s-5); max-width: var(--reading); }
 
 @media (max-width: 640px) {
-  .post-head { padding-block: var(--s-6) var(--s-4); }
-  .post-title { font-size: var(--text-2xl); }
+  .post-head { padding-block: var(--s-7) var(--s-4); }
+  .post-body h2 { font-size: 26px; }
+  .post-body h3 { font-size: 20px; }
 }

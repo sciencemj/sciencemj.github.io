@@ -68,6 +68,56 @@
 
   --text-xs: 12px; --text-sm: 14px; --text-base: 16px; --text-lg: 18px;
   --text-xl: 22px; --text-2xl: 30px; --text-3xl: 40px; --text-4xl: 56px;
+
+  /* ============================================================
+     Site design system — a display serif against a plain UI sans,
+     hairline borders instead of shadows, one radius, one accent.
+     The colours above are unchanged; only the shapes and type are new.
+     The older tokens stay because the local admin tool still uses them.
+     ============================================================ */
+
+  /* ---- Type families ---- */
+  --font-serif: "Fraunces", "Nanum Myeongjo", Georgia, serif;
+  --font-ui: "Inter", "IBM Plex Sans KR", system-ui, -apple-system, sans-serif;
+
+  /* ---- Type scale (compact, 4px base) ---- */
+  --fs-caption: 10px;   --lh-caption: 1.5;  --tr-caption: 0.04em;
+  --fs-label: 12px;     --lh-label: 1.4;    --tr-label: 0.15em;
+  --fs-body: 14px;      --lh-body: 1.6;     --tr-body: 0.01em;
+  --fs-lead: 16px;      --lh-lead: 1.6;     --tr-lead: 0.01em;
+  --fs-h-sm: 18px;      --lh-h-sm: 1.33;    --tr-h-sm: 0;
+  --fs-h: 40px;         --lh-h: 1.1;        --tr-h: -0.015em;
+  --fs-h-lg: 56px;      --lh-h-lg: 1.0;     --tr-h-lg: -0.02em;
+  --fs-display: 80px;   --lh-display: 0.95; --tr-display: -0.025em;
+
+  /* ---- Shape: one rectangle radius, one pill ---- */
+  --r-surface: 6px;
+
+  /* ---- Layout ---- */
+  --page: 1200px;
+  --reading: 720px;
+  --section-gap: 64px;
+
+  /* ---- Elevation: the hairline is the elevation ---- */
+  --sh-hairline: 0 0 0 1px rgba(34, 28, 22, .10);
+  --sh-card: 0 1px 3px rgba(34, 28, 22, .06), 0 0 0 1px rgba(34, 28, 22, .08);
+  --sh-button:
+    inset 0 1px 0 rgba(255, 255, 255, .25),
+    0 1px 3px rgba(90, 40, 12, .18),
+    0 7px 11px -5px rgba(90, 40, 12, .14);
+  --sh-mockup:
+    0 21px 44px -32px rgba(34, 28, 22, .18),
+    0 26px 30px -23px rgba(34, 28, 22, .20),
+    0 14px 40px rgba(34, 28, 22, .06),
+    0 0 0 1px rgba(34, 28, 22, .09);
+
+  /* ---- Atmosphere: one light source above the page ---- */
+  --aurora: radial-gradient(120% 90% at 58% 0,
+    color-mix(in srgb, var(--accent) 42%, transparent) 0,
+    color-mix(in srgb, var(--accent-300) 22%, transparent) 34%,
+    transparent 72%);
+  --wash: linear-gradient(180deg, var(--accent-50) 0%, var(--canvas) 62%);
+  --grad-headline: linear-gradient(180deg, var(--accent-300), var(--accent-600));
 }
 
 /* ============================================================
@@ -96,4 +146,27 @@
   --shadow-md: 0 4px 14px rgba(0,0,0,.45);
   --shadow-lg: 0 14px 34px rgba(0,0,0,.55);
   --shadow-raised: inset 0 1px 0 rgba(255,255,255,.06), 0 6px 16px rgba(0,0,0,.5);
+
+  /* The reference system is daylight-only. Dark keeps its rules — one radius,
+     hairline elevation, a single accent — and only inverts the surfaces: the
+     borders carry light instead of shadow, and the aurora is dimmed so it reads
+     as a glow rather than a wash. */
+  --sh-hairline: 0 0 0 1px rgba(255, 255, 255, .07);
+  --sh-card: 0 1px 3px rgba(0, 0, 0, .35), 0 0 0 1px rgba(255, 255, 255, .07);
+  --sh-button:
+    inset 0 1px 0 rgba(255, 255, 255, .18),
+    0 1px 3px rgba(0, 0, 0, .5),
+    0 7px 11px -5px rgba(0, 0, 0, .4);
+  --sh-mockup:
+    0 21px 44px -32px rgba(0, 0, 0, .6),
+    0 26px 30px -23px rgba(0, 0, 0, .45),
+    0 14px 40px rgba(0, 0, 0, .3),
+    0 0 0 1px rgba(255, 255, 255, .08);
+
+  --aurora: radial-gradient(120% 90% at 58% 0,
+    color-mix(in srgb, var(--accent) 30%, transparent) 0,
+    color-mix(in srgb, var(--viz-clay) 16%, transparent) 36%,
+    transparent 74%);
+  --wash: linear-gradient(180deg, color-mix(in srgb, var(--accent) 6%, var(--canvas)) 0%, var(--canvas) 62%);
+  --grad-headline: linear-gradient(180deg, var(--accent-200), var(--accent));
 }
