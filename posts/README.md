@@ -1,11 +1,14 @@
 # Posts
 
-One HTML file per post, no build step.
+`posts/<slug>.md` is the source. The published page is built from it by
+`tools/build-site.js` on every push, so a change to the template re-renders
+every post instead of leaving the already-published ones on an old shell.
 
 ```
-posts/<slug>.md            markdown source, kept so the post stays editable
-posts/<slug>.html          the published page
-posts/assets/<slug>-N.webp its figures
+posts/<slug>.md            markdown source — the only committed thing
+posts/<slug>.html          local preview, written by the editor; gitignored,
+                           rebuilt into dist/ by CI
+posts/assets/<slug>-N.*    its figures (WebP for photos, SVG for diagrams)
 ```
 
 ## Write one (the editor)
@@ -31,8 +34,9 @@ Then open **Write a post** from the admin bar, or go straight to
     stay under 200KB.
 - Maths is [KaTeX](https://katex.org/): `$inline$` and `$$display$$`. A `$` inside
   code stays a `$`.
-- **Save post** writes all three files and updates `../assets/js/posts.data.js`.
-  **Commit & push** publishes.
+- **Save post** writes the markdown, the local preview page and any images, and
+  updates `../assets/js/posts.data.js`. **Commit & push** publishes — only the
+  markdown, the images and the data file go with it; CI rebuilds the page.
 
 Pick an existing post from the dropdown to edit it again.
 
@@ -49,12 +53,17 @@ files it could not bring back, and you re-add them.
 
 ## Write one by hand
 
-Copy `../templates/post-template.html` to `posts/<slug>.html`, replace the
-`{{TOKENS}}`, then add the entry yourself:
+Write `posts/<slug>.md`, then add the entry to `../assets/js/posts.data.js`
+yourself:
 
 ```js
 {"date":"2026-08-04","kind":"Post","lang":"ko","title":"역전파의 원리","url":"posts/backpropagation.html","tags":["Deep learning"]}
 ```
+
+The `url` names the page the build will produce; the build fails if
+`posts.data.js` lists a post whose `.md` is missing. Do not write
+`posts/<slug>.html` by hand — it is gitignored and `tools/build-site.js` owns it.
+Run `bun tools/build-site.js` to see the result in `dist/`.
 
 Keep the array newest-first — the landing page shows the top four.
 

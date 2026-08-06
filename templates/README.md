@@ -20,7 +20,8 @@ and links back to it.
    `<img src>` paths.
 4. Enable **GitHub Pages** on the repo (Settings → Pages → branch `main`, `/`).
 5. Add the repo to the portfolio's card list in
-   `assets/js/projects.js` (`PROJECTS`), with `report: 'report.html'`.
+   `assets/js/projects.data.js` (`window.PORTFOLIO_PROJECTS`), with
+   `report: 'report.html'`.
 
 ## What's built in
 

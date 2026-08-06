@@ -22,8 +22,11 @@ bun tools/build-site.js   # -> dist/
 the repository — `posts/<slug>.md` is the source, and editing
 `templates/post-template.html` re-renders every post on the next push.
 
-`dist/` carries only what a reader needs; `admin/`, `tests/`, `tools/`,
-`templates/` and `docs/` stay out of it.
+`dist/` carries only what a reader needs: `admin/`, `tests/`, `tools/`,
+`templates/` and `docs/` stay out of it, and so does every dot-directory —
+agent and editor tooling (`.claude/`, `.cursor/`, `.code-review-graph/` …)
+holds absolute local paths and a code index, none of which belongs on a public
+site. `.nojekyll` is the one dotfile that ships.
 
 ## Layout
 
@@ -46,10 +49,6 @@ embed/footer.js            Shared footer + back-link injector for report repos
 
 The landing page caps a list with `data-limit` on the `<ul>`; the archive pages
 leave it off and render everything.
-
-Unused since the CV-style rewrite, kept for reference: `assets/css/site.css`,
-`assets/js/projects.js`, `assets/js/project-view.js`, `assets/js/data-canvas.js`,
-`assets/js/data-canvas-model.js`.
 
 ## Project cards
 

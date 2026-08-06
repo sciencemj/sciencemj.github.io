@@ -1,6 +1,6 @@
 /* Portfolio projects list — single source of truth for which repos appear on the site.
    Edited by the local admin tool (`bun admin/server.js`) or by hand.
-   Array body must stay valid JSON: projects.js and the admin server both parse it. */
+   Array body must stay valid JSON: pages.js and the admin server both parse it. */
 window.PORTFOLIO_PROJECTS = [
   {"repo":"LCC_Review_Sentiment_Cluster","report":"report.html","featured":true,"highlight":"Prioritized high-intensity, low-cost airline complaint fixes.","categories":["data-analysis","ml-nlp","visualization"],"preview":{"kind":"chart","src":"assets/img/projects/lcc-review.webp","alt":"Airline review sentiment clusters and complaint priorities"}},
   {"repo":"steam-review","report":"index.html","featured":true,"highlight":"Separated loud complaints from complaints that actually drive churn.","categories":["data-analysis","ml-nlp"],"preview":{"kind":"chart","src":"assets/img/projects/steam-review.webp","alt":"Steam review complaint impact and churn analysis"}},

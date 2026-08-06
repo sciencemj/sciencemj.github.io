@@ -1,4 +1,4 @@
-const HEADER = "/* Portfolio projects list — single source of truth for which repos appear on the site.\n   Edited by the local admin tool (`bun admin/server.js`) or by hand.\n   Array body must stay valid JSON: projects.js and the admin server both parse it. */";
+const HEADER = "/* Portfolio projects list — single source of truth for which repos appear on the site.\n   Edited by the local admin tool (`bun admin/server.js`) or by hand.\n   Array body must stay valid JSON: pages.js and the admin server both parse it. */";
 const REPO_RE = /^[A-Za-z0-9_.-]+$/;
 const CATEGORY_KEYS = ["data-analysis", "ml-nlp", "visualization", "developer-tools", "apps"];
 const PREVIEW_KINDS = ["image", "chart", "app", "terminal", "workflow"];
