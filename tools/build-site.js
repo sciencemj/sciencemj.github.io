@@ -16,26 +16,30 @@ import { cleanMeta, metaError, parsePosts, renderPostPage } from "../admin/posts
 const ROOT = resolve(import.meta.dir, "..");
 const OUT = resolve(ROOT, "dist");
 
-/* Directories and files that exist for development, not for readers.
+/* Everything hidden is denied rather than listed: tooling keeps inventing new
+   dot-entries (.claude, .cursor, .gemini, .qoder, .vscode, .code-review-graph …)
+   and an enumeration that falls behind publishes them — absolute local paths and
+   an index of the source included. .nojekyll is the one the site needs. */
+const KEEP_HIDDEN = ".nojekyll";
 
-   Every dot-directory is denied rather than listed: tooling keeps inventing new
-   ones (.claude, .cursor, .gemini, .qoder, .vscode, .code-review-graph …) and an
-   enumeration that falls behind publishes them. Nothing readers need is hidden. */
+/* The rest exist for development, not for readers. */
 const DENY_DIRS = new Set([
   "node_modules", "dist", "admin", "tests", "tools", "docs", "templates",
 ]);
-/* .nojekyll is the one dotfile the site needs, so files stay an explicit list. */
 const DENY_FILES = new Set([
-  "package.json", "bun.lock", "bun.lockb", ".DS_Store", ".gitignore", "README.md",
-  ".mcp.json", "opencode.jsonc", "CLAUDE.md", "AGENTS.md", "GEMINI.md",
+  "package.json", "bun.lock", "bun.lockb", "README.md",
+  "opencode.jsonc", "CLAUDE.md", "AGENTS.md", "GEMINI.md",
 ]);
 
 async function* walk(dir) {
   for (const entry of await readdir(dir, { withFileTypes: true })) {
     const full = join(dir, entry.name);
     const rel = relative(ROOT, full);
+    /* Denied by name before the type is read: a symlinked node_modules reports
+       as a file, and copying it as one crashes the build. */
+    if (entry.name.startsWith(".") && entry.name !== KEEP_HIDDEN) continue;
+    if (DENY_DIRS.has(entry.name)) continue;
     if (entry.isDirectory()) {
-      if (entry.name.startsWith(".") || DENY_DIRS.has(entry.name)) continue;
       yield* walk(full);
     } else {
       if (DENY_FILES.has(entry.name)) continue;
