@@ -184,7 +184,6 @@ img { max-width: 100%; height: auto; }
   padding: var(--s-2) var(--s-4);
 }
 .more:hover { border-color: var(--accent); background: var(--accent-soft); }
-.more--sm { margin-top: var(--s-4); padding: var(--s-1) var(--s-3); }
 
 .sec-title {
   font-family: var(--font-display); font-size: var(--text-sm); font-weight: 600;
@@ -221,9 +220,6 @@ a.row-title:hover { color: var(--accent); }
 
 .row-org { font-size: var(--text-sm); color: var(--ink-2); margin: 2px 0 0; }
 .row-desc { margin: var(--s-1) 0 0; color: var(--ink-2); max-width: 62ch; }
-
-.row-notes { margin: var(--s-2) 0 0; padding-left: 1.1em; color: var(--ink-2); }
-.row-notes li { margin-bottom: 2px; }
 
 .row-foot {
   display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-3);
