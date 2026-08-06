@@ -9,3 +9,16 @@ dist/
 
 # Built from posts/<slug>.md by tools/build-site.js — the CI build owns these.
 posts/*.html
+# Added by code-review-graph
+.code-review-graph/
+
+# Per-tool agent/editor config. Machine-local: every one of these hard-codes an
+# absolute path to this checkout, and .claude/ also holds a local code index.
+.claude/
+.codebuddy/
+.cursor/
+.gemini/
+.qoder/
+.vscode/
+.mcp.json
+opencode.jsonc

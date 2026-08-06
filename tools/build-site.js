@@ -16,13 +16,18 @@ import { cleanMeta, metaError, parsePosts, renderPostPage } from "../admin/posts
 const ROOT = resolve(import.meta.dir, "..");
 const OUT = resolve(ROOT, "dist");
 
-/* Directories and files that exist for development, not for readers. */
+/* Directories and files that exist for development, not for readers.
+
+   Every dot-directory is denied rather than listed: tooling keeps inventing new
+   ones (.claude, .cursor, .gemini, .qoder, .vscode, .code-review-graph …) and an
+   enumeration that falls behind publishes them. Nothing readers need is hidden. */
 const DENY_DIRS = new Set([
-  ".git", ".github", ".claude", ".superpowers", ".worktrees", ".admin-tmp", ".admin-archive",
   "node_modules", "dist", "admin", "tests", "tools", "docs", "templates",
 ]);
+/* .nojekyll is the one dotfile the site needs, so files stay an explicit list. */
 const DENY_FILES = new Set([
   "package.json", "bun.lock", "bun.lockb", ".DS_Store", ".gitignore", "README.md",
+  ".mcp.json", "opencode.jsonc", "CLAUDE.md", "AGENTS.md", "GEMINI.md",
 ]);
 
 async function* walk(dir) {
@@ -30,7 +35,7 @@ async function* walk(dir) {
     const full = join(dir, entry.name);
     const rel = relative(ROOT, full);
     if (entry.isDirectory()) {
-      if (DENY_DIRS.has(entry.name)) continue;
+      if (entry.name.startsWith(".") || DENY_DIRS.has(entry.name)) continue;
       yield* walk(full);
     } else {
       if (DENY_FILES.has(entry.name)) continue;
