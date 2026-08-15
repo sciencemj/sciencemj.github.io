@@ -5,8 +5,10 @@ import { saveProjectTransaction } from "./save-transaction.js";
 import { parsePosts, postUrl, slugError } from "./posts-store.js";
 import { savePostTransaction } from "./post-transaction.js";
 
+/* The post editor is the front door; the project editor sits at /admin/projects. */
 const ADMIN_FILES = new Map([
-  ["/admin/", ["index.html", "text/html; charset=utf-8"]],
+  ["/admin/", ["posts.html", "text/html; charset=utf-8"]],
+  ["/admin/projects", ["index.html", "text/html; charset=utf-8"]],
   ["/admin/index.html", ["index.html", "text/html; charset=utf-8"]],
   ["/admin/admin.css", ["admin.css", "text/css; charset=utf-8"]],
   ["/admin/admin.js", ["admin.js", "text/javascript; charset=utf-8"]],

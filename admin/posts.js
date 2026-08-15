@@ -1,6 +1,6 @@
-/* Post editor. Renders the preview through the same renderPostPage() the server
-   uses to write the file, so what you see is the file. */
-import { cleanMeta, metaError, renderPostPage } from "./posts-store.js";
+/* Post editor. The markdown surface renders in place, so there is no second
+   preview pane — what the editor shows is what render() writes on save. */
+import { cleanMeta, metaError } from "./posts-store.js";
 import { render } from "./markdown.js";
 import { draftKeyFor, imagePaths, makeDraft, shouldOffer, worthKeeping } from "./draft.js";
 
@@ -30,13 +30,11 @@ let surface = {
     markdownInput.focus();
   },
 };
-const preview = el("preview");
 const saveBtn = el("save-btn");
 const dirty = el("dirty-indicator");
 
 /* Images the author added but has not saved yet: markdown path -> {blob, url}. */
 const pendingImages = new Map();
-let template = "";
 let slugTouched = false;
 let dirtyState = false;
 let draftKey = draftKeyFor(null);
@@ -106,7 +104,7 @@ function offerDraft(draft) {
 }
 
 /* A restored draft carries image links but not the image bytes, so say plainly
-   which files are not there rather than letting the preview quietly break. */
+   which files are not there rather than letting the images quietly break. */
 async function reportMissingImages(markdown) {
   const paths = imagePaths(markdown);
   if (!paths.length) return;
@@ -136,7 +134,6 @@ function restoreDraft() {
   surface.setValue(draft.markdown);
   slugTouched = true;
   setDirty(true);
-  renderPreview();
   reportMissingImages(draft.markdown);
 }
 
@@ -159,34 +156,16 @@ function readMeta() {
   };
 }
 
-/* Preview images live as object URLs until they are saved, so the relative
-   paths in the markdown are swapped for something the iframe can load. */
-function resolvePreviewSrc(src) {
+/* Images live as object URLs until they are saved, so the relative paths in the
+   markdown are swapped for something the editor can load. */
+function resolveImageSrc(src) {
   const pending = pendingImages.get(src);
   if (pending) return pending.url;
   return /^(https?:)?\/\//.test(src) ? src : "/posts/" + src.replace(/^\.?\//, "");
 }
 
-function renderPreview() {
-  if (!template) return;
-  let body;
-  try {
-    body = render(surface.getValue(), { resolveSrc: resolvePreviewSrc });
-  } catch (error) {
-    el("preview-note").textContent = error.message;
-    return;
-  }
-  el("preview-note").textContent = "exactly what gets written";
-  const raw = readMeta();
-  const meta = cleanMeta({ ...raw, slug: raw.slug || "preview", date: raw.date || "2026-01-01" });
-  /* Asset URLs in the shell are relative to posts/; the iframe is not. */
-  const page = renderPostPage(template, meta, body).replace(/(href|src)="\.\.\//g, '$1="/');
-  preview.srcdoc = page;
-}
-
 function refresh() {
   setDirty(true);
-  renderPreview();
   scheduleDraft();
 }
 
@@ -278,7 +257,7 @@ async function mountLiveEditor() {
       parent: host,
       doc: surface.getValue(),
       onChange: refresh,
-      resolveSrc: resolvePreviewSrc,
+      resolveSrc: resolveImageSrc,
       onDrop(event) {
         const files = imagesFrom(event);
         if (!files.length) return false;
@@ -382,7 +361,6 @@ async function save() {
     hideDraftBanner();
     setDirty(false);
     await loadList(meta.slug);
-    renderPreview();
     toast(`${result.created ? "Created" : "Updated"} ${result.url}`, "success");
   } catch (error) {
     saveBtn.disabled = false;
@@ -437,7 +415,6 @@ async function openPost(slug) {
     fields.date.value = new Date().toISOString().slice(0, 10);
     slugTouched = false;
     setDirty(false);
-    renderPreview();
   } else {
     const response = await fetch("/api/posts/" + slug);
     const result = await response.json();
@@ -452,7 +429,6 @@ async function openPost(slug) {
     surface.setValue(result.markdown);
     slugTouched = true;
     setDirty(false);
-    renderPreview();
   }
 
   const draft = readDraft(draftKey);
@@ -491,7 +467,6 @@ function wire() {
     const next = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
     document.documentElement.setAttribute("data-theme", next);
     try { localStorage.setItem("theme", next); } catch (error) {}
-    renderPreview();
   });
   addEventListener("beforeunload", (event) => {
     if (!dirtyState) return;
@@ -505,11 +480,6 @@ function wire() {
 async function start() {
   wire();
   await mountLiveEditor();
-  try {
-    template = await (await fetch("/templates/post-template.html")).text();
-  } catch {
-    toast("Could not load the post shell.", "error");
-  }
   await loadList("");
   await openPost("");
 }

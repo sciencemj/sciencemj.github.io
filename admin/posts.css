@@ -49,8 +49,9 @@
   outline: 2px solid var(--accent); outline-offset: 1px;
 }
 
+/* One column: the editor renders markdown in place, so there is no second pane. */
 .post-grid {
-  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  display: grid; grid-template-columns: minmax(0, 1fr);
   gap: var(--s-4); align-items: stretch;
 }
 .pane {
@@ -80,16 +81,10 @@
 
 #image-note { padding: var(--s-2) var(--s-4) var(--s-3); border-top: 1px solid var(--border); }
 
-#preview {
-  flex: 1; min-height: 60vh; width: 100%; border: 0;
-  background: var(--canvas);
-}
-
 @media (max-width: 900px) {
   .post-meta-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .field-wide { grid-column: span 2; }
-  .post-grid { grid-template-columns: 1fr; }
-  #markdown, #preview { min-height: 44vh; }
+  #markdown { min-height: 44vh; }
 }
 
 /* CodeMirror fills the pane the textarea used to. */
