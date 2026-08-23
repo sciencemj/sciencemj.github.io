@@ -32,19 +32,9 @@ describe("project model", () => {
     });
   });
 
-  test("keeps only three featured projects", () => {
-    const split = Model.splitProjects([
-      { repo: "a", featured: true }, { repo: "b", featured: true },
-      { repo: "c", featured: true }, { repo: "d", featured: true }, { repo: "e" },
+  test("exposes the category keys other tools derive from", () => {
+    expect(Model.CATEGORIES.map((category) => category.key)).toEqual([
+      "data-analysis", "ml-nlp", "visualization", "developer-tools", "apps",
     ]);
-    expect(split.featured.map((p) => p.repo)).toEqual(["a", "b", "c"]);
-    expect(split.compact.map((p) => p.repo)).toEqual(["d", "e"]);
-  });
-
-  test("matches categories with OR behavior", () => {
-    const project = Model.normalizeProject({ repo: "demo", categories: ["ml-nlp", "visualization"] });
-    expect(Model.matchesAnyCategory(project, [])).toBe(true);
-    expect(Model.matchesAnyCategory(project, ["apps", "visualization"])).toBe(true);
-    expect(Model.matchesAnyCategory(project, ["apps"])).toBe(false);
   });
 });

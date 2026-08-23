@@ -14,6 +14,5 @@
 window.PORTFOLIO_POSTS = [
   {"date":"2026-08-15","kind":"Post","lang":"ko","title":"Attention Is All You Need 논문 요약","url":"posts/attention-is-all-you-need.html","tags":["Deep Learning","Transformer"]},
   {"date":"2026-08-05","kind":"Post","lang":"ko","title":"Batch Normalization","url":"posts/batch-normalization.html","tags":["Deep Learning"]},
-  {"date":"2026-08-04","kind":"Post","lang":"ko","title":"역전파의 원리","url":"posts/backpropagation.html","tags":["Deep learning"]},
-  {"date":"2026-07-12","kind":"Post","lang":"ko","title":"Dummy post — replace with a real one","url":"https://github.com/sciencemj","tags":["Placeholder"]}
+  {"date":"2026-08-04","kind":"Post","lang":"ko","title":"역전파의 원리","url":"posts/backpropagation.html","tags":["Deep learning"]}
 ];

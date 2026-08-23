@@ -126,7 +126,7 @@
     if (report) links += '<a href="' + esc(report) + '">Report</a>';
     links += '<a href="' + esc(code) + '" target="_blank" rel="noopener">Code</a>';
 
-    return '<li class="row row--proj" data-categories="' + esc(project.categories.join("|")) + '">' +
+    return '<li class="row row--proj">' +
       '<a class="proj-thumb-link" href="' + esc(report || code) + '"' + (report ? "" : ' target="_blank" rel="noopener"') +
         ' tabindex="-1" aria-hidden="true">' + renderThumb(project) + "</a>" +
       '<div class="row-body">' +
@@ -143,7 +143,11 @@
   function drawProjects() {
     var list = doc.getElementById("projects-list");
     if (!list || !Model) return;
-    var projects = limitOf(list, (root.PORTFOLIO_PROJECTS || []).map(Model.normalizeProject));
+    /* Featured first, then the curated order; the landing page's data-limit
+       shows the top slice of this order. */
+    var projects = limitOf(list, (root.PORTFOLIO_PROJECTS || []).map(Model.normalizeProject).sort(function (a, b) {
+      return (b.featured === true) - (a.featured === true);
+    }));
 
     function paint(results) {
       list.innerHTML = projects.map(function (project, index) {

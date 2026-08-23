@@ -1,17 +1,26 @@
 (function (root, factory) {
-  var api = factory();
-  if (typeof module === "object" && module.exports) module.exports = api;
+  var api = factory(root && root.PortfolioProjectModel);
+  if (typeof module === "object" && module.exports) api = factory(require("../assets/js/project-model.js")), module.exports = api;
   else root.AdminEditorView = api;
-})(typeof globalThis !== "undefined" ? globalThis : this, function () {
+})(typeof globalThis !== "undefined" ? globalThis : this, function (SharedModel) {
   "use strict";
 
-  var CATEGORY_LABELS = {
-    "data-analysis": "Data analysis",
-    "ml-nlp": "ML & NLP",
-    "visualization": "Visualization",
-    "developer-tools": "Developer tools",
-    "apps": "Apps"
-  };
+  /* Labels keyed off the shared model's categories, so a key change in one
+     place cannot leave a label behind. */
+  var CATEGORY_LABELS = {};
+  if (SharedModel) {
+    SharedModel.CATEGORIES.forEach(function (category) {
+      CATEGORY_LABELS[category.key] = category.key === "data-analysis" ? "Data analysis"
+        : category.key === "developer-tools" ? "Developer tools"
+        : category.label;
+    });
+  } else {
+    CATEGORY_LABELS["data-analysis"] = "Data analysis";
+    CATEGORY_LABELS["ml-nlp"] = "ML & NLP";
+    CATEGORY_LABELS["visualization"] = "Visualization";
+    CATEGORY_LABELS["developer-tools"] = "Developer tools";
+    CATEGORY_LABELS["apps"] = "Apps";
+  }
   var KIND_LABELS = {
     image: "IMAGE PREVIEW",
     chart: "CHART PREVIEW",

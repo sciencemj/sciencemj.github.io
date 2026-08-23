@@ -1,11 +1,13 @@
 (function (root, factory) {
-  var api = factory();
-  if (typeof module === "object" && module.exports) module.exports = api;
+  var api = factory(root && root.PortfolioProjectModel);
+  if (typeof module === "object" && module.exports) api = factory(require("../assets/js/project-model.js")), module.exports = api;
   else root.AdminEditorModel = api;
-})(typeof globalThis !== "undefined" ? globalThis : this, function () {
+})(typeof globalThis !== "undefined" ? globalThis : this, function (SharedModel) {
   "use strict";
 
-  var CATEGORY_KEYS = ["data-analysis", "ml-nlp", "visualization", "developer-tools", "apps"];
+  var CATEGORY_KEYS = SharedModel
+    ? SharedModel.CATEGORIES.map(function (category) { return category.key; })
+    : ["data-analysis", "ml-nlp", "visualization", "developer-tools", "apps"];
   var PREVIEW_KINDS = ["image", "chart", "app", "terminal", "workflow"];
 
   function clone(project) {
