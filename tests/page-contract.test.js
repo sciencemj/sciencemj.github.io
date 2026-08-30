@@ -77,3 +77,57 @@ test("the skills marquee duplicates an identical set so the loop is seamless", (
   expect(sets).toHaveLength(2);
   expect(sets[0]).toBe(sets[1]);
 });
+
+/* ---------- Language toggle ---------- */
+
+const i18nOf = () => {
+  const source = readFileSync(resolve(import.meta.dir, "../assets/js/i18n.js"), "utf8");
+  const win = {
+    document: {
+      documentElement: { setAttribute() {} },
+      readyState: "complete",
+      getElementById() { return null; },
+      querySelectorAll() { return []; },
+    },
+    localStorage: { getItem() { return null; }, setItem() {} },
+  };
+  new Function("window", source)(win);
+  return win.PortfolioI18n;
+};
+
+test("every page carries the language toggle and loads i18n before the renderer", () => {
+  PAGES.forEach((page) => {
+    const html = read(page);
+    expect(html).toContain('id="lang-toggle"');
+    const i18n = html.indexOf('src="assets/js/i18n.js"');
+    const renderer = html.indexOf('src="assets/js/pages.js"');
+    expect(i18n).toBeGreaterThan(-1);
+    expect(renderer).toBeGreaterThan(i18n);
+  });
+});
+
+/* A key that is in the markup but not in the dictionary ships an empty element,
+   which is invisible in review — so it fails here instead. */
+test("every data-i18n key in the markup exists in both dictionaries", () => {
+  const i18n = i18nOf();
+  const known = new Set(i18n.keys("en"));
+  const korean = new Set(i18n.keys("ko"));
+  PAGES.forEach((page) => {
+    const html = read(page);
+    const keys = [
+      ...[...html.matchAll(/data-i18n(?:-html)?="([^"]+)"/g)].map((match) => match[1]),
+      ...[...html.matchAll(/data-i18n-attr="([^"]+)"/g)]
+        .flatMap((match) => match[1].split(";"))
+        .map((pair) => pair.slice(pair.indexOf(":") + 1).trim()),
+    ];
+    expect(keys.length).toBeGreaterThan(0);
+    keys.forEach((key) => {
+      expect(`${page}:${key}:${known.has(key)}`).toBe(`${page}:${key}:true`);
+      expect(`${page}:${key}:${korean.has(key)}`).toBe(`${page}:${key}:true`);
+    });
+  });
+});
+
+test("the pages stay English by default so the toggle is the only way into Korean", () => {
+  PAGES.forEach((page) => expect(read(page)).toContain('<html lang="en"'));
+});

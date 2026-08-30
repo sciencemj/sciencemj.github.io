@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Contact — MJ Park</title>
-<meta name="description" content="How to reach MJ Park.">
+<title data-i18n="title.contact">Contact — MJ Park</title>
+<meta name="description" data-i18n-attr="content:desc.contact" content="How to reach MJ Park.">
 <meta name="color-scheme" content="light dark">
 <link rel="icon" href="assets/img/logomark.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -32,11 +32,11 @@
   <span class="grain"></span>
 </div>
 
-<a class="skip-link" href="#main">Skip to content</a>
+<a class="skip-link" href="#main" data-i18n="skip">Skip to content</a>
 
 <nav class="nav">
   <div class="wrap nav-in">
-    <a class="brand" href="index.html" aria-label="MJ Park — home">
+    <a class="brand" href="index.html" aria-label="MJ Park — home" data-i18n-attr="aria-label:brand.aria">
       <span class="brand-mk">
         <svg viewBox="0 0 100 100" aria-hidden="true"><g>
           <rect x="22" y="22" width="9" height="58" rx="2.5" fill="#FFFFFF"/>
@@ -49,9 +49,10 @@
       <span class="brand-name">Science<span class="brand-accent">mj</span></span>
     </a>
     <div class="nav-right">
-      <a href="writing.html" class="nav-link">Writing</a>
-      <a href="projects.html" class="nav-link">Projects</a>
-      <a href="contact.html" class="nav-link" aria-current="page">Contact</a>
+      <a href="writing.html" class="nav-link" data-i18n="nav.writing">Writing</a>
+      <a href="projects.html" class="nav-link" data-i18n="nav.projects">Projects</a>
+      <a href="contact.html" class="nav-link" aria-current="page" data-i18n="nav.contact">Contact</a>
+      <button id="lang-toggle" class="icon-btn icon-btn--text" aria-label="한국어로 보기" title="한국어로 보기">KO</button>
       <button id="theme-toggle" class="icon-btn" aria-label="Toggle color theme" title="Toggle theme"></button>
     </div>
   </div>
@@ -60,39 +61,39 @@
 <main class="wrap" id="main">
 
   <header class="page-head">
-    <h1 class="page-title">Contact</h1>
-    <p class="page-lead">Email is the fastest way to reach me. I read everything and usually
+    <h1 class="page-title" data-i18n="nav.contact">Contact</h1>
+    <p class="page-lead" data-i18n="page.contact.lead">Email is the fastest way to reach me. I read everything and usually
       reply within a couple of days.</p>
   </header>
 
   <section class="section">
     <ul class="rows">
       <li class="row">
-        <span class="row-when">Email</span>
+        <span class="row-when" data-i18n="link.email">Email</span>
         <div class="row-body">
           <a class="row-title" href="mailto:sciencemj.park@gmail.com">sciencemj.park@gmail.com</a>
-          <p class="row-desc">Best for anything with detail — a dataset, a question, a role.</p>
+          <p class="row-desc" data-i18n="contact.email.desc">Best for anything with detail — a dataset, a question, a role.</p>
         </div>
       </li>
       <li class="row">
         <span class="row-when">GitHub</span>
         <div class="row-body">
           <a class="row-title" href="https://github.com/sciencemj" target="_blank" rel="noopener">@sciencemj</a>
-          <p class="row-desc">Code, notebooks and the reports behind the projects.</p>
+          <p class="row-desc" data-i18n="contact.github.desc">Code, notebooks and the reports behind the projects.</p>
         </div>
       </li>
       <li class="row">
         <span class="row-when">LinkedIn</span>
         <div class="row-body">
           <a class="row-title" href="https://www.linkedin.com/in/%EB%AF%BC%EC%A4%80-%EB%B0%95-438b08420/" target="_blank" rel="noopener">MJ Park</a>
-          <p class="row-desc">Background and roles, in the shortest form.</p>
+          <p class="row-desc" data-i18n="contact.linkedin.desc">Background and roles, in the shortest form.</p>
         </div>
       </li>
       <li class="row">
-        <span class="row-when">Based in</span>
+        <span class="row-when" data-i18n="contact.basedin">Based in</span>
         <div class="row-body">
-          <span class="row-title">Seoul, Korea</span>
-          <p class="row-desc">KST (UTC+9). Remote is fine.</p>
+          <span class="row-title" data-i18n="contact.city">Seoul, Korea</span>
+          <p class="row-desc" data-i18n="contact.tz">KST (UTC+9). Remote is fine.</p>
         </div>
       </li>
     </ul>
@@ -105,11 +106,12 @@
     <span class="mono">© <span id="year">2026</span> MJ Park</span>
     <span class="mono"><a href="https://github.com/sciencemj" target="_blank" rel="noopener">GitHub</a>
       · <a href="https://www.linkedin.com/in/%EB%AF%BC%EC%A4%80-%EB%B0%95-438b08420/" target="_blank" rel="noopener">LinkedIn</a>
-      · <a href="mailto:sciencemj.park@gmail.com">Email</a></span>
+      · <a href="mailto:sciencemj.park@gmail.com" data-i18n="link.email">Email</a></span>
   </div>
 </footer>
 
 <script src="assets/js/theme.js" defer></script>
+<script src="assets/js/i18n.js" defer></script>
 <script src="assets/js/pages.js" defer></script>
 </body>
 </html>

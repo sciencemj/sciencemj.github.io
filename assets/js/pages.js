@@ -5,6 +5,7 @@
   var OWNER = "sciencemj";
   var doc = root.document;
   var Model = root.PortfolioProjectModel;
+  var I18n = root.PortfolioI18n;
 
   function esc(value) {
     return String(value == null ? "" : value).replace(/[&<>"]/g, function (character) {
@@ -18,29 +19,56 @@
     }).join(" ");
   }
 
-  var MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  /* Page copy lives in i18n.js. Dates stay here because they are formatting
+     rather than translation — Korean puts the year first and takes no plural. */
+  function lang() { return I18n && I18n.lang() === "ko" ? "ko" : "en"; }
+  function label(key, english) { return I18n ? I18n.t(key) : english; }
+
+  var MONTHS = {
+    en: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+    ko: ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"],
+  };
 
   function monthYear(iso) {
     var parts = String(iso || "").split("-");
     if (parts.length < 2) return "";
-    var month = MONTHS[Number(parts[1]) - 1];
-    return month ? month + " " + parts[0] : "";
+    var month = MONTHS[lang()][Number(parts[1]) - 1];
+    if (!month) return "";
+    return lang() === "ko" ? parts[0] + "년 " + month : month + " " + parts[0];
   }
+
+  var UNITS = {
+    en: [["year", 31536000], ["month", 2592000], ["week", 604800], ["day", 86400]],
+    ko: [["년", 31536000], ["개월", 2592000], ["주", 604800], ["일", 86400]],
+  };
 
   function relTime(iso) {
     var diff = (Date.now() - new Date(iso).getTime()) / 1000;
     if (isNaN(diff)) return "";
-    var units = [["year", 31536000], ["month", 2592000], ["week", 604800], ["day", 86400]];
+    var ko = lang() === "ko";
+    var units = UNITS[ko ? "ko" : "en"];
     for (var index = 0; index < units.length; index += 1) {
       var value = Math.floor(diff / units[index][1]);
-      if (value >= 1) return value + " " + units[index][0] + (value > 1 ? "s" : "") + " ago";
+      if (value >= 1) {
+        return ko ? value + units[index][0] + " 전"
+          : value + " " + units[index][0] + (value > 1 ? "s" : "") + " ago";
+      }
     }
-    return "today";
+    return ko ? "오늘" : "today";
   }
 
   /* ---------- Writing ---------- */
 
   function isExternal(url) { return /^https?:\/\//i.test(String(url || "")); }
+
+  /* kind is a fixed enum in posts.data.js, so it is a chrome label rather than
+     the author's own words — it translates with the rest of the chrome. */
+  var KINDS = { Post: "row.post", Report: "row.report", Talk: "row.talk" };
+
+  function kindLabel(kind) {
+    if (!kind) return label("row.post", "Post");
+    return KINDS[kind] ? label(KINDS[kind], kind) : kind;
+  }
 
   function renderPost(post) {
     var tags = (post.tags || []).map(function (tag) {
@@ -55,7 +83,7 @@
       '<div class="row-body">' +
         '<a class="row-title" href="' + esc(post.url) + '"' + target + ">" + esc(post.title) + "</a>" +
         '<div class="row-foot">' +
-          '<span class="row-kind">' + esc(post.kind || "Post") + "</span>" +
+          '<span class="row-kind">' + esc(kindLabel(post.kind)) + "</span>" +
           (lang ? '<span class="row-kind">' + lang + "</span>" : "") +
           (tags ? '<span class="row-tags">' + tags + "</span>" : "") +
         "</div>" +
@@ -120,11 +148,15 @@
     var description = project.highlight || (data && data.description) || "";
     var meta = [];
     if (data && data.language) meta.push(esc(data.language));
-    if (data && data.pushed_at) meta.push("updated " + esc(relTime(data.pushed_at)));
+    if (data && data.pushed_at) {
+      var updated = esc(relTime(data.pushed_at));
+      meta.push(lang() === "ko" ? updated + " 업데이트" : "updated " + updated);
+    }
 
     var links = "";
-    if (report) links += '<a href="' + esc(report) + '">Report</a>';
-    links += '<a href="' + esc(code) + '" target="_blank" rel="noopener">Code</a>';
+    if (report) links += '<a href="' + esc(report) + '">' + esc(label("row.report", "Report")) + "</a>";
+    links += '<a href="' + esc(code) + '" target="_blank" rel="noopener">' +
+      esc(label("row.code", "Code")) + "</a>";
 
     return '<li class="row row--proj">' +
       '<a class="proj-thumb-link" href="' + esc(report || code) + '"' + (report ? "" : ' target="_blank" rel="noopener"') +
@@ -190,6 +222,9 @@
   function init() {
     drawPosts();
     drawProjects();
+    /* The rows carry no data-i18n of their own — they are rebuilt from scratch
+       whenever the reader flips the language. */
+    if (I18n) I18n.onChange(function () { drawPosts(); drawProjects(); });
     wireNavGlow();
     var year = doc.getElementById("year");
     if (year) year.textContent = new Date().getFullYear();

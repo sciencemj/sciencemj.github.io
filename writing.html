@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Writing — MJ Park</title>
-<meta name="description" content="Posts and talks by MJ Park on analytics, NLP, and forecasting.">
+<title data-i18n="title.writing">Writing — MJ Park</title>
+<meta name="description" data-i18n-attr="content:desc.writing" content="Posts and talks by MJ Park on analytics, NLP, and forecasting.">
 <meta name="color-scheme" content="light dark">
 <link rel="icon" href="assets/img/logomark.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -32,11 +32,11 @@
   <span class="grain"></span>
 </div>
 
-<a class="skip-link" href="#main">Skip to content</a>
+<a class="skip-link" href="#main" data-i18n="skip">Skip to content</a>
 
 <nav class="nav">
   <div class="wrap nav-in">
-    <a class="brand" href="index.html" aria-label="MJ Park — home">
+    <a class="brand" href="index.html" aria-label="MJ Park — home" data-i18n-attr="aria-label:brand.aria">
       <span class="brand-mk">
         <svg viewBox="0 0 100 100" aria-hidden="true"><g>
           <rect x="22" y="22" width="9" height="58" rx="2.5" fill="#FFFFFF"/>
@@ -49,9 +49,10 @@
       <span class="brand-name">Science<span class="brand-accent">mj</span></span>
     </a>
     <div class="nav-right">
-      <a href="writing.html" class="nav-link" aria-current="page">Writing</a>
-      <a href="projects.html" class="nav-link">Projects</a>
-      <a href="contact.html" class="nav-link">Contact</a>
+      <a href="writing.html" class="nav-link" aria-current="page" data-i18n="nav.writing">Writing</a>
+      <a href="projects.html" class="nav-link" data-i18n="nav.projects">Projects</a>
+      <a href="contact.html" class="nav-link" data-i18n="nav.contact">Contact</a>
+      <button id="lang-toggle" class="icon-btn icon-btn--text" aria-label="한국어로 보기" title="한국어로 보기">KO</button>
       <button id="theme-toggle" class="icon-btn" aria-label="Toggle color theme" title="Toggle theme"></button>
     </div>
   </div>
@@ -60,8 +61,8 @@
 <main class="wrap" id="main">
 
   <header class="page-head">
-    <h1 class="page-title">Writing</h1>
-    <p class="page-lead">Posts and talks — mostly write-ups of analyses I ran, and the parts
+    <h1 class="page-title" data-i18n="nav.writing">Writing</h1>
+    <p class="page-lead" data-i18n="page.writing.lead">Posts and talks — mostly write-ups of analyses I ran, and the parts
       that did not work the first time.</p>
   </header>
 
@@ -77,11 +78,12 @@
     <span class="mono">© <span id="year">2026</span> MJ Park</span>
     <span class="mono"><a href="https://github.com/sciencemj" target="_blank" rel="noopener">GitHub</a>
       · <a href="https://www.linkedin.com/in/%EB%AF%BC%EC%A4%80-%EB%B0%95-438b08420/" target="_blank" rel="noopener">LinkedIn</a>
-      · <a href="mailto:sciencemj.park@gmail.com">Email</a></span>
+      · <a href="mailto:sciencemj.park@gmail.com" data-i18n="link.email">Email</a></span>
   </div>
 </footer>
 
 <script src="assets/js/theme.js" defer></script>
+<script src="assets/js/i18n.js" defer></script>
 <script src="assets/js/posts.data.js" defer></script>
 <script src="assets/js/pages.js" defer></script>
 </body>

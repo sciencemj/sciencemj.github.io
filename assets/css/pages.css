@@ -95,6 +95,12 @@ img { max-width: 100%; height: auto; }
 }
 .icon-btn:hover { border-color: var(--border-2); color: var(--ink); }
 .icon-btn svg { width: 15px; height: 15px; }
+/* The language toggle carries a two-letter label instead of an icon, so it
+   drops the square and sizes to its text. */
+.icon-btn--text {
+  width: auto; padding: 0 8px; font-family: var(--font-mono);
+  font-size: var(--text-xs); font-weight: 600; letter-spacing: .04em;
+}
 
 /* ---------- Profile ---------- */
 
