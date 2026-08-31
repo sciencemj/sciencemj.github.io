@@ -131,3 +131,20 @@ test("every data-i18n key in the markup exists in both dictionaries", () => {
 test("the pages stay English by default so the toggle is the only way into Korean", () => {
   PAGES.forEach((page) => expect(read(page)).toContain('<html lang="en"'));
 });
+
+/* A misspelled href renders nothing at all — no warning, no broken-image mark —
+   so the reference and the pill coverage are checked here. */
+test("every skill pill carries a glyph that the sprite actually defines", () => {
+  const html = read("index.html");
+  const defined = new Set([...html.matchAll(/<symbol id="(ic-[a-z]+)"/g)].map((m) => m[1]));
+  expect(defined.size).toBeGreaterThan(0);
+
+  const set = /<div class="skills-set">([\s\S]*?)<\/div>/.exec(html)[1];
+  const pills = [...set.matchAll(/<span class="skill">([\s\S]*?)<\/span>/g)].map((m) => m[1]);
+  expect(pills.length).toBeGreaterThan(0);
+  pills.forEach((pill) => {
+    const used = /<use href="#(ic-[a-z]+)"\/>/.exec(pill);
+    expect(`${pill.slice(0, 40)}:${used !== null}`).toBe(`${pill.slice(0, 40)}:true`);
+    expect(`${used[1]}:${defined.has(used[1])}`).toBe(`${used[1]}:true`);
+  });
+});

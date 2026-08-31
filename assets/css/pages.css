@@ -245,6 +245,17 @@ a.row-title:hover { color: var(--accent); }
   padding: 1px var(--s-2); white-space: nowrap;
 }
 
+/* The sprite only holds <symbol> definitions; <use> still resolves out of it. */
+.icon-sprite { display: none; }
+
+/* A skill pill carries its category glyph, so it needs a little more room than
+   a bare tag. The glyph sits a step back from the label. */
+.skill {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 3px var(--s-3) 3px var(--s-2);
+}
+.skill-ic { flex: none; width: 14px; height: 14px; color: var(--muted-2); }
+
 /* ---------- Project thumbnails ---------- */
 
 .proj-thumb-link { display: block; text-decoration: none; }

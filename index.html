@@ -112,23 +112,40 @@
       </aside>
     </div>
 
+    <!-- Skill glyphs. Each mark stands for a CATEGORY, not a product, so the three
+         languages share one code mark and the strip reads as a taxonomy. House spec:
+         24 viewBox, 1.75 stroke, round caps, currentColor. -->
+    <svg class="icon-sprite" aria-hidden="true"><defs>
+      <symbol id="ic-code" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 7.5 5 12l4.5 4.5M14.5 7.5 19 12l-4.5 4.5"/></g></symbol>
+      <symbol id="ic-table" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="4.5" width="17" height="15" rx="2"/><path d="M3.5 9.5h17M9.8 9.5v10M15.2 9.5v10"/></g></symbol>
+      <symbol id="ic-array" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 5H5.5v14h3M15.5 5h3v14h-3"/><circle cx="9.6" cy="12" r="1.05" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.05" fill="currentColor" stroke="none"/><circle cx="14.4" cy="12" r="1.05" fill="currentColor" stroke="none"/></g></symbol>
+      <symbol id="ic-model" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="6.2" cy="7" r="2"/><circle cx="17.8" cy="7" r="2"/><circle cx="12" cy="17" r="2"/><path d="M8.2 7h7.6M7.4 8.7l3.5 6.6M16.6 8.7l-3.5 6.6"/></g></symbol>
+      <symbol id="ic-speech" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13.6a2 2 0 0 1-2 2h-6.6L7.6 18.6v-3H6a2 2 0 0 1-2-2V6.4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2z"/><path d="M8 8.2h8M8 11.6h5"/></g></symbol>
+      <symbol id="ic-clusters" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="8.2" r="1.05" fill="currentColor" stroke="none"/><circle cx="9.4" cy="6.3" r="1.05" fill="currentColor" stroke="none"/><circle cx="6.1" cy="5.6" r="1.05" fill="currentColor" stroke="none"/><circle cx="7.5" cy="6.7" r="3.9" stroke-dasharray="2.2 2.4"/><circle cx="16" cy="16.4" r="1.05" fill="currentColor" stroke="none"/><circle cx="18" cy="14.2" r="1.05" fill="currentColor" stroke="none"/><circle cx="14.8" cy="14" r="1.05" fill="currentColor" stroke="none"/><circle cx="16.3" cy="15" r="3.9" stroke-dasharray="2.2 2.4"/></g></symbol>
+      <symbol id="ic-timeseries" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5h16"/><path d="M5 15.2 8.6 10.4 12.2 13 15.6 7.2"/><path d="M15.6 7.2 19.4 10" stroke-dasharray="2.4 2.4"/><circle cx="15.6" cy="7.2" r="1.15" fill="currentColor" stroke="none"/></g></symbol>
+      <symbol id="ic-bars" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5h16"/><rect x="5.8" y="11" width="3.2" height="6" rx="1"/><rect x="10.8" y="7.4" width="3.2" height="9.6" rx="1"/><rect x="15.8" y="13.4" width="3.2" height="3.6" rx="1"/></g></symbol>
+      <symbol id="ic-notebook" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="4" width="15" height="16" rx="2"/><path d="M8.6 4v16"/><path d="M11.6 9.2 14.8 11.3 11.6 13.4z"/><path d="M11.6 16.4h5"/></g></symbol>
+      <symbol id="ic-database" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="6.4" rx="6.4" ry="2.4"/><path d="M5.6 6.4v11.2c0 1.33 2.87 2.4 6.4 2.4s6.4-1.07 6.4-2.4V6.4"/><path d="M5.6 12c0 1.33 2.87 2.4 6.4 2.4s6.4-1.07 6.4-2.4"/></g></symbol>
+      <symbol id="ic-neural" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="7.4" r="1.7"/><circle cx="6" cy="16.6" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="18" cy="7.4" r="1.7"/><circle cx="18" cy="16.6" r="1.7"/><path d="M7.5 8.4 10.6 11M7.5 15.6 10.6 13M13.4 11 16.5 8.4M13.4 13 16.5 15.6"/></g></symbol>
+    </defs></svg>
+
     <!-- Marquee: the second .skills-set is an exact clone; the track scrolls by
          -50% so the loop is seamless. Keep both lists identical. -->
     <div class="skills-marquee">
       <div class="skills-track">
         <div class="skills-set">
-          <span class="skill">Python</span><span class="skill">R</span><span class="skill">C</span>
-          <span class="skill">pandas</span><span class="skill">NumPy</span><span class="skill">scikit-learn</span>
-          <span class="skill">NLP · sentiment</span><span class="skill">Clustering</span>
-          <span class="skill">Time-series forecasting</span><span class="skill">Data viz</span>
-          <span class="skill">Jupyter</span><span class="skill">SQL</span><span class="skill">DL</span>
+          <span class="skill"><svg class="skill-ic"><use href="#ic-code"/></svg>Python</span><span class="skill"><svg class="skill-ic"><use href="#ic-code"/></svg>R</span><span class="skill"><svg class="skill-ic"><use href="#ic-code"/></svg>C</span>
+          <span class="skill"><svg class="skill-ic"><use href="#ic-table"/></svg>pandas</span><span class="skill"><svg class="skill-ic"><use href="#ic-array"/></svg>NumPy</span><span class="skill"><svg class="skill-ic"><use href="#ic-model"/></svg>scikit-learn</span>
+          <span class="skill"><svg class="skill-ic"><use href="#ic-speech"/></svg>NLP · sentiment</span><span class="skill"><svg class="skill-ic"><use href="#ic-clusters"/></svg>Clustering</span><span class="skill"><svg class="skill-ic"><use href="#ic-timeseries"/></svg>Time-series forecasting</span>
+          <span class="skill"><svg class="skill-ic"><use href="#ic-bars"/></svg>Data viz</span><span class="skill"><svg class="skill-ic"><use href="#ic-notebook"/></svg>Jupyter</span><span class="skill"><svg class="skill-ic"><use href="#ic-database"/></svg>SQL</span>
+          <span class="skill"><svg class="skill-ic"><use href="#ic-neural"/></svg>DL</span>
         </div>
         <div class="skills-set" aria-hidden="true">
-          <span class="skill">Python</span><span class="skill">R</span><span class="skill">C</span>
-          <span class="skill">pandas</span><span class="skill">NumPy</span><span class="skill">scikit-learn</span>
-          <span class="skill">NLP · sentiment</span><span class="skill">Clustering</span>
-          <span class="skill">Time-series forecasting</span><span class="skill">Data viz</span>
-          <span class="skill">Jupyter</span><span class="skill">SQL</span><span class="skill">DL</span>
+          <span class="skill"><svg class="skill-ic"><use href="#ic-code"/></svg>Python</span><span class="skill"><svg class="skill-ic"><use href="#ic-code"/></svg>R</span><span class="skill"><svg class="skill-ic"><use href="#ic-code"/></svg>C</span>
+          <span class="skill"><svg class="skill-ic"><use href="#ic-table"/></svg>pandas</span><span class="skill"><svg class="skill-ic"><use href="#ic-array"/></svg>NumPy</span><span class="skill"><svg class="skill-ic"><use href="#ic-model"/></svg>scikit-learn</span>
+          <span class="skill"><svg class="skill-ic"><use href="#ic-speech"/></svg>NLP · sentiment</span><span class="skill"><svg class="skill-ic"><use href="#ic-clusters"/></svg>Clustering</span><span class="skill"><svg class="skill-ic"><use href="#ic-timeseries"/></svg>Time-series forecasting</span>
+          <span class="skill"><svg class="skill-ic"><use href="#ic-bars"/></svg>Data viz</span><span class="skill"><svg class="skill-ic"><use href="#ic-notebook"/></svg>Jupyter</span><span class="skill"><svg class="skill-ic"><use href="#ic-database"/></svg>SQL</span>
+          <span class="skill"><svg class="skill-ic"><use href="#ic-neural"/></svg>DL</span>
         </div>
       </div>
     </div>
