@@ -65,7 +65,7 @@ describe("admin asset store", () => {
 
   test("lists only direct active WebP files with metadata", async () => {
     const assets = await listActiveAssets(resolve(import.meta.dir, ".."));
-    expect(assets).toHaveLength(5);
+    expect(assets).toHaveLength(6);
     expect(assets[0]).toHaveProperty("path");
     expect(new Set(assets.map((asset) => `${asset.width}x${asset.height}`))).toEqual(new Set(["1280x800"]));
   });

@@ -13,6 +13,7 @@ window.PORTFOLIO_PROJECTS = [
   {"repo":"transformer-from-scratch","featured":false,"highlight":"Built a transformer from torch primitives, tested by the properties the paper relies on.","categories":["ml-nlp","developer-tools"],"preview":{"kind":"workflow"}},
   {"repo":"fashion_mnist","featured":false,"categories":["data-analysis","ml-nlp","visualization"],"preview":{"kind":"workflow"}},
   {"repo":"petvision","featured":false,"highlight":"Compared ResNet vs ResNeXt from scratch under identical conditions, with hardware benchmarks.","categories":["ml-nlp","data-analysis","visualization"],"preview":{"kind":"workflow"}},
+  {"repo":"argos","featured":false,"highlight":"Built a local-first macOS desk where chat messages become tasks, events and notes for AI agents.","categories":["apps","developer-tools"],"preview":{"kind":"app","src":"assets/img/projects/argos.webp","alt":"Argos Today page with schedule, tasks and weekly progress"}},
   {"repo":"pyile_manager","featured":false,"highlight":"Explored local-AI file renaming in a native desktop workflow.","categories":["developer-tools","apps"],"preview":{"kind":"app"}},
   {"repo":"routine-timer","featured":false,"highlight":"Designed a focused macOS timer with long-term routine feedback.","categories":["apps","visualization"],"preview":{"kind":"app"}},
   {"repo":"whisper-transcribe","featured":false,"highlight":"Made local audio transcription repeatable from the command line.","categories":["ml-nlp","developer-tools"],"preview":{"kind":"terminal"}}
